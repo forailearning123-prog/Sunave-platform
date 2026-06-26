@@ -20,8 +20,18 @@ import { createUserRepository } from './repositories/userRepository.js';
 import { createTeamRepository } from './repositories/teamRepository.js';
 import { createRoleRepository } from './repositories/roleRepository.js';
 import { createSettingsRepository } from './repositories/settingsRepository.js';
+import { createGoalRepository } from './repositories/goalRepository.js';
+import { createProjectRepository } from './repositories/projectRepository.js';
+import { createMilestoneRepository } from './repositories/milestoneRepository.js';
+import { createTaskRepository } from './repositories/taskRepository.js';
+import { createCommentRepository } from './repositories/commentRepository.js';
+import { createAttachmentRepository } from './repositories/attachmentRepository.js';
+import { createActivityRepository } from './repositories/activityRepository.js';
+import { createAiProviderRepository } from './repositories/aiProviderRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
+import { createAiGatewayService } from './services/aiGatewayService.js';
+import { createCredentialService } from './services/credentialService.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -53,6 +63,20 @@ export async function createApp({ pool } = {}) {
   const settingsRepo = createSettingsRepository(dbPool);
   const permService = createPermissionService(dbPool);
   const configService = createConfigurationService(settingsRepo, orgRepo);
+
+  // Goals & Projects platform repositories
+  const goalRepo       = createGoalRepository(dbPool);
+  const projectRepo    = createProjectRepository(dbPool);
+  const milestoneRepo  = createMilestoneRepository(dbPool);
+  const taskRepo       = createTaskRepository(dbPool);
+  const commentRepo    = createCommentRepository(dbPool);
+  const attachmentRepo = createAttachmentRepository(dbPool);
+  const activityRepo   = createActivityRepository(dbPool);
+
+  // AI Gateway platform
+  const aiProviderRepo    = createAiProviderRepository(dbPool);
+  const credentialService = createCredentialService();
+  const aiGatewayService  = createAiGatewayService(aiProviderRepo);
 
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });

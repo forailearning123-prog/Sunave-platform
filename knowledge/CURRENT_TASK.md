@@ -1,7 +1,7 @@
 ## Current Task
 
 ## Sprint
-- Sprint 4
+- Sprint 6
 
 ## Module
 - Goal Management
@@ -13,12 +13,10 @@
 - `apps/api/**`
 - `apps/web/**`
 - `packages/core/**`
-- `docs/**`
-- `.env.example`
-- `docker-compose*.yml`
 - `knowledge/PROJECT_MEMORY.md`
 - `knowledge/CURRENT_TASK.md`
 - `knowledge/DECISIONS.md`
+- `knowledge/MASTER_ROADMAP.md`
 
 ## Out-of-Scope Files
 - Workers, AI, agents, goals, projects, marketplace modules.
@@ -37,4 +35,4 @@
 - [x] Documentation Updated
 
 ## Next Module
-- AI Gateway
+- AI Model Registry

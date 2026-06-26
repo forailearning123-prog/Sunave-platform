@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline - Sunave AI OS</title>
+  <meta name="description" content="Gantt timeline view of goals and projects.">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search timeline...">
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar">U</div>
+          <span class="dash-user-name">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item active"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div>
+            <h1 class="dash-page-title">Timeline</h1>
+            <div class="dash-page-subtitle">Gantt view of Goals, Projects, and Milestones.</div>
+          </div>
+          <div class="timeline-controls">
+            <div class="timeline-zoom-group">
+              <button class="timeline-zoom-btn">Day</button>
+              <button class="timeline-zoom-btn active">Week</button>
+              <button class="timeline-zoom-btn">Month</button>
+              <button class="timeline-zoom-btn">Quarter</button>
+            </div>
+            <button class="dash-btn dash-btn-ghost dash-btn-sm" style="border:1px solid var(--dash-border);">Today</button>
+          </div>
+        </div>
+
+        <div class="timeline-grid">
+          <div class="timeline-header-row">
+            <div class="timeline-label-col">Item</div>
+            <div class="timeline-date-cols">
+              <div class="timeline-date-col">W1 Jan</div>
+              <div class="timeline-date-col">W2 Jan</div>
+              <div class="timeline-date-col">W3 Jan</div>
+              <div class="timeline-date-col today">W4 Jan</div>
+              <div class="timeline-date-col">W1 Feb</div>
+              <div class="timeline-date-col">W2 Feb</div>
+              <div class="timeline-date-col">W3 Feb</div>
+              <div class="timeline-date-col">W4 Feb</div>
+              <div class="timeline-date-col">W1 Mar</div>
+              <div class="timeline-date-col">W2 Mar</div>
+              <div class="timeline-date-col">W3 Mar</div>
+              <div class="timeline-date-col">W4 Mar</div>
+            </div>
+          </div>
+          
+          <div class="timeline-row">
+            <div class="timeline-row-label">
+              <span class="timeline-row-type timeline-type-goal">G</span>
+              <span class="timeline-row-label-text">Increase Revenue 30%</span>
+            </div>
+            <div class="timeline-bars">
+              <div class="timeline-bar goal" style="left: 0%; width: 100%;">74%</div>
+            </div>
+          </div>
+
+          <div class="timeline-row">
+            <div class="timeline-row-label">
+              <span class="timeline-row-type timeline-type-project">P</span>
+              <span class="timeline-row-label-text">API Gateway v2</span>
+            </div>
+            <div class="timeline-bars">
+              <div class="timeline-today-line" style="left: 30%;"></div>
+              <div class="timeline-bar project" style="left: 20%; width: 40%;">72%</div>
+            </div>
+          </div>
+
+          <div class="timeline-row">
+            <div class="timeline-row-label">
+              <span class="timeline-row-type timeline-type-milestone">M</span>
+              <span class="timeline-row-label-text">Design Complete</span>
+            </div>
+            <div class="timeline-bars">
+              <div class="timeline-bar milestone" style="left: 35%; width: 2%;"></div>
+            </div>
+          </div>
+          
+          <div class="timeline-row">
+            <div class="timeline-row-label">
+              <span class="timeline-row-type timeline-type-project">P</span>
+              <span class="timeline-row-label-text">Customer Portal</span>
+            </div>
+            <div class="timeline-bars">
+              <div class="timeline-bar project" style="left: 40%; width: 30%;">34%</div>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goals - Sunave AI OS</title>
+  <meta name="description" content="Manage your organizational goals.">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search goals...">
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-icon-btn" aria-label="Notifications">
+          🔔<div class="badge-dot"></div>
+        </button>
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar" id="userAvatar">U</div>
+          <span class="dash-user-name" id="userName">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar" id="sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item active"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div>
+            <h1 class="dash-page-title">Goals</h1>
+            <div class="dash-page-subtitle">Manage strategic objectives and track progress across the organization.</div>
+          </div>
+          <div class="dash-page-actions">
+            <button class="dash-btn dash-btn-secondary">Import</button>
+            <a href="/goals/new" class="dash-btn dash-btn-primary">+ New Goal</a>
+          </div>
+        </div>
+        
+        <div class="ai-summary-banner">
+          <div class="ai-summary-icon">✨</div>
+          <div class="ai-summary-content">
+            <div class="ai-summary-label">AI Insights</div>
+            <div class="ai-summary-text">You have 3 active goals. 1 is at risk of missing its target date.</div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="dash-input" placeholder="Search goals..." style="max-width: 200px;">
+          <select class="dash-select">
+            <option>All Statuses</option>
+            <option>Draft</option>
+            <option>Planning</option>
+            <option>Active</option>
+            <option>On Hold</option>
+            <option>Completed</option>
+          </select>
+          <select class="dash-select">
+            <option>All Categories</option>
+            <option>Business</option>
+            <option>Technology</option>
+            <option>Operations</option>
+            <option>HR</option>
+          </select>
+           <select class="dash-select">
+            <option>All Priorities</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+          <div class="view-switcher" style="margin-left: auto;">
+            <button class="view-btn">List</button>
+            <button class="view-btn active">Cards</button>
+            <button class="view-btn">Tree</button>
+          </div>
+        </div>
+
+        <div class="goals-grid" id="goalsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/auth-client.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mockGoals = [
+        { id: 1, title: 'Increase Annual Revenue 30%', category: 'business', status: 'active', priority: 'high', progress: 74, owner: 'Sarah Chen', targetDate: 'Q4 2026', childCount: 2, projectCount: 4 },
+        { id: 2, title: 'Launch Product V2', category: 'technology', status: 'active', priority: 'high', progress: 45, owner: 'James Park', targetDate: 'Q3 2026', childCount: 0, projectCount: 2 },
+        { id: 3, title: 'Improve Customer Retention', category: 'customer', status: 'planning', priority: 'medium', progress: 12, owner: 'Priya Nair', targetDate: 'Q4 2026', childCount: 1, projectCount: 1 },
+        { id: 4, title: 'Reduce Operational Costs', category: 'operations', status: 'active', priority: 'medium', progress: 88, owner: 'Mike Torres', targetDate: 'Q2 2026', childCount: 0, projectCount: 1 },
+        { id: 5, title: 'Build Engineering Team', category: 'hr', status: 'active', priority: 'high', progress: 60, owner: 'Sarah Chen', targetDate: 'Q3 2026', childCount: 0, projectCount: 1 }
+      ];
+
+      const grid = document.getElementById('goalsGrid');
+      
+      mockGoals.forEach(g => {
+        let fillClass = 'success';
+        if(g.progress < 50 && g.status === 'active') fillClass = 'warning';
+        if(g.title === 'Launch Product V2') fillClass = 'danger';
+        
+        grid.innerHTML += \`
+          <a href="/goals/detail?id=\${g.id}" class="goal-card" style="--goal-color: var(--dash-accent);">
+            <div class="goal-card-header">
+              <div class="goal-card-icon">🎯</div>
+              <div class="goal-card-title">\${g.title}</div>
+            </div>
+            <div class="goal-card-meta">
+              <span class="dash-tag dash-tag-muted">\${g.category}</span>
+              <span class="status-badge status-\${g.status}">\${g.status}</span>
+            </div>
+            <div class="goal-card-progress">
+              <div class="goal-card-progress-label">
+                <span>Progress</span>
+                <span>\${g.progress}%</span>
+              </div>
+              <div class="dash-progress-bar">
+                <div class="dash-progress-fill \${fillClass}" style="width: \${g.progress}%;"></div>
+              </div>
+            </div>
+            <div class="goal-card-meta" style="margin-top: auto; border-top: 1px solid var(--dash-border); padding-top: 0.75rem;">
+              <span style="font-size: 0.75rem; color: var(--dash-text-muted);">\${g.owner}</span>
+              <span class="goal-card-dates">Target: \${g.targetDate}</span>
+            </div>
+          </a>
+        \`;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goal Detail - Sunave AI OS</title>
+  <meta name="description" content="Goal details and metrics.">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search...">
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar">U</div>
+          <span class="dash-user-name">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item active"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <a href="/goals" style="color:var(--dash-text-muted); text-decoration:none; font-size:0.85rem;">&larr; Back to Goals</a>
+          </div>
+        </div>
+        
+        <div class="detail-hero">
+          <div class="detail-hero-header">
+            <div class="detail-hero-icon" style="background: rgba(99,102,241,0.15); color: #818cf8;">🎯</div>
+            <div style="flex:1;">
+              <h1 class="detail-hero-title">Increase Annual Revenue 30%</h1>
+              <div class="detail-hero-meta">
+                <span class="status-badge status-active">Active</span>
+                <span class="health-badge health-on_track">On Track</span>
+                <span style="display:flex; align-items:center; gap:0.3rem; font-size:0.75rem;"><div class="priority-dot priority-high"></div> High Priority</span>
+              </div>
+            </div>
+            <div class="progress-ring" style="width:80px; height:80px;">
+              <svg width="80" height="80">
+                <circle class="progress-ring-track" stroke-width="6" cx="40" cy="40" r="34"></circle>
+                <circle class="progress-ring-fill" stroke="var(--dash-success)" stroke-width="6" cx="40" cy="40" r="34" style="stroke-dasharray: 213; stroke-dashoffset: 55;"></circle>
+              </svg>
+              <div class="progress-ring-label" style="font-size:1.1rem;">74%</div>
+            </div>
+          </div>
+          <div class="detail-hero-desc">Expand into 3 new regional markets and increase enterprise sales team headcount to drive top-line growth.</div>
+          <div class="detail-stats-row">
+            <div class="detail-stat">
+              <span class="detail-stat-label">Owner</span>
+              <span class="detail-stat-value">Sarah Chen</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Target Date</span>
+              <span class="detail-stat-value">Q4 2026</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Budget</span>
+              <span class="detail-stat-value">$150k / $500k</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tabs">
+          <button class="dash-tab active" data-target="overview">Overview</button>
+          <button class="dash-tab" data-target="projects">Projects (3)</button>
+          <button class="dash-tab" data-target="tasks">Tasks (8)</button>
+          <button class="dash-tab" data-target="milestones">Milestones (4)</button>
+          <button class="dash-tab" data-target="activity">Activity</button>
+          <button class="dash-tab" data-target="comments">Comments</button>
+        </div>
+
+        <div class="dash-tab-panel active" id="overview">
+          <h3 style="margin-bottom:1rem;">Child Goals</h3>
+          <div class="goals-grid">
+            <div class="goal-card">
+               <div class="goal-card-header">
+                <div class="goal-card-icon">🌍</div>
+                <div class="goal-card-title">EMEA Expansion</div>
+              </div>
+              <div class="goal-card-progress">
+                <div class="dash-progress-bar"><div class="dash-progress-fill success" style="width: 80%;"></div></div>
+              </div>
+            </div>
+            <div class="goal-card">
+               <div class="goal-card-header">
+                <div class="goal-card-icon">🤝</div>
+                <div class="goal-card-title">Enterprise Sales Hiring</div>
+              </div>
+              <div class="goal-card-progress">
+                <div class="dash-progress-bar"><div class="dash-progress-fill warning" style="width: 40%;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="projects">
+          <div class="projects-grid">
+             <div class="project-card">
+              <div class="project-card-header">
+                <div class="project-card-icon" style="background:#6366f1;">🔌</div>
+                <div class="project-card-title">API Gateway v2</div>
+              </div>
+              <div class="project-card-stats">
+                <div class="project-stat"><div class="project-stat-value">72%</div><div class="project-stat-label">Done</div></div>
+                <div class="project-stat"><div class="project-stat-value">5</div><div class="project-stat-label">Tasks</div></div>
+              </div>
+             </div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="tasks">
+          <div class="dash-empty">
+            <div class="dash-empty-icon">✓</div>
+            <div class="dash-empty-title">Tasks</div>
+            <div class="dash-empty-text">List of tasks goes here...</div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="milestones">
+          <div class="milestone-item">
+            <div class="milestone-check completed">✓</div>
+            <div class="milestone-body">
+              <div class="milestone-title">Hire VP of Sales</div>
+              <div class="milestone-meta">Due: Jan 15, 2026</div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-check"></div>
+            <div class="milestone-body">
+              <div class="milestone-title">Open London Office</div>
+              <div class="milestone-meta">Due: Jun 30, 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="activity">
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon-wrap">📝</div>
+              <div class="activity-body">
+                <div class="activity-subject">Sarah Chen updated the progress to 74%</div>
+                <div class="activity-time">2 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="comments">
+          <div class="comment-item">
+            <div class="comment-avatar">SC</div>
+            <div class="comment-body">
+              <div class="comment-header">
+                <span class="comment-author">Sarah Chen</span>
+                <span class="comment-time">1 day ago</span>
+              </div>
+              <div class="comment-content">We are ahead of schedule on the hiring front, but need to watch the budget for the new office setup.</div>
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem;">
+            <textarea class="dash-textarea" placeholder="Add a comment..."></textarea>
+            <div style="margin-top:0.5rem; text-align:right;">
+              <button class="dash-btn dash-btn-primary">Submit</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.dash-tab');
+      const panels = document.querySelectorAll('.dash-tab-panel');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.target).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

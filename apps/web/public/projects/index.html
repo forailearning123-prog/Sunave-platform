@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects - Sunave AI OS</title>
+  <meta name="description" content="Manage projects and track health.">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search projects...">
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar">U</div>
+          <span class="dash-user-name">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item active"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div>
+            <h1 class="dash-page-title">Projects</h1>
+            <div class="dash-page-subtitle">Track project health and task execution.</div>
+          </div>
+          <div class="dash-page-actions">
+            <button class="dash-btn dash-btn-primary" onclick="alert('New project modal would open here')">+ New Project</button>
+          </div>
+        </div>
+        
+        <div class="filter-bar">
+          <input type="text" class="dash-input" placeholder="Search..." style="max-width: 150px;">
+          <select class="dash-select"><option>All Goals</option><option>Increase Revenue</option></select>
+          <select class="dash-select"><option>All Statuses</option><option>Active</option><option>Planning</option></select>
+          <select class="dash-select"><option>All Health</option><option>On Track</option><option>At Risk</option></select>
+          <div class="view-switcher" style="margin-left: auto;">
+            <button class="view-btn active">Cards</button>
+            <button class="view-btn">List</button>
+            <button class="view-btn">Table</button>
+          </div>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mockProjects = [
+        { id: 1, name: 'API Gateway v2', goal: 'Increase Revenue', status: 'active', health: 'on_track', progress: 72, owner: 'James Park', openTasks: 5, totalTasks: 12, color: '#6366f1', icon: '🔌' },
+        { id: 2, name: 'Customer Portal Redesign', goal: 'Customer Retention', status: 'active', health: 'at_risk', progress: 34, owner: 'Sarah Chen', openTasks: 8, totalTasks: 20, color: '#10b981', icon: '🎨' },
+        { id: 3, name: 'Cost Reduction Initiative', goal: 'Reduce Costs', status: 'active', health: 'on_track', progress: 61, owner: 'Mike Torres', openTasks: 3, totalTasks: 8, color: '#f59e0b', icon: '💰' },
+        { id: 4, name: 'Mobile App V2', goal: 'Launch Product V2', status: 'planning', health: 'unknown', progress: 8, owner: 'James Park', openTasks: 0, totalTasks: 15, color: '#8b5cf6', icon: '📱' },
+        { id: 5, name: 'Engineering Hiring Pipeline', goal: 'Build Team', status: 'active', health: 'on_track', progress: 45, owner: 'Sarah Chen', openTasks: 4, totalTasks: 10, color: '#3b82f6', icon: '👥' }
+      ];
+
+      const grid = document.getElementById('projectsGrid');
+      
+      mockProjects.forEach(p => {
+        let healthClass = p.health;
+        let healthLabel = p.health.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+        
+        let fillClass = 'success';
+        if(p.health === 'at_risk') fillClass = 'warning';
+        if(p.health === 'off_track') fillClass = 'danger';
+        
+        grid.innerHTML += \`
+          <a href="/projects/detail?id=\${p.id}" class="project-card">
+            <div class="project-card-header">
+              <div class="project-card-icon" style="background: \${p.color}; color: #fff;">\${p.icon}</div>
+              <div class="project-card-title">\${p.name}
+                <div class="project-card-goal">\${p.goal}</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+              <span class="health-badge health-\${p.health}">\${healthLabel}</span>
+              <span class="status-badge status-\${p.status}">\${p.status}</span>
+            </div>
+            <div class="project-card-stats">
+              <div class="project-stat"><div class="project-stat-value">\${p.openTasks}</div><div class="project-stat-label">Tasks Open</div></div>
+              <div class="project-stat"><div class="project-stat-value">\${p.progress}%</div><div class="project-stat-label">Complete</div></div>
+              <div class="project-stat"><div class="project-stat-value">12</div><div class="project-stat-label">Days Left</div></div>
+            </div>
+            <div class="dash-progress-bar">
+              <div class="dash-progress-fill \${fillClass}" style="width: \${p.progress}%;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--dash-text-muted);">
+              <span>\${p.owner}</span>
+              <span>\${p.openTasks}/\${p.totalTasks} Tasks</span>
+            </div>
+          </a>
+        \`;
+      });
+    });
+  </script>
+</body>
+</html>

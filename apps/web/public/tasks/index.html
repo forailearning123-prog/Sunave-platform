@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks - Sunave AI OS</title>
+  <meta name="description" content="Cross-project task management.">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search tasks...">
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar">U</div>
+          <span class="dash-user-name">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item active"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div>
+            <h1 class="dash-page-title">Tasks</h1>
+            <div class="dash-page-subtitle">Manage tasks across all your projects.</div>
+          </div>
+          <div class="dash-page-actions">
+            <button class="dash-btn dash-btn-primary">+ Create Task</button>
+          </div>
+        </div>
+
+        <div class="dash-tabs" style="margin-bottom:1rem;">
+          <button class="dash-tab active">My Tasks</button>
+          <button class="dash-tab">All Tasks</button>
+          <button class="dash-tab">Overdue <span class="dash-nav-badge" style="color:var(--dash-danger);">3</span></button>
+          <button class="dash-tab">This Week</button>
+        </div>
+        
+        <div class="filter-bar">
+          <input type="text" class="dash-input" placeholder="Search..." style="max-width: 150px;">
+          <select class="dash-select"><option>All Projects</option></select>
+          <select class="dash-select"><option>All Statuses</option></select>
+          <select class="dash-select"><option>All Priorities</option></select>
+          <div class="view-switcher" style="margin-left: auto;">
+            <button class="view-btn">Board</button>
+            <button class="view-btn active">List</button>
+          </div>
+        </div>
+
+        <div style="background:var(--dash-surface); border:1px solid var(--dash-border); border-radius:var(--dash-radius); overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse; text-align:left;">
+            <thead>
+              <tr style="background:var(--dash-surface-2); border-bottom:1px solid var(--dash-border); font-size:0.75rem; color:var(--dash-text-muted); text-transform:uppercase; letter-spacing:0.05em;">
+                <th style="padding:0.75rem 1rem; width:40px;"></th>
+                <th style="padding:0.75rem 1rem;">Task Title</th>
+                <th style="padding:0.75rem 1rem;">Project</th>
+                <th style="padding:0.75rem 1rem;">Priority</th>
+                <th style="padding:0.75rem 1rem;">Status</th>
+                <th style="padding:0.75rem 1rem;">Due Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--dash-border); font-size:0.85rem; color:var(--dash-text);">
+                <td style="padding:0.75rem 1rem;"><input type="checkbox"></td>
+                <td style="padding:0.75rem 1rem; font-weight:600;">Define rate limiting rules</td>
+                <td style="padding:0.75rem 1rem;"><span class="dash-tag dash-tag-muted">API Gateway v2</span></td>
+                <td style="padding:0.75rem 1rem;"><div class="priority-dot priority-high"></div> High</td>
+                <td style="padding:0.75rem 1rem;"><span class="status-badge status-todo">Todo</span></td>
+                <td style="padding:0.75rem 1rem; color:var(--dash-text-muted);">Apr 15</td>
+              </tr>
+               <tr style="border-bottom:1px solid var(--dash-border); font-size:0.85rem; color:var(--dash-text);">
+                <td style="padding:0.75rem 1rem;"><input type="checkbox"></td>
+                <td style="padding:0.75rem 1rem; font-weight:600;">Implement JWT validation middleware</td>
+                <td style="padding:0.75rem 1rem;"><span class="dash-tag dash-tag-muted">API Gateway v2</span></td>
+                <td style="padding:0.75rem 1rem;"><div class="priority-dot priority-critical"></div> Critical</td>
+                <td style="padding:0.75rem 1rem;"><span class="status-badge status-in_progress">In Progress</span></td>
+                <td style="padding:0.75rem 1rem; color:var(--dash-danger); font-weight:700;">Apr 10 (Overdue)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>
