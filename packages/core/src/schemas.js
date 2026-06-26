@@ -100,3 +100,80 @@ export const SETTINGS_CATEGORY = ['general', 'branding', 'regional', 'billing', 
 export const updateSettingsSchema = z.object({
   settings: z.record(z.unknown())
 });
+
+// ─── IAM Schemas ──────────────────────────────────────────────────────────────
+
+export const USER_STATUS = ['active', 'inactive', 'invited', 'suspended', 'archived'];
+
+export const createUserSchema = z.object({
+  firstName: nameField,
+  lastName: nameField,
+  email,
+  phone: z.string().trim().max(50).optional().default(''),
+  jobTitle: z.string().trim().max(120).optional().default(''),
+  department: z.string().trim().max(120).optional().default(''),
+  employeeId: z.string().trim().max(80).optional().default(''),
+  timezone: z.string().trim().max(100).optional().default('UTC'),
+  language: z.string().trim().max(10).optional().default('en'),
+  role: z.enum(['Admin', 'Manager', 'User', 'Guest']).optional().default('User')
+});
+
+export const updateUserSchema = z.object({
+  firstName: nameField.optional(),
+  lastName: nameField.optional(),
+  displayName: z.string().trim().max(160).optional(),
+  phone: z.string().trim().max(50).optional(),
+  jobTitle: z.string().trim().max(120).optional(),
+  department: z.string().trim().max(120).optional(),
+  employeeId: z.string().trim().max(80).optional(),
+  timezone: z.string().trim().max(100).optional(),
+  language: z.string().trim().max(10).optional(),
+  avatarUrl: z.string().trim().url().or(z.literal('')).optional(),
+  status: z.enum(USER_STATUS).optional()
+});
+
+export const assignUserRoleSchema = z.object({
+  role: z.enum(['Admin', 'Manager', 'User', 'Guest'])
+});
+
+export const assignUserTeamsSchema = z.object({
+  teamId: z.string().uuid(),
+  role: z.string().trim().max(40).optional().default('member')
+});
+
+export const TEAM_MEMBER_ROLE = ['lead', 'member'];
+
+export const createTeamSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  description: z.string().trim().max(1000).optional().default(''),
+  color: z.string().trim().max(20).optional().default(''),
+  icon: z.string().trim().max(80).optional().default(''),
+  parentTeamId: z.string().uuid().optional().nullable()
+});
+
+export const updateTeamSchema = z.object({
+  name: z.string().trim().min(1).max(120).optional(),
+  description: z.string().trim().max(1000).optional(),
+  color: z.string().trim().max(20).optional(),
+  icon: z.string().trim().max(80).optional(),
+  parentTeamId: z.string().uuid().optional().nullable()
+});
+
+export const addTeamMemberSchema = z.object({
+  userId: z.string().uuid(),
+  role: z.string().trim().max(40).optional().default('member')
+});
+
+export const createRoleSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  description: z.string().trim().max(500).optional().default('')
+});
+
+export const updateRoleSchema = z.object({
+  name: z.string().trim().min(1).max(80).optional(),
+  description: z.string().trim().max(500).optional()
+});
+
+export const assignPermissionsSchema = z.object({
+  permissionIds: z.array(z.string().uuid()).min(1)
+});

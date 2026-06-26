@@ -1,13 +1,13 @@
 # Current Task
 
 ## Sprint
-- Sprint 2
+- Sprint 3
 
 ## Module
-- Organizations & Multi-Tenancy (Complete)
+- Settings
 
 ## Goal
-- Implement full multi-tenant organization module: CRUD, membership, invitations, tenant middleware, settings, audit logging.
+- Implement user preferences, notification settings, and account settings module. Includes per-user and per-org preference storage, UI settings pages, and notification categories.
 
 ## Allowed Files
 - `apps/api/**`
@@ -23,17 +23,17 @@
 ## Out-of-Scope Files
 - Workers, AI, agents, goals, dashboard business modules, marketplace modules, and unrelated plugin implementations.
 
-## Acceptance Criteria
-- [x] Organizations CRUD (create, read, update, archive, restore)
-- [x] Multi-Tenant Architecture (requireOrg middleware, tenant isolation)
-- [x] Organization Switcher (POST /switch, current_org_id cookie)
-- [x] Member Management (list, update, remove)
-- [x] Invitations (send, accept, list)
-- [x] Middleware (requireOrg, requireOrgPermission)
-- [x] Organization Settings (CRUD per category)
-- [x] Audit Logging (created, updated, archived, restored, member events, invitation events)
-- [x] Tests (28 API tests including multi-tenant isolation)
+## Acceptance Criteria (Previous Sprint — IAM)
+- [x] User Management (CRUD, status transitions, force logout)
+- [x] Team Management (CRUD, archive/restore, nested hierarchy)
+- [x] Nested Teams (multi-level parent_team_id tree)
+- [x] Roles (system roles protected, custom org roles)
+- [x] Permissions (21 seeded permissions across categories)
+- [x] RBAC Engine (DB-backed permissionService with hasPermission/hasAnyPermission/hasAllPermissions)
+- [x] Permission Middleware (requirePermission factory on all IAM routes)
+- [x] Audit Logging (user.created, user.updated, user.suspended, role.assigned, team.created, team.member_added, etc.)
+- [x] Responsive UI (/users, /users/detail, /teams, /teams/detail, /roles, /permissions)
 - [x] Documentation Updated
 
 ## Next Module
-- Users & Teams
+- Dashboard

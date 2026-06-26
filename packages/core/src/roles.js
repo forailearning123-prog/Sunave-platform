@@ -19,7 +19,29 @@ export const PERMISSION = {
   MEMBER_INVITE: 'member:invite',
   MEMBER_MANAGE: 'member:manage',
   SETTINGS_READ: 'settings:read',
-  SETTINGS_WRITE: 'settings:write'
+  SETTINGS_WRITE: 'settings:write',
+  // IAM permissions (DB-backed, also reflected here for reference)
+  USERS_READ: 'users.read',
+  USERS_CREATE: 'users.create',
+  USERS_UPDATE: 'users.update',
+  USERS_DELETE: 'users.delete',
+  TEAMS_READ: 'teams.read',
+  TEAMS_CREATE: 'teams.create',
+  TEAMS_UPDATE: 'teams.update',
+  TEAMS_DELETE: 'teams.delete',
+  TEAMS_MANAGE: 'teams.manage',
+  ROLES_READ: 'roles.read',
+  ROLES_MANAGE: 'roles.manage',
+  PERMISSIONS_READ: 'permissions.read',
+  GOALS_MANAGE: 'goals.manage',
+  PROJECTS_MANAGE: 'projects.manage',
+  PLUGINS_INSTALL: 'plugins.install',
+  WORKERS_EXECUTE: 'workers.execute',
+  AGENTS_MANAGE: 'agents.manage',
+  SETTINGS_MANAGE: 'settings.manage',
+  AI_MANAGE: 'ai.manage',
+  BILLING_MANAGE: 'billing.manage',
+  AUDIT_READ: 'audit.read'
 };
 
 const rolePermissions = {

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <h1>Users</h1>
+        <button id="create-btn" style="width:auto;margin:0;padding:0.5rem 1rem;">+ Invite User</button>
+      </div>
+
+      <nav class="iam-nav">
+        <a href="/users" class="active">Users</a>
+        <a href="/teams">Teams</a>
+        <a href="/roles">Roles</a>
+        <a href="/permissions">Permissions</a>
+      </nav>
+
+      <div id="user-list"><p class="helper">Loading users…</p></div>
+      <p id="error" class="error"></p>
+    </div>
+
+    <!-- Invite User Dialog -->
+    <div class="dialog-overlay" id="invite-dialog">
+      <div class="dialog">
+        <h2>Invite User</h2>
+        <form id="invite-form">
+          <label>First Name</label>
+          <input type="text" name="firstName" required />
+          <label>Last Name</label>
+          <input type="text" name="lastName" required />
+          <label>Email</label>
+          <input type="email" name="email" required />
+          <label>Job Title</label>
+          <input type="text" name="jobTitle" />
+          <label>Department</label>
+          <input type="text" name="department" />
+          <label>Role</label>
+          <select name="role">
+            <option value="User">User</option>
+            <option value="Guest">Guest</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button type="submit" style="flex:1;margin:0;">Create User</button>
+            <button type="button" id="cancel-invite" class="secondary" style="flex:1;margin:0;">Cancel</button>
+          </div>
+          <p id="invite-error" class="error"></p>
+          <p id="invite-success" class="success"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="container links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/organizations">Organizations</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const listEl = document.getElementById('user-list');
+      const errorEl = document.getElementById('error');
+      const inviteDialog = document.getElementById('invite-dialog');
+
+      function statusBadge(s) {
+        return `<span class="badge ${s}">${s}</span>`;
+      }
+
+      function roleBadge(r) {
+        return `<span class="badge ${r.toLowerCase()}">${r}</span>`;
+      }
+
+      function initials(u) {
+        return `${(u.firstName || '?')[0]}${(u.lastName || '?')[0]}`.toUpperCase();
+      }
+
+      async function loadUsers() {
+        try {
+          const data = await request('/api/users', 'GET');
+          const users = data.users;
+
+          if (!users.length) {
+            listEl.innerHTML = `<div class="empty"><h3>No users yet</h3><p>Invite your first team member.</p></div>`;
+            return;
+          }
+
+          listEl.innerHTML = `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Job Title</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${users.map((u) => `
+                    <tr>
+                      <td>
+                        <div style="display:flex;align-items:center;gap:0.6rem;">
+                          <div class="avatar">${initials(u)}</div>
+                          <div>
+                            <div style="font-weight:600;">${u.firstName} ${u.lastName}</div>
+                            <div style="font-size:0.8rem;color:var(--muted);">${u.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="color:var(--muted);font-size:0.88rem;">${u.jobTitle || '—'}</td>
+                      <td style="color:var(--muted);font-size:0.88rem;">${u.department || '—'}</td>
+                      <td>${u.orgRole ? roleBadge(u.orgRole) : '—'}</td>
+                      <td>${statusBadge(u.status)}</td>
+                      <td>
+                        <a href="/users/detail?id=${u.id}"><button class="sm secondary" style="margin:0;">View</button></a>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      document.getElementById('create-btn').addEventListener('click', () => {
+        inviteDialog.classList.add('open');
+      });
+
+      document.getElementById('cancel-invite').addEventListener('click', () => {
+        inviteDialog.classList.remove('open');
+      });
+
+      document.getElementById('invite-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('invite-error');
+        const sucEl = document.getElementById('invite-success');
+        errEl.textContent = '';
+        sucEl.textContent = '';
+        try {
+          const payload = {
+            firstName: e.target.firstName.value,
+            lastName: e.target.lastName.value,
+            email: e.target.email.value,
+            jobTitle: e.target.jobTitle.value,
+            department: e.target.department.value,
+            role: e.target.role.value
+          };
+          await request('/api/users', 'POST', payload);
+          sucEl.textContent = 'User created successfully.';
+          e.target.reset();
+          setTimeout(() => { inviteDialog.classList.remove('open'); loadUsers(); }, 1200);
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      loadUsers();
+    </script>
+  </body>
+</html>

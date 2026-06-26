@@ -202,6 +202,73 @@ tr:last-child td { border-bottom: none; }
 /* Status message */
 #status-msg { min-height: 1.5rem; }
 
+/* Avatar */
+.avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+}
+.avatar.sm { width: 28px; height: 28px; font-size: 0.72rem; }
+
+/* Permission badge */
+.badge.iam    { background: #7c3aed; color: white; }
+.badge.users  { background: #0891b2; color: white; }
+.badge.teams  { background: #059669; color: white; }
+.badge.billing{ background: #b45309; color: white; }
+.badge.security{ background: #dc2626; color: white; }
+.badge.platform{ background: #6d28d9; color: white; }
+.badge.goals  { background: #0369a1; color: white; }
+.badge.projects{ background: #047857; color: white; }
+.badge.settings{ background: var(--neutral-bg); color: var(--neutral-text); }
+.badge.suspended { background: #fca5a5; color: #7f1d1d; }
+.badge.invited   { background: var(--warning-bg); color: var(--warning-text); }
+.badge.archived  { background: var(--neutral-bg); color: var(--neutral-text); }
+.badge.inactive  { background: var(--neutral-bg); color: var(--neutral-text); }
+
+/* Team tree */
+.tree-node { border-left: 2px solid var(--border); margin-left: 1.25rem; padding-left: 0.75rem; }
+.tree-root > .tree-node { border-left: none; margin-left: 0; padding-left: 0; }
+.tree-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 0.6rem; border-radius: 8px;
+  margin-bottom: 0.25rem; transition: background 0.1s;
+  cursor: pointer;
+}
+.tree-item:hover { background: var(--neutral-bg); }
+.tree-item .tree-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; background: var(--primary); color: white; flex-shrink: 0;
+}
+.tree-item .tree-name { font-weight: 600; font-size: 0.9rem; }
+.tree-item .tree-meta { font-size: 0.78rem; color: var(--muted); }
+
+/* Role matrix */
+.matrix-wrap { overflow-x: auto; }
+.matrix-table th:first-child { white-space: nowrap; min-width: 180px; }
+.matrix-table td, .matrix-table th { font-size: 0.82rem; text-align: center; }
+.matrix-table td:first-child { text-align: left; }
+.check { color: #16a34a; font-weight: 700; }
+.cross  { color: var(--muted); }
+
+/* User card */
+.user-card {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem; border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 0.5rem;
+}
+.user-card-info { flex: 1; min-width: 0; }
+.user-card-name { font-weight: 600; font-size: 0.92rem; }
+.user-card-meta { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+
+/* IAM nav */
+.iam-nav { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; font-size: 0.92rem; }
+.iam-nav a { color: var(--muted); }
+.iam-nav a.active { color: var(--primary); font-weight: 600; }
+
 @media (max-width: 640px) {
   .container { margin: 1rem auto; padding: 1rem; }
 }

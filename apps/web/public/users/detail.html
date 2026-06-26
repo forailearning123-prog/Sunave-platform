@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Detail - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+        <a href="/users">← Users</a>
+      </div>
+
+      <div id="user-header"><p class="helper">Loading…</p></div>
+
+      <div id="user-body" style="display:none;">
+        <h2>Profile</h2>
+        <form id="profile-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+            <div>
+              <label>First Name</label>
+              <input type="text" name="firstName" required />
+            </div>
+            <div>
+              <label>Last Name</label>
+              <input type="text" name="lastName" required />
+            </div>
+            <div>
+              <label>Display Name</label>
+              <input type="text" name="displayName" />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input type="text" name="phone" />
+            </div>
+            <div>
+              <label>Job Title</label>
+              <input type="text" name="jobTitle" />
+            </div>
+            <div>
+              <label>Department</label>
+              <input type="text" name="department" />
+            </div>
+            <div>
+              <label>Employee ID</label>
+              <input type="text" name="employeeId" />
+            </div>
+            <div>
+              <label>Status</label>
+              <select name="status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:1rem;display:flex;gap:0.75rem;">
+            <button type="submit" style="width:auto;margin:0;padding:0.5rem 1.25rem;">Save Changes</button>
+            <button type="button" id="force-logout-btn" class="secondary" style="width:auto;margin:0;padding:0.5rem 1.25rem;">Force Logout</button>
+          </div>
+          <p id="save-error" class="error"></p>
+          <p id="save-success" class="success"></p>
+        </form>
+
+        <h2>Organization Role</h2>
+        <form id="role-form" style="max-width:320px;">
+          <label>Role</label>
+          <select name="role">
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+            <option value="Guest">Guest</option>
+          </select>
+          <button type="submit" style="width:auto;margin-top:0.75rem;padding:0.5rem 1.25rem;">Update Role</button>
+          <p id="role-error" class="error"></p>
+          <p id="role-success" class="success"></p>
+        </form>
+
+        <h2>Assign to Team</h2>
+        <form id="team-form" style="max-width:320px;">
+          <label>Team</label>
+          <select name="teamId" id="team-select">
+            <option value="">Loading teams…</option>
+          </select>
+          <label>Team Role</label>
+          <select name="teamRole">
+            <option value="member">Member</option>
+            <option value="lead">Lead</option>
+          </select>
+          <button type="submit" style="width:auto;margin-top:0.75rem;padding:0.5rem 1.25rem;">Assign to Team</button>
+          <p id="team-error" class="error"></p>
+          <p id="team-success" class="success"></p>
+        </form>
+      </div>
+
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/users">← Back to Users</a>
+      <a href="/teams">Teams</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get('id');
+
+      if (!userId) {
+        window.location.href = '/users';
+      }
+
+      const headerEl = document.getElementById('user-header');
+      const bodyEl = document.getElementById('user-body');
+      const errorEl = document.getElementById('error');
+
+      function statusBadge(s) {
+        return `<span class="badge ${s}">${s}</span>`;
+      }
+
+      function roleBadge(r) {
+        return r ? `<span class="badge ${r.toLowerCase()}">${r}</span>` : '';
+      }
+
+      function initials(u) {
+        return `${(u.firstName || '?')[0]}${(u.lastName || '?')[0]}`.toUpperCase();
+      }
+
+      async function loadTeams() {
+        try {
+          const data = await request('/api/teams?flat=true', 'GET');
+          const select = document.getElementById('team-select');
+          if (!data.teams.length) {
+            select.innerHTML = '<option value="">No teams available</option>';
+            return;
+          }
+          select.innerHTML = data.teams.map((t) => `<option value="${t.id}">${t.name}</option>`).join('');
+        } catch { /* non-fatal */ }
+      }
+
+      async function loadUser() {
+        try {
+          const data = await request(`/api/users/${userId}`, 'GET');
+          const u = data.user;
+
+          document.title = `${u.firstName} ${u.lastName} - Sunave`;
+
+          headerEl.innerHTML = `
+            <div class="user-card">
+              <div class="avatar" style="width:48px;height:48px;font-size:1.1rem;">${initials(u)}</div>
+              <div class="user-card-info">
+                <div class="user-card-name">${u.firstName} ${u.lastName}</div>
+                <div class="user-card-meta">${u.email} · ${u.jobTitle || 'No title'} · ${u.department || 'No dept'}</div>
+                <div style="margin-top:0.3rem;">${roleBadge(u.orgRole)} ${statusBadge(u.status)}</div>
+              </div>
+            </div>
+          `;
+
+          // Populate profile form
+          const form = document.getElementById('profile-form');
+          form.firstName.value = u.firstName;
+          form.lastName.value = u.lastName;
+          form.displayName.value = u.displayName || '';
+          form.phone.value = u.phone || '';
+          form.jobTitle.value = u.jobTitle || '';
+          form.department.value = u.department || '';
+          form.employeeId.value = u.employeeId || '';
+          form.status.value = u.status;
+
+          // Populate role form
+          if (u.orgRole) {
+            const roleForm = document.getElementById('role-form');
+            const opt = roleForm.role.querySelector(`option[value="${u.orgRole}"]`);
+            if (opt) opt.selected = true;
+          }
+
+          bodyEl.style.display = 'block';
+          loadTeams();
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('save-error');
+        const sucEl = document.getElementById('save-success');
+        errEl.textContent = '';
+        sucEl.textContent = '';
+        try {
+          const payload = {
+            firstName: e.target.firstName.value,
+            lastName: e.target.lastName.value,
+            displayName: e.target.displayName.value,
+            phone: e.target.phone.value,
+            jobTitle: e.target.jobTitle.value,
+            department: e.target.department.value,
+            employeeId: e.target.employeeId.value,
+            status: e.target.status.value
+          };
+          await request(`/api/users/${userId}`, 'PUT', payload);
+          sucEl.textContent = 'Profile updated.';
+          loadUser();
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      document.getElementById('role-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('role-error');
+        const sucEl = document.getElementById('role-success');
+        errEl.textContent = '';
+        sucEl.textContent = '';
+        try {
+          await request(`/api/users/${userId}/roles`, 'POST', { role: e.target.role.value });
+          sucEl.textContent = 'Role updated.';
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      document.getElementById('team-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('team-error');
+        const sucEl = document.getElementById('team-success');
+        errEl.textContent = '';
+        sucEl.textContent = '';
+        const teamId = e.target.teamId.value;
+        if (!teamId) { errEl.textContent = 'Select a team.'; return; }
+        try {
+          await request(`/api/users/${userId}/teams`, 'POST', { teamId, role: e.target.teamRole.value });
+          sucEl.textContent = 'Assigned to team.';
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      document.getElementById('force-logout-btn').addEventListener('click', async () => {
+        const sucEl = document.getElementById('save-success');
+        const errEl = document.getElementById('save-error');
+        try {
+          await request(`/api/users/${userId}/force-logout`, 'POST', {});
+          sucEl.textContent = 'User sessions revoked.';
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      loadUser();
+    </script>
+  </body>
+</html>

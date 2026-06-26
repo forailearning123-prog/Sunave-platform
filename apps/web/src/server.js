@@ -34,6 +34,12 @@ const pageRoutes = {
   '/organizations/settings': 'organizations/settings.html',
   '/organizations/members': 'organizations/members.html',
   '/organizations/invitations': 'organizations/invitations.html',
+  '/users': 'users/index.html',
+  '/users/detail': 'users/detail.html',
+  '/teams': 'teams/index.html',
+  '/teams/detail': 'teams/detail.html',
+  '/roles': 'roles/index.html',
+  '/permissions': 'permissions/index.html',
   '/dashboard': 'dashboard.html',
   '/': 'auth/login.html'
 };
