@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Settings - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .settings-section { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+      .settings-section:last-child { border-bottom: none; }
+      .json-editor { font-family: monospace; font-size: 0.85rem; min-height: 100px; resize: vertical; }
+      .badge { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--neutral-bg); color: var(--muted); margin-left: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>System Settings</h1>
+      <p class="helper">Platform-wide configuration defaults. These are the baseline values used when organization or user settings are not set.</p>
+
+      <div id="system-panels">
+        <p class="helper">Loading system settings…</p>
+      </div>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/feature-flags">Feature Flags</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const panelsEl = document.getElementById('system-panels');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+
+      const CATEGORIES = [
+        'general', 'appearance', 'localization', 'security',
+        'notifications', 'storage', 'ai', 'email', 'api', 'billing', 'audit', 'branding'
+      ];
+
+      let allSettings = {};
+
+      function renderSection(category, settings) {
+        const json = JSON.stringify(settings || {}, null, 2);
+        return `
+          <div class="settings-section">
+            <h2>${category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+            <textarea class="json-editor" id="json-${category}" rows="8">${json}</textarea>
+            <button type="button" onclick="saveCategory('${category}')" style="width:auto;margin-top:0.5rem;padding:0.4rem 1rem;">Save ${category}</button>
+          </div>
+        `;
+      }
+
+      window.saveCategory = async (category) => {
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          const raw = document.getElementById(`json-${category}`).value;
+          const settings = JSON.parse(raw);
+          await request(`/api/settings/system?category=${category}`, 'PUT', { settings });
+          successEl.textContent = `${category} settings saved.`;
+        } catch (err) {
+          errorEl.textContent = err.message || 'Invalid JSON or save failed.';
+        }
+      };
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/system', 'GET');
+          allSettings = data.settings || {};
+          panelsEl.innerHTML = CATEGORIES.map((cat) => renderSection(cat, allSettings[cat])).join('');
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+            panelsEl.innerHTML = '';
+          }
+        }
+      }
+
+      load();
+    </script>
+  </body>
+</html>

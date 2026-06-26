@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Security Settings - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Security Settings</h1>
+      <p class="helper">Configure password policy, session limits, and access controls for the organization.</p>
+
+      <form id="security-form">
+        <h2>Password Policy</h2>
+        <label for="passwordMinLength">Minimum Password Length</label>
+        <input type="number" id="passwordMinLength" name="passwordMinLength" min="8" max="128" value="10" />
+
+        <h2>Session Management</h2>
+        <label for="sessionTimeoutMinutes">Session Timeout (minutes)</label>
+        <input type="number" id="sessionTimeoutMinutes" name="sessionTimeoutMinutes" min="5" max="10080" value="15" />
+
+        <label for="maxActiveSessions">Maximum Active Sessions</label>
+        <input type="number" id="maxActiveSessions" name="maxActiveSessions" min="1" max="50" value="5" />
+
+        <h2>Account Lockout</h2>
+        <label>
+          <input type="checkbox" id="accountLockoutEnabled" name="accountLockoutEnabled" />
+          Enable account lockout after failed login attempts
+        </label>
+
+        <label for="maxLoginAttempts">Maximum Login Attempts Before Lockout</label>
+        <input type="number" id="maxLoginAttempts" name="maxLoginAttempts" min="3" max="20" value="5" />
+
+        <label for="lockoutDurationMinutes">Lockout Duration (minutes)</label>
+        <input type="number" id="lockoutDurationMinutes" name="lockoutDurationMinutes" min="1" max="1440" value="30" />
+
+        <h2>Access Control</h2>
+        <label for="allowedDomains">Allowed Email Domains (comma-separated, empty = all)</label>
+        <input type="text" id="allowedDomains" name="allowedDomains" placeholder="example.com, corp.org" />
+
+        <label for="ipRestrictions">IP Restrictions (placeholder — future)</label>
+        <input type="text" id="ipRestrictions" name="ipRestrictions" placeholder="Not yet active" disabled />
+
+        <h2>Audit & API</h2>
+        <label>
+          <input type="checkbox" id="auditLoggingEnabled" name="auditLoggingEnabled" />
+          Enable audit logging
+        </label>
+
+        <label>
+          <input type="checkbox" id="apiAccessEnabled" name="apiAccessEnabled" />
+          Allow API access
+        </label>
+
+        <button type="submit" style="margin-top:1.25rem;">Save Security Settings</button>
+      </form>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/notifications">Notifications</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('security-form');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/system', 'GET');
+          const s = (data.settings || {}).security || {};
+          form.passwordMinLength.value = s.passwordMinLength ?? 10;
+          form.sessionTimeoutMinutes.value = s.sessionTimeoutMinutes ?? 15;
+          form.maxActiveSessions.value = s.maxActiveSessions ?? 5;
+          form.accountLockoutEnabled.checked = s.accountLockoutEnabled !== false;
+          form.maxLoginAttempts.value = s.maxLoginAttempts ?? 5;
+          form.lockoutDurationMinutes.value = s.lockoutDurationMinutes ?? 30;
+          form.allowedDomains.value = (s.allowedDomains || []).join(', ');
+          form.auditLoggingEnabled.checked = s.auditLoggingEnabled !== false;
+          form.apiAccessEnabled.checked = s.apiAccessEnabled !== false;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        const domainsRaw = form.allowedDomains.value.trim();
+        const allowedDomains = domainsRaw
+          ? domainsRaw.split(',').map((d) => d.trim()).filter(Boolean)
+          : [];
+        try {
+          await request('/api/settings/system?category=security', 'PUT', {
+            settings: {
+              passwordMinLength: Number(form.passwordMinLength.value),
+              sessionTimeoutMinutes: Number(form.sessionTimeoutMinutes.value),
+              maxActiveSessions: Number(form.maxActiveSessions.value),
+              accountLockoutEnabled: form.accountLockoutEnabled.checked,
+              maxLoginAttempts: Number(form.maxLoginAttempts.value),
+              lockoutDurationMinutes: Number(form.lockoutDurationMinutes.value),
+              allowedDomains,
+              auditLoggingEnabled: form.auditLoggingEnabled.checked,
+              apiAccessEnabled: form.apiAccessEnabled.checked
+            }
+          });
+          successEl.textContent = 'Security settings saved.';
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

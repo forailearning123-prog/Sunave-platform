@@ -1,13 +1,13 @@
-# Current Task
+## Current Task
 
 ## Sprint
-- Sprint 3
+- Sprint 4
 
 ## Module
-- Settings
+- Dashboard Framework
 
 ## Goal
-- Implement user preferences, notification settings, and account settings module. Includes per-user and per-org preference storage, UI settings pages, and notification categories.
+- Implement the dashboard framework with widgets, layout management, and quick-access to key platform metrics.
 
 ## Allowed Files
 - `apps/api/**`
@@ -21,19 +21,20 @@
 - `knowledge/DECISIONS.md`
 
 ## Out-of-Scope Files
-- Workers, AI, agents, goals, dashboard business modules, marketplace modules, and unrelated plugin implementations.
+- Workers, AI, agents, goals, projects, marketplace modules.
 
-## Acceptance Criteria (Previous Sprint — IAM)
-- [x] User Management (CRUD, status transitions, force logout)
-- [x] Team Management (CRUD, archive/restore, nested hierarchy)
-- [x] Nested Teams (multi-level parent_team_id tree)
-- [x] Roles (system roles protected, custom org roles)
-- [x] Permissions (21 seeded permissions across categories)
-- [x] RBAC Engine (DB-backed permissionService with hasPermission/hasAnyPermission/hasAllPermissions)
-- [x] Permission Middleware (requirePermission factory on all IAM routes)
-- [x] Audit Logging (user.created, user.updated, user.suspended, role.assigned, team.created, team.member_added, etc.)
-- [x] Responsive UI (/users, /users/detail, /teams, /teams/detail, /roles, /permissions)
+## Acceptance Criteria (Previous Sprint — Settings)
+- [x] Configuration Engine (resolve, get, set, has, remove, typed accessors, cache, invalidate)
+- [x] Settings Management (GET/PUT /api/settings/system, /organization, /user)
+- [x] User Preferences (appearance, general, notifications, accessibility categories)
+- [x] Organization Settings (via /api/settings/organization, backed by organization_settings table)
+- [x] Feature Flags (boolean/percentage/org_rollout/role_rollout; 10 seeded flags)
+- [x] Theme Management (light/dark/system via user appearance preferences)
+- [x] Security Settings (password policy, session, lockout, audit, API access)
+- [x] Notification Settings (email/in-app/SMS placeholder/push placeholder)
+- [x] Configuration Cache (in-memory with TTL, targeted invalidation)
+- [x] Audit Logging (org settings changes recorded via existing audit_logs table)
 - [x] Documentation Updated
 
 ## Next Module
-- Dashboard
+- AI Gateway

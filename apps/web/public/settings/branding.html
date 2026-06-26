@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Branding - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .color-row { display: flex; align-items: center; gap: 0.75rem; }
+      .color-row input[type="color"] { width: 3rem; height: 2.25rem; padding: 0; border: none; cursor: pointer; border-radius: 6px; }
+      .logo-preview { max-height: 60px; max-width: 200px; margin-top: 0.5rem; border-radius: 6px; border: 1px solid var(--border); display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Branding</h1>
+      <p class="helper">Customize colors, logo, and visual identity for this organization.</p>
+
+      <form id="branding-form">
+        <h2>Logo</h2>
+        <label for="logoUrl">Logo URL</label>
+        <input type="url" id="logoUrl" name="logoUrl" placeholder="https://example.com/logo.png" />
+        <img id="logo-preview" class="logo-preview" alt="Logo preview" />
+
+        <label for="faviconUrl">Favicon URL</label>
+        <input type="url" id="faviconUrl" name="faviconUrl" placeholder="https://example.com/favicon.ico" />
+
+        <h2>Colors</h2>
+        <label for="primaryColor">Primary Color</label>
+        <div class="color-row">
+          <input type="color" id="primaryColor" name="primaryColor" value="#6366f1" />
+          <input type="text" id="primaryColorHex" placeholder="#6366f1" style="width:120px;" />
+        </div>
+
+        <label for="secondaryColor">Secondary Color</label>
+        <div class="color-row">
+          <input type="color" id="secondaryColor" name="secondaryColor" value="#8b5cf6" />
+          <input type="text" id="secondaryColorHex" placeholder="#8b5cf6" style="width:120px;" />
+        </div>
+
+        <button type="submit" style="margin-top:1.25rem;">Save Branding</button>
+      </form>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/appearance">Appearance</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('branding-form');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+      const logoPreview = document.getElementById('logo-preview');
+
+      function syncColorPicker(picker, hex) {
+        picker.addEventListener('input', () => { hex.value = picker.value; });
+        hex.addEventListener('change', () => {
+          if (/^#[0-9a-f]{6}$/i.test(hex.value)) picker.value = hex.value;
+        });
+      }
+
+      syncColorPicker(form.primaryColor, document.getElementById('primaryColorHex'));
+      syncColorPicker(form.secondaryColor, document.getElementById('secondaryColorHex'));
+
+      form.logoUrl.addEventListener('change', () => {
+        if (form.logoUrl.value) {
+          logoPreview.src = form.logoUrl.value;
+          logoPreview.style.display = 'block';
+        } else {
+          logoPreview.style.display = 'none';
+        }
+      });
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/system', 'GET');
+          const b = (data.settings || {}).branding || {};
+          form.logoUrl.value = b.logoUrl || '';
+          form.faviconUrl.value = b.faviconUrl || '';
+          const primary = b.primaryColor || '#6366f1';
+          const secondary = b.secondaryColor || '#8b5cf6';
+          form.primaryColor.value = primary;
+          document.getElementById('primaryColorHex').value = primary;
+          form.secondaryColor.value = secondary;
+          document.getElementById('secondaryColorHex').value = secondary;
+          if (b.logoUrl) {
+            logoPreview.src = b.logoUrl;
+            logoPreview.style.display = 'block';
+          }
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          await request('/api/settings/system?category=branding', 'PUT', {
+            settings: {
+              logoUrl: form.logoUrl.value,
+              faviconUrl: form.faviconUrl.value,
+              primaryColor: form.primaryColor.value,
+              secondaryColor: form.secondaryColor.value
+            }
+          });
+          successEl.textContent = 'Branding saved.';
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

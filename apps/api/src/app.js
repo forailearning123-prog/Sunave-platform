@@ -11,12 +11,15 @@ import { buildOrganizationsRouter } from './routes/organizations.js';
 import { buildUsersRouter } from './routes/users.js';
 import { buildTeamsRouter } from './routes/teams.js';
 import { buildRolesRouter } from './routes/roles.js';
+import { buildSettingsRouter } from './routes/settings.js';
 import { createAuthRepository } from './repositories/authRepository.js';
 import { createOrganizationRepository } from './repositories/organizationRepository.js';
 import { createUserRepository } from './repositories/userRepository.js';
 import { createTeamRepository } from './repositories/teamRepository.js';
 import { createRoleRepository } from './repositories/roleRepository.js';
+import { createSettingsRepository } from './repositories/settingsRepository.js';
 import { createPermissionService } from './services/permissionService.js';
+import { createConfigurationService } from './services/configurationService.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -45,7 +48,9 @@ export async function createApp({ pool } = {}) {
   const userRepo = createUserRepository(dbPool);
   const teamRepo = createTeamRepository(dbPool);
   const roleRepo = createRoleRepository(dbPool);
+  const settingsRepo = createSettingsRepository(dbPool);
   const permService = createPermissionService(dbPool);
+  const configService = createConfigurationService(settingsRepo, orgRepo);
 
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
@@ -56,6 +61,7 @@ export async function createApp({ pool } = {}) {
   app.use('/api/users', buildUsersRouter(userRepo, orgRepo, permService));
   app.use('/api/teams', buildTeamsRouter(teamRepo, orgRepo, permService));
   app.use('/api/roles', buildRolesRouter(roleRepo, orgRepo, permService));
+  app.use('/api/settings', buildSettingsRouter(settingsRepo, configService, orgRepo, permService));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

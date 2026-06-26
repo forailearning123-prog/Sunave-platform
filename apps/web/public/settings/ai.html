@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Configuration - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .notice { background: var(--warning-bg); color: var(--warning-text); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>AI Configuration</h1>
+      <p class="notice">⚙️ These are <strong>configuration-only</strong> placeholders. AI functionality is not yet implemented. Values saved here will be read by the AI Gateway module when it is built.</p>
+
+      <form id="ai-form">
+        <h2>Gateway</h2>
+        <label for="gatewayUrl">AI Gateway URL</label>
+        <input type="url" id="gatewayUrl" name="gatewayUrl" placeholder="https://ai-gateway.example.com" />
+
+        <label for="defaultProvider">Default Provider</label>
+        <select id="defaultProvider" name="defaultProvider">
+          <option value="">— Not Set —</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="ollama">Ollama (local)</option>
+          <option value="azure">Azure OpenAI</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <h2>Capability Policies</h2>
+        <label for="reasoningPolicy">Reasoning Policy</label>
+        <select id="reasoningPolicy" name="reasoningPolicy">
+          <option value="auto">Auto</option>
+          <option value="always">Always</option>
+          <option value="never">Never</option>
+        </select>
+
+        <label for="visionPolicy">Vision Policy</label>
+        <select id="visionPolicy" name="visionPolicy">
+          <option value="auto">Auto</option>
+          <option value="always">Always</option>
+          <option value="never">Never</option>
+        </select>
+
+        <label for="speechPolicy">Speech Policy</label>
+        <select id="speechPolicy" name="speechPolicy">
+          <option value="auto">Auto</option>
+          <option value="always">Always</option>
+          <option value="never">Never</option>
+        </select>
+
+        <label for="embeddingPolicy">Embedding Policy</label>
+        <select id="embeddingPolicy" name="embeddingPolicy">
+          <option value="auto">Auto</option>
+          <option value="always">Always</option>
+          <option value="never">Never</option>
+        </select>
+
+        <h2>Fallback & Cost</h2>
+        <label for="fallbackPolicy">Fallback Policy</label>
+        <select id="fallbackPolicy" name="fallbackPolicy">
+          <option value="error">Return error</option>
+          <option value="next_provider">Try next provider</option>
+          <option value="degrade">Graceful degrade</option>
+        </select>
+
+        <label for="costPolicy">Cost Policy</label>
+        <select id="costPolicy" name="costPolicy">
+          <option value="default">Default</option>
+          <option value="strict">Strict (hard cap)</option>
+          <option value="warn">Warn at threshold</option>
+        </select>
+
+        <button type="submit" style="margin-top:1.25rem;">Save AI Configuration</button>
+      </form>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/system">System</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('ai-form');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/system', 'GET');
+          const ai = (data.settings || {}).ai || {};
+          form.gatewayUrl.value = ai.gatewayUrl || '';
+          if (ai.defaultProvider) form.defaultProvider.value = ai.defaultProvider;
+          if (ai.reasoningPolicy) form.reasoningPolicy.value = ai.reasoningPolicy;
+          if (ai.visionPolicy) form.visionPolicy.value = ai.visionPolicy;
+          if (ai.speechPolicy) form.speechPolicy.value = ai.speechPolicy;
+          if (ai.embeddingPolicy) form.embeddingPolicy.value = ai.embeddingPolicy;
+          if (ai.fallbackPolicy) form.fallbackPolicy.value = ai.fallbackPolicy;
+          if (ai.costPolicy) form.costPolicy.value = ai.costPolicy;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          await request('/api/settings/system?category=ai', 'PUT', {
+            settings: {
+              gatewayUrl: form.gatewayUrl.value,
+              defaultProvider: form.defaultProvider.value,
+              reasoningPolicy: form.reasoningPolicy.value,
+              visionPolicy: form.visionPolicy.value,
+              speechPolicy: form.speechPolicy.value,
+              embeddingPolicy: form.embeddingPolicy.value,
+              fallbackPolicy: form.fallbackPolicy.value,
+              costPolicy: form.costPolicy.value
+            }
+          });
+          successEl.textContent = 'AI configuration saved.';
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

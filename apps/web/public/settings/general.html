@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>General Settings - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>General Preferences</h1>
+      <p class="helper">Configure your personal language, timezone, and landing page defaults.</p>
+
+      <form id="general-form">
+        <label for="language">Language</label>
+        <select id="language" name="language">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ja">Japanese</option>
+          <option value="zh">Chinese</option>
+        </select>
+
+        <label for="timezone">Timezone</label>
+        <input type="text" id="timezone" name="timezone" placeholder="e.g. America/New_York" />
+
+        <label for="dateFormat">Date Format</label>
+        <select id="dateFormat" name="dateFormat">
+          <option value="YYYY-MM-DD">YYYY-MM-DD (ISO)</option>
+          <option value="MM/DD/YYYY">MM/DD/YYYY (US)</option>
+          <option value="DD/MM/YYYY">DD/MM/YYYY (EU)</option>
+          <option value="DD.MM.YYYY">DD.MM.YYYY</option>
+        </select>
+
+        <label for="timeFormat">Time Format</label>
+        <select id="timeFormat" name="timeFormat">
+          <option value="HH:mm">24-hour (HH:mm)</option>
+          <option value="hh:mm a">12-hour (hh:mm a)</option>
+        </select>
+
+        <label for="dashboardLayout">Dashboard Layout</label>
+        <select id="dashboardLayout" name="dashboardLayout">
+          <option value="default">Default</option>
+          <option value="compact">Compact</option>
+          <option value="comfortable">Comfortable</option>
+        </select>
+
+        <label for="defaultLandingPage">Default Landing Page</label>
+        <select id="defaultLandingPage" name="defaultLandingPage">
+          <option value="/dashboard">Dashboard</option>
+          <option value="/organizations">Organizations</option>
+          <option value="/users">Users</option>
+        </select>
+
+        <button type="submit">Save General Settings</button>
+      </form>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/appearance">Appearance</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('general-form');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/user?category=general', 'GET');
+          const prefs = data.preferences || {};
+          if (prefs.language) form.language.value = prefs.language;
+          if (prefs.timezone) form.timezone.value = prefs.timezone;
+          if (prefs.dateFormat) form.dateFormat.value = prefs.dateFormat;
+          if (prefs.timeFormat) form.timeFormat.value = prefs.timeFormat;
+          if (prefs.dashboardLayout) form.dashboardLayout.value = prefs.dashboardLayout;
+          if (prefs.defaultLandingPage) form.defaultLandingPage.value = prefs.defaultLandingPage;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        const prefs = {
+          language: form.language.value,
+          timezone: form.timezone.value,
+          dateFormat: form.dateFormat.value,
+          timeFormat: form.timeFormat.value,
+          dashboardLayout: form.dashboardLayout.value,
+          defaultLandingPage: form.defaultLandingPage.value
+        };
+        try {
+          await request('/api/settings/user', 'PUT', { category: 'general', preferences: prefs });
+          successEl.textContent = 'General settings saved.';
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

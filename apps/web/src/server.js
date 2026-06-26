@@ -40,6 +40,15 @@ const pageRoutes = {
   '/teams/detail': 'teams/detail.html',
   '/roles': 'roles/index.html',
   '/permissions': 'permissions/index.html',
+  '/settings': 'settings/index.html',
+  '/settings/general': 'settings/general.html',
+  '/settings/appearance': 'settings/appearance.html',
+  '/settings/notifications': 'settings/notifications.html',
+  '/settings/security': 'settings/security.html',
+  '/settings/branding': 'settings/branding.html',
+  '/settings/ai': 'settings/ai.html',
+  '/settings/system': 'settings/system.html',
+  '/settings/feature-flags': 'settings/feature-flags.html',
   '/dashboard': 'dashboard.html',
   '/': 'auth/login.html'
 };

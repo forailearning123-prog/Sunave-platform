@@ -177,3 +177,62 @@ export const updateRoleSchema = z.object({
 export const assignPermissionsSchema = z.object({
   permissionIds: z.array(z.string().uuid()).min(1)
 });
+
+// ─── Settings Schemas ─────────────────────────────────────────────────────────
+
+export const SYSTEM_SETTINGS_CATEGORY = [
+  'general', 'appearance', 'localization', 'branding', 'security',
+  'notifications', 'storage', 'ai', 'voice', 'email', 'api',
+  'integrations', 'plugins', 'marketplace', 'billing', 'audit', 'system'
+];
+
+export const USER_PREFERENCE_CATEGORY = [
+  'general', 'appearance', 'notifications', 'accessibility'
+];
+
+export const FEATURE_FLAG_TYPE = ['boolean', 'percentage', 'org_rollout', 'role_rollout'];
+
+export const updateSystemSettingsSchema = z.object({
+  settings: z.record(z.unknown())
+});
+
+export const updateUserPreferencesSchema = z.object({
+  category: z.enum(['general', 'appearance', 'notifications', 'accessibility']),
+  preferences: z.record(z.unknown())
+});
+
+export const userAppearancePreferencesSchema = z.object({
+  theme: z.enum(['light', 'dark', 'system']).optional(),
+  layout: z.enum(['compact', 'comfortable']).optional(),
+  sidebarMode: z.enum(['expanded', 'collapsed']).optional(),
+  accentColor: z.string().trim().max(20).optional()
+}).passthrough();
+
+export const userGeneralPreferencesSchema = z.object({
+  language: z.string().trim().min(2).max(10).optional(),
+  timezone: z.string().trim().max(100).optional(),
+  dateFormat: z.string().trim().max(30).optional(),
+  timeFormat: z.string().trim().max(10).optional(),
+  defaultLandingPage: z.string().trim().max(100).optional(),
+  defaultOrganization: z.string().uuid().optional().nullable(),
+  dashboardLayout: z.string().trim().max(40).optional()
+}).passthrough();
+
+export const userNotificationPreferencesSchema = z.object({
+  emailEnabled: z.boolean().optional(),
+  inAppEnabled: z.boolean().optional(),
+  smsEnabled: z.boolean().optional(),
+  pushEnabled: z.boolean().optional()
+}).passthrough();
+
+export const updateFeatureFlagSchema = z.object({
+  enabled: z.boolean().optional(),
+  rolloutPercentage: z.number().int().min(0).max(100).optional(),
+  config: z.record(z.unknown()).optional()
+});
+
+export const createFeatureFlagAssignmentSchema = z.object({
+  scope: z.enum(['organization', 'role', 'user']),
+  scopeId: z.string().min(1).max(255),
+  enabled: z.boolean()
+});

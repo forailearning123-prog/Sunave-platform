@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feature Flags - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .flag-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+      .flag-table th { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; }
+      .flag-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+      .flag-table tr:last-child td { border-bottom: none; }
+      .badge-on  { background: var(--success-bg); color: var(--success-text); padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.78rem; }
+      .badge-off { background: var(--neutral-bg); color: var(--muted); padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.78rem; }
+      .toggle-btn { padding: 0.3rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; background: var(--surface); color: var(--text); font-size: 0.85rem; }
+      .toggle-btn:hover { background: var(--neutral-bg); }
+      .flag-type-badge { background: var(--neutral-bg); color: var(--muted); padding: 0.15rem 0.45rem; border-radius: 999px; font-size: 0.75rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Feature Flags</h1>
+      <p class="helper">Enable or disable platform features. Changes take effect immediately.</p>
+
+      <div id="flags-container">
+        <p class="helper">Loading feature flags…</p>
+      </div>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/system">System Settings</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const containerEl = document.getElementById('flags-container');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+
+      let flags = [];
+
+      function renderTable(data) {
+        if (!data.length) {
+          containerEl.innerHTML = '<p class="helper">No feature flags found.</p>';
+          return;
+        }
+        const rows = data.map((f) => `
+          <tr>
+            <td>
+              <strong>${f.name}</strong><br />
+              <small style="color:var(--muted)">${f.key}</small>
+            </td>
+            <td><span class="flag-type-badge">${f.flagType}</span></td>
+            <td>${f.description || '—'}</td>
+            <td>
+              <span class="${f.effectiveEnabled ? 'badge-on' : 'badge-off'}">
+                ${f.effectiveEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+            </td>
+            <td>
+              <button class="toggle-btn" onclick="toggleFlag('${f.key}', ${!f.enabled})">
+                ${f.enabled ? 'Disable' : 'Enable'}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+        containerEl.innerHTML = `
+          <table class="flag-table">
+            <thead>
+              <tr>
+                <th>Flag</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        `;
+      }
+
+      window.toggleFlag = async (key, enabled) => {
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          await request(`/api/settings/feature-flags?key=${encodeURIComponent(key)}`, 'PUT', { enabled });
+          successEl.textContent = `Flag "${key}" ${enabled ? 'enabled' : 'disabled'}.`;
+          await loadFlags();
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      };
+
+      async function loadFlags() {
+        try {
+          const data = await request('/api/settings/feature-flags', 'GET');
+          flags = data.featureFlags || [];
+          renderTable(flags);
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+            containerEl.innerHTML = '';
+          }
+        }
+      }
+
+      loadFlags();
+    </script>
+  </body>
+</html>

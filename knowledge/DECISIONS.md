@@ -102,3 +102,33 @@
 
 10. **`Guest` role added to initial CHECK constraint in `001_auth.sql` (not via ALTER TABLE in 002).**
     - Rationale: pg-mem (test in-memory DB) does not support named inline CHECK constraint modification. Since the project has no production database yet, updating the original migration is acceptable and cleaner than workarounds.
+
+## 2026-06-26 - Settings & Configuration Engine Decisions
+
+1. **Configuration resolution hierarchy is user → org → system → app default.**
+   - Rationale: user preferences override organizational defaults, which override system defaults, which override hardcoded application defaults. This supports full multi-tenant customization while always providing safe fallbacks without null-checks scattered across the codebase.
+
+2. **`system_settings` table uses JSONB per category (same pattern as `organization_settings`).**
+   - Rationale: consistent with the existing organization settings pattern. Schema-free JSONB per category allows each settings domain to evolve independently without migrations.
+
+3. **All configuration access goes through `configurationService` — no direct DB queries for settings.**
+   - Rationale: enforces the single source of truth principle. The service owns resolution, caching, and cache invalidation. Direct DB queries would bypass caching and break hierarchy resolution.
+
+4. **In-memory Map cache with TTL; Redis support deferred.**
+   - Rationale: Redis is an external infrastructure dependency. An in-memory cache is sufficient for single-instance deployments and satisfies the caching requirement without adding operational complexity now. The `cache()` and `invalidate()` API is designed to be backend-agnostic for future Redis migration.
+
+5. **Feature flags support boolean, percentage, org_rollout, and role_rollout types.**
+   - Rationale: covers the full range of controlled rollout strategies. Boolean flags are the common case; percentage and assignment scopes support gradual rollout and org/role-specific access without code changes.
+
+6. **Feature flag org/role overrides are stored in `feature_flag_assignments` (separate table, not merged into `feature_flags`).**
+   - Rationale: keeps the global flag state clean and queryable. Assignments are a sparse override layer; the base flag is the source of truth and assignments are applied at resolution time.
+
+7. **User preferences are always organization-scoped (inheriting the existing `user_preferences` table constraint).**
+   - Rationale: consistent with IAM decision #9. A user in two organizations may have different notification preferences per org. Global appearance preferences (theme) are stored under the active org context.
+
+8. **Settings API routes live under `/api/settings/*` (not split across multiple top-level prefixes).**
+   - Rationale: a single router mount keeps the settings domain cohesive. Feature flags at `/api/settings/feature-flags` is consistent with the module boundary rather than a separate top-level prefix.
+
+9. **`configurationService` is injected into the settings router — no singleton.**
+   - Rationale: follows the established dependency injection pattern used by all other routers. Avoids global mutable state and makes testing straightforward.
+
