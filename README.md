@@ -61,7 +61,8 @@ npm install
 npm test
 npm run lint
 npm run build
-npm run dev
+npm --workspace @sunave/api start
+npm --workspace @sunave/web start
 ```
 
 Run with Docker:

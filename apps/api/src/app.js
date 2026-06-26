@@ -32,10 +32,14 @@ export async function createApp({ pool } = {}) {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));
   });
 
-  app.use((err, _req, res, _next) => {
+  app.use((err, _req, res, next) => {
+    if (res.headersSent) {
+      return next(err);
+    }
     // eslint-disable-next-line no-console
     console.error(err);
     res.status(500).json(fail('INTERNAL_ERROR', 'An unexpected error occurred.'));
+    return undefined;
   });
 
   app.locals.pool = dbPool;
