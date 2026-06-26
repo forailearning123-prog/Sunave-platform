@@ -3,7 +3,18 @@ function getCookie(name) {
   return found ? decodeURIComponent(found.split('=')[1]) : '';
 }
 
+export async function bootstrapCsrfToken() {
+  await fetch('/api/auth/csrf-token', {
+    method: 'GET',
+    credentials: 'include'
+  });
+}
+
 export async function request(url, method, payload) {
+  if (method !== 'GET') {
+    await bootstrapCsrfToken();
+  }
+
   const response = await fetch(url, {
     method,
     headers: {

@@ -15,21 +15,6 @@ export function requireAuth(req, res, next) {
   }
 }
 
-export function requireCsrf(req, res, next) {
-  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
-    return next();
-  }
-
-  const cookieToken = req.cookies.csrf_token;
-  const headerToken = req.headers['x-csrf-token'];
-
-  if (!cookieToken || !headerToken || cookieToken !== headerToken) {
-    return res.status(403).json(fail('CSRF_VALIDATION_FAILED', 'CSRF validation failed.'));
-  }
-
-  return next();
-}
-
 export function requirePermission(permission) {
   return (req, res, next) => {
     if (!req.auth?.role || !hasPermission(req.auth.role, permission)) {

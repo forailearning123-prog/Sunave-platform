@@ -12,13 +12,12 @@ import {
   resetPasswordSchema
 } from '@sunave/core';
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { v4 as uuid } from 'uuid';
 import { config } from '../config.js';
-import { requireAuth, requireCsrf, requirePermission } from '../middleware/auth.js';
-import { createRateLimit } from '../middleware/rateLimit.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 import {
   generateAccessToken,
-  generateCsrfToken,
   generateRefreshToken,
   hashToken,
   signRefreshToken,
@@ -89,10 +88,23 @@ function parseSchema(schema, payload) {
 export function buildAuthRouter(repo) {
   const router = Router();
 
-  const loginRateLimit = createRateLimit({ limit: 10, windowMs: 15 * 60 * 1000 });
-  const forgotRateLimit = createRateLimit({ limit: 5, windowMs: 15 * 60 * 1000 });
+  const loginRateLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, standardHeaders: true, legacyHeaders: false });
+  const forgotRateLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false });
+  const authReadRateLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false });
+  const authWriteRateLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false });
 
-  router.post('/register', async (req, res) => {
+  router.get('/csrf-token', (req, res) => {
+    const csrfToken = req.csrfToken();
+    res.cookie('csrf_token', csrfToken, {
+      secure: config.isProduction,
+      sameSite: 'lax',
+      httpOnly: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+    return res.status(200).json(ok({ csrfToken }));
+  });
+
+  router.post('/register', authWriteRateLimit, async (req, res) => {
     const parsed = parseSchema(registerSchema, req.body);
     if (parsed.error) {
       return res.status(400).json(parsed.error);
@@ -120,7 +132,7 @@ export function buildAuthRouter(repo) {
     const membership = await repo.findMembership(user.id);
     const accessToken = generateAccessToken({ sub: user.id, sessionId: session.id, role: membership?.role || 'User' });
     const refreshToken = signRefreshToken(refreshTokenValue, session.id);
-    const csrfToken = generateCsrfToken();
+    const csrfToken = req.csrfToken();
 
     setAuthCookies(res, {
       accessToken,
@@ -166,7 +178,7 @@ export function buildAuthRouter(repo) {
       role: membership?.role || 'User'
     });
     const refreshToken = signRefreshToken(refreshTokenValue, session.id);
-    const csrfToken = generateCsrfToken();
+    const csrfToken = req.csrfToken();
 
     setAuthCookies(res, {
       accessToken,
@@ -182,7 +194,7 @@ export function buildAuthRouter(repo) {
     }));
   });
 
-  router.post('/refresh', async (req, res) => {
+  router.post('/refresh', authWriteRateLimit, async (req, res) => {
     const token = req.cookies.refresh_token;
     if (!token) {
       return res.status(401).json(fail('UNAUTHORIZED', 'Refresh token missing.'));
@@ -242,7 +254,7 @@ export function buildAuthRouter(repo) {
     }));
   });
 
-  router.post('/reset-password', async (req, res) => {
+  router.post('/reset-password', authWriteRateLimit, async (req, res) => {
     const parsed = parseSchema(resetPasswordSchema, req.body);
     if (parsed.error) {
       return res.status(400).json(parsed.error);
@@ -261,7 +273,7 @@ export function buildAuthRouter(repo) {
     return res.status(200).json(ok({ message: 'Password has been reset.' }));
   });
 
-  router.post('/change-password', requireAuth, requireCsrf, async (req, res) => {
+  router.post('/change-password', authWriteRateLimit, requireAuth, async (req, res) => {
     const parsed = parseSchema(changePasswordSchema, req.body);
     if (parsed.error) {
       return res.status(400).json(parsed.error);
@@ -280,7 +292,7 @@ export function buildAuthRouter(repo) {
     return res.status(200).json(ok({ message: 'Password updated successfully.' }));
   });
 
-  router.get('/me', requireAuth, requirePermission(PERMISSION.PROFILE_READ), async (req, res) => {
+  router.get('/me', authReadRateLimit, requireAuth, requirePermission(PERMISSION.PROFILE_READ), async (req, res) => {
     const user = await repo.findUserById(req.auth.sub);
     const membership = await repo.findMembership(req.auth.sub);
     if (!user) {
@@ -290,7 +302,7 @@ export function buildAuthRouter(repo) {
     return res.status(200).json(ok({ user: toUserOutput(user, membership), needsOrganization: !membership }));
   });
 
-  router.put('/profile', requireAuth, requireCsrf, requirePermission(PERMISSION.PROFILE_WRITE), async (req, res) => {
+  router.put('/profile', authWriteRateLimit, requireAuth, requirePermission(PERMISSION.PROFILE_WRITE), async (req, res) => {
     const parsed = parseSchema(profileSchema, req.body);
     if (parsed.error) {
       return res.status(400).json(parsed.error);
@@ -301,24 +313,24 @@ export function buildAuthRouter(repo) {
     return res.status(200).json(ok({ user: toUserOutput(user, membership) }));
   });
 
-  router.get('/sessions', requireAuth, requirePermission(PERMISSION.SESSIONS_READ), async (req, res) => {
+  router.get('/sessions', authReadRateLimit, requireAuth, requirePermission(PERMISSION.SESSIONS_READ), async (req, res) => {
     const sessions = await repo.listActiveSessions(req.auth.sub);
     return res.status(200).json(ok({ sessions }));
   });
 
-  router.post('/logout', requireAuth, requireCsrf, async (req, res) => {
+  router.post('/logout', authWriteRateLimit, requireAuth, async (req, res) => {
     await repo.revokeSession(req.auth.sessionId);
     clearAuthCookies(res);
     return res.status(200).json(ok({ message: 'Logged out successfully.' }));
   });
 
-  router.post('/logout-all', requireAuth, requireCsrf, requirePermission(PERMISSION.SESSIONS_WRITE), async (req, res) => {
+  router.post('/logout-all', authWriteRateLimit, requireAuth, requirePermission(PERMISSION.SESSIONS_WRITE), async (req, res) => {
     await repo.revokeAllSessions(req.auth.sub);
     clearAuthCookies(res);
     return res.status(200).json(ok({ message: 'All sessions revoked.' }));
   });
 
-  router.post('/complete-onboarding', requireAuth, requireCsrf, async (req, res) => {
+  router.post('/complete-onboarding', authWriteRateLimit, requireAuth, async (req, res) => {
     const parsed = parseSchema(organizationOnboardingSchema, req.body);
     if (parsed.error) {
       return res.status(400).json(parsed.error);

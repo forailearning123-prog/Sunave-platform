@@ -6,6 +6,10 @@ import { createApp } from '../src/app.js';
 describe('authentication api', () => {
   let app;
   let pool;
+  const fetchCsrf = async (agent) => {
+    const csrfResponse = await agent.get('/api/auth/csrf-token');
+    return csrfResponse.body.data.csrfToken;
+  };
 
   beforeAll(async () => {
     const db = newDb();
@@ -19,7 +23,9 @@ describe('authentication api', () => {
   });
 
   it('registers user and returns needsOrganization', async () => {
-    const response = await request(app).post('/api/auth/register').send({
+    const agent = request.agent(app);
+    const csrf = await fetchCsrf(agent);
+    const response = await agent.post('/api/auth/register').set('x-csrf-token', csrf).send({
       firstName: 'Jane',
       lastName: 'Doe',
       email: 'jane@example.com',
@@ -35,7 +41,8 @@ describe('authentication api', () => {
 
   it('logs in and supports me endpoint', async () => {
     const agent = request.agent(app);
-    const login = await agent.post('/api/auth/login').send({
+    const csrf = await fetchCsrf(agent);
+    const login = await agent.post('/api/auth/login').set('x-csrf-token', csrf).send({
       email: 'jane@example.com',
       password: 'Strong!Pass123'
     });
@@ -49,7 +56,8 @@ describe('authentication api', () => {
 
   it('completes organization onboarding for first login', async () => {
     const agent = request.agent(app);
-    const login = await agent.post('/api/auth/login').send({
+    const csrf = await fetchCsrf(agent);
+    const login = await agent.post('/api/auth/login').set('x-csrf-token', csrf).send({
       email: 'jane@example.com',
       password: 'Strong!Pass123'
     });
@@ -69,21 +77,27 @@ describe('authentication api', () => {
   });
 
   it('generates and consumes password reset token', async () => {
-    const forgot = await request(app).post('/api/auth/forgot-password').send({
+    const forgotAgent = request.agent(app);
+    const forgotCsrf = await fetchCsrf(forgotAgent);
+    const forgot = await forgotAgent.post('/api/auth/forgot-password').set('x-csrf-token', forgotCsrf).send({
       email: 'jane@example.com'
     });
 
     expect(forgot.statusCode).toBe(200);
     const token = forgot.body.data.resetToken;
 
-    const reset = await request(app).post('/api/auth/reset-password').send({
+    const resetAgent = request.agent(app);
+    const resetCsrf = await fetchCsrf(resetAgent);
+    const reset = await resetAgent.post('/api/auth/reset-password').set('x-csrf-token', resetCsrf).send({
       token,
       newPassword: 'EvenStronger!Pass456'
     });
 
     expect(reset.statusCode).toBe(200);
 
-    const relogin = await request(app).post('/api/auth/login').send({
+    const loginAgent = request.agent(app);
+    const loginCsrf = await fetchCsrf(loginAgent);
+    const relogin = await loginAgent.post('/api/auth/login').set('x-csrf-token', loginCsrf).send({
       email: 'jane@example.com',
       password: 'EvenStronger!Pass456'
     });

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const port = Number(process.env.WEB_PORT || 3000);
 const apiTarget = process.env.WEB_API_TARGET || `http://localhost:${process.env.API_PORT || 8080}`;
 
 const app = express();
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 2000, standardHeaders: true, legacyHeaders: false }));
 
 app.use('/api', createProxyMiddleware({
   target: apiTarget,
