@@ -12,14 +12,8 @@ import { buildUsersRouter } from './routes/users.js';
 import { buildTeamsRouter } from './routes/teams.js';
 import { buildRolesRouter } from './routes/roles.js';
 import { buildSettingsRouter } from './routes/settings.js';
-import { buildGoalsRouter } from './routes/goals.js';
-import { buildProjectsRouter } from './routes/projects.js';
-import { buildMilestonesRouter } from './routes/milestones.js';
-import { buildTasksRouter } from './routes/tasks.js';
-import { buildCommentsRouter } from './routes/comments.js';
-import { buildAttachmentsRouter } from './routes/attachments.js';
-import { buildActivityRouter } from './routes/activity.js';
-import { buildAiRouter } from './routes/ai.js';
+import { buildDashboardRouter } from './routes/dashboard.js';
+import { createDashboardService } from './services/dashboardService.js';
 import { createAuthRepository } from './repositories/authRepository.js';
 import { createOrganizationRepository } from './repositories/organizationRepository.js';
 import { createUserRepository } from './repositories/userRepository.js';
@@ -95,17 +89,8 @@ export async function createApp({ pool } = {}) {
   app.use('/api/roles', buildRolesRouter(roleRepo, orgRepo, permService));
   app.use('/api/settings', buildSettingsRouter(settingsRepo, configService, orgRepo, permService));
 
-  // Goals & Projects platform
-  app.use('/api/goals',       buildGoalsRouter(goalRepo, projectRepo, milestoneRepo, taskRepo, commentRepo, activityRepo, orgRepo));
-  app.use('/api/projects',    buildProjectsRouter(projectRepo, milestoneRepo, taskRepo, commentRepo, activityRepo, orgRepo));
-  app.use('/api/milestones',  buildMilestonesRouter(milestoneRepo, activityRepo, orgRepo));
-  app.use('/api/tasks',       buildTasksRouter(taskRepo, commentRepo, activityRepo, orgRepo));
-  app.use('/api/comments',    buildCommentsRouter(commentRepo, orgRepo));
-  app.use('/api/attachments', buildAttachmentsRouter(attachmentRepo, orgRepo));
-  app.use('/api/activity',    buildActivityRouter(activityRepo, orgRepo));
-
-  // AI Gateway & Provider Management
-  app.use('/api/ai', buildAiRouter(aiProviderRepo, aiGatewayService, credentialService, orgRepo, permService));
+  const dashboardService = createDashboardService();
+  app.use('/api/dashboard', buildDashboardRouter(dashboardService));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

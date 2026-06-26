@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Settings — Sunave AI OS</title>
+  <meta name="description" content="Customise your Sunave AI OS dashboard layout, widgets, and display preferences." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/dashboard.css" />
+</head>
+<body class="dash-root">
+<div class="dash-shell">
+
+  <!-- Header -->
+  <header class="dash-header" role="banner">
+    <button class="dash-icon-btn" id="dash-menu-toggle" aria-label="Menu" style="display:none">☰</button>
+    <a href="/dashboard" class="dash-header-logo">
+      <div class="dash-header-logo-mark">✦</div>
+      <span>Sunave</span>
+    </a>
+    <div class="dash-header-divider"></div>
+    <div style="font-size:0.85rem;color:var(--dash-text-muted)">
+      <a href="/dashboard" style="color:var(--dash-text-muted);text-decoration:none">Dashboard</a>
+      <span style="margin:0 0.4rem">›</span>
+      <span style="color:var(--dash-text)">Layout Settings</span>
+    </div>
+    <div class="dash-header-actions" style="margin-left:auto">
+      <a href="/dashboard" class="dash-btn dash-btn-secondary">← Back to Dashboard</a>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <aside class="dash-sidebar" id="dash-sidebar" aria-label="Navigation">
+      <nav class="dash-nav">
+        <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">🏠</span><span>Dashboard</span></a>
+        <div class="dash-nav-section-label">Dashboard</div>
+        <a href="/dashboard/widgets" class="dash-nav-item"><span class="dash-nav-icon">📦</span><span>Widget Catalog</span></a>
+        <a href="/dashboard/settings" class="dash-nav-item active" aria-current="page"><span class="dash-nav-icon">🎨</span><span>Layout Settings</span></a>
+        <div class="dash-nav-section-label">Admin</div>
+        <a href="/settings" class="dash-nav-item"><span class="dash-nav-icon">⚙️</span><span>Settings</span></a>
+      </nav>
+    </aside>
+    <div class="dash-sidebar-overlay" id="dash-sidebar-overlay"></div>
+
+    <main class="dash-main" role="main">
+      <div class="dash-page-header">
+        <div>
+          <h1 class="dash-page-title">Dashboard Settings</h1>
+          <p class="dash-page-subtitle">Customise your dashboard layout, density, and display preferences.</p>
+        </div>
+      </div>
+
+      <div style="max-width:640px;display:flex;flex-direction:column;gap:1.25rem">
+
+        <!-- Saved status -->
+        <div id="settings-status" style="display:none" class="dash-tag dash-tag-success" role="status" aria-live="polite">✓ Preferences saved</div>
+
+        <!-- ── Layout & Density ─────────────────────────────────────────── -->
+        <div class="widget" style="padding:1.25rem">
+          <div style="font-size:1rem;font-weight:700;color:var(--dash-text);margin-bottom:1rem">🗂 Layout & Density</div>
+
+          <div class="dash-form-group">
+            <label class="dash-label" for="pref-density">Widget Density</label>
+            <select class="dash-select" id="pref-density" name="density">
+              <option value="comfortable" selected>Comfortable — more padding, larger widgets</option>
+              <option value="compact">Compact — tighter layout, fits more on screen</option>
+              <option value="cozy">Cozy — balanced medium density</option>
+            </select>
+          </div>
+
+          <div class="dash-form-group">
+            <label class="dash-label" for="pref-sidebar-mode">Sidebar Mode</label>
+            <select class="dash-select" id="pref-sidebar-mode" name="sidebarMode">
+              <option value="expanded" selected>Expanded — labels always visible</option>
+              <option value="collapsed">Collapsed — icons only</option>
+              <option value="auto">Auto — collapses on smaller screens</option>
+            </select>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;border-top:1px solid var(--dash-border)">
+            <div>
+              <div style="font-size:0.875rem;font-weight:600;color:var(--dash-text)">Compact Mode</div>
+              <div style="font-size:0.78rem;color:var(--dash-text-muted)">Reduce all padding and font sizes</div>
+            </div>
+            <label class="toggle-switch" aria-label="Toggle compact mode">
+              <input type="checkbox" id="pref-compact-mode" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- ── Refresh & Performance ───────────────────────────────────── -->
+        <div class="widget" style="padding:1.25rem">
+          <div style="font-size:1rem;font-weight:700;color:var(--dash-text);margin-bottom:1rem">⚡ Refresh & Performance</div>
+
+          <div class="dash-form-group">
+            <label class="dash-label" for="pref-refresh-interval">Global Refresh Interval</label>
+            <select class="dash-select" id="pref-refresh-interval" name="refreshInterval">
+              <option value="15">Every 15 seconds</option>
+              <option value="30">Every 30 seconds</option>
+              <option value="60" selected>Every 1 minute</option>
+              <option value="300">Every 5 minutes</option>
+              <option value="0">Manual only</option>
+            </select>
+            <p style="font-size:0.75rem;color:var(--dash-text-faint);margin-top:0.35rem">Individual widgets may override this with their own interval.</p>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;border-top:1px solid var(--dash-border)">
+            <div>
+              <div style="font-size:0.875rem;font-weight:600;color:var(--dash-text)">Enable Animations</div>
+              <div style="font-size:0.78rem;color:var(--dash-text-muted)">Widget entrance and transition animations</div>
+            </div>
+            <label class="toggle-switch" aria-label="Toggle animations">
+              <input type="checkbox" id="pref-animations" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- ── Theme & Appearance ─────────────────────────────────────── -->
+        <div class="widget" style="padding:1.25rem">
+          <div style="font-size:1rem;font-weight:700;color:var(--dash-text);margin-bottom:1rem">🎨 Theme & Appearance</div>
+
+          <div class="dash-form-group">
+            <label class="dash-label" for="pref-theme">Dashboard Theme</label>
+            <select class="dash-select" id="pref-theme" name="theme">
+              <option value="system" selected>System Default</option>
+              <option value="dark">Dark — Executive dark mode</option>
+              <option value="light">Light — Clean light mode</option>
+            </select>
+          </div>
+
+          <div class="dash-form-group">
+            <label class="dash-label" for="pref-landing">Landing Dashboard</label>
+            <select class="dash-select" id="pref-landing" name="landingDashboard">
+              <option value="default" selected>Default Dashboard</option>
+              <option value="executive">Executive View</option>
+              <option value="projects">Projects View</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ── Layout Management ────────────────────────────────────────── -->
+        <div class="widget" style="padding:1.25rem">
+          <div style="font-size:1rem;font-weight:700;color:var(--dash-text);margin-bottom:1rem">📐 Layout Management</div>
+          <p style="font-size:0.85rem;color:var(--dash-text-muted);margin:0 0 1rem">
+            Your widget layout is automatically saved as you drag and resize widgets on the dashboard.
+          </p>
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button class="dash-btn dash-btn-secondary" id="btn-reset-layout">↺ Reset to Default Layout</button>
+            <a href="/dashboard/widgets" class="dash-btn dash-btn-ghost">📦 Manage Widgets</a>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <div style="display:flex;gap:0.75rem">
+          <button class="dash-btn dash-btn-primary" id="btn-save-settings" style="min-width:140px">Save Preferences</button>
+          <button class="dash-btn dash-btn-ghost" onclick="window.location.href='/dashboard'">Cancel</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="dash-footer" role="contentinfo">
+    <span>✦ Sunave AI OS · Dashboard Settings</span>
+    <a href="/dashboard">← Dashboard</a>
+  </footer>
+</div>
+
+<script src="/assets/js/dashboard/registry.js"></script>
+<script src="/assets/js/dashboard/layout-engine.js"></script>
+
+<script>
+  // ── Apply preferences to the live page ───────────────────────────────────
+
+  function applyDensity(val) {
+    const root = document.getElementById('dash-root');
+    if (val === 'compact') root.classList.add('compact');
+    else root.classList.remove('compact');
+  }
+
+  function applyAnimations(enabled) {
+    const styleId = 'dash-no-anim';
+    if (!enabled) {
+      let s = document.getElementById(styleId);
+      if (!s) { s = document.createElement('style'); s.id = styleId; document.head.appendChild(s); }
+      s.textContent = '* { animation: none !important; transition: none !important; }';
+    } else {
+      const s = document.getElementById(styleId);
+      if (s) s.remove();
+    }
+  }
+
+  // ── Load saved preferences ────────────────────────────────────────────────
+
+  function loadPrefs() {
+    const raw = localStorage.getItem('sunave_dash_prefs');
+    return raw ? JSON.parse(raw) : {};
+  }
+
+  function savePrefs(prefs) {
+    localStorage.setItem('sunave_dash_prefs', JSON.stringify(prefs));
+    // Also send to API (fire and forget, mock)
+    fetch('/api/dashboard/preferences', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '' },
+      body: JSON.stringify({ preferences: prefs }),
+      credentials: 'same-origin'
+    }).catch(() => { /* ignore */ });
+  }
+
+  // ── Wire form ─────────────────────────────────────────────────────────────
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const prefs = loadPrefs();
+
+    // Restore saved values
+    if (prefs.density)         document.getElementById('pref-density').value = prefs.density;
+    if (prefs.sidebarMode)     document.getElementById('pref-sidebar-mode').value = prefs.sidebarMode;
+    if (prefs.refreshInterval) document.getElementById('pref-refresh-interval').value = String(prefs.refreshInterval);
+    if (prefs.theme)           document.getElementById('pref-theme').value = prefs.theme;
+    if (prefs.landingDashboard) document.getElementById('pref-landing').value = prefs.landingDashboard;
+    if ('compactMode' in prefs) document.getElementById('pref-compact-mode').checked = prefs.compactMode;
+    if ('animationsEnabled' in prefs) document.getElementById('pref-animations').checked = prefs.animationsEnabled;
+
+    applyDensity(prefs.density ?? 'comfortable');
+    applyAnimations(prefs.animationsEnabled !== false);
+
+    // Live preview
+    document.getElementById('pref-density').addEventListener('change', function () { applyDensity(this.value); });
+    document.getElementById('pref-compact-mode').addEventListener('change', function () { applyDensity(this.checked ? 'compact' : 'comfortable'); });
+    document.getElementById('pref-animations').addEventListener('change', function () { applyAnimations(this.checked); });
+
+    // Save
+    document.getElementById('btn-save-settings').addEventListener('click', () => {
+      const newPrefs = {
+        density:          document.getElementById('pref-density').value,
+        sidebarMode:      document.getElementById('pref-sidebar-mode').value,
+        refreshInterval:  Number(document.getElementById('pref-refresh-interval').value),
+        theme:            document.getElementById('pref-theme').value,
+        landingDashboard: document.getElementById('pref-landing').value,
+        compactMode:      document.getElementById('pref-compact-mode').checked,
+        animationsEnabled:document.getElementById('pref-animations').checked
+      };
+      savePrefs(newPrefs);
+      const status = document.getElementById('settings-status');
+      status.style.display = 'inline-flex';
+      setTimeout(() => { status.style.display = 'none'; }, 3000);
+    });
+
+    // Reset layout
+    document.getElementById('btn-reset-layout').addEventListener('click', () => {
+      if (confirm('This will reset your widget layout to the platform defaults. Continue?')) {
+        const engine = window.createLayoutEngine({ userId: 'current-user' });
+        engine.restoreDefaults();
+        alert('Layout reset. Redirecting to dashboard…');
+        window.location.href = '/dashboard';
+      }
+    });
+
+    // Mobile menu
+    const toggle = document.getElementById('dash-menu-toggle');
+    const sidebar = document.getElementById('dash-sidebar');
+    const overlay = document.getElementById('dash-sidebar-overlay');
+    if (toggle) {
+      toggle.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+      toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+      overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+      window.addEventListener('resize', () => { toggle.style.display = window.innerWidth <= 768 ? 'flex' : 'none'; });
+    }
+  });
+</script>
+</body>
+</html>
