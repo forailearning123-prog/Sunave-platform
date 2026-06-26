@@ -50,6 +50,8 @@ const pageRoutes = {
   '/settings/system': 'settings/system.html',
   '/settings/feature-flags': 'settings/feature-flags.html',
   '/dashboard': 'dashboard.html',
+  '/dashboard/widgets': 'dashboard/widgets.html',
+  '/dashboard/settings': 'dashboard/settings.html',
   '/': 'auth/login.html'
 };
 

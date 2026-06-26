@@ -1,18 +1,310 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Sunave</title>
-    <link rel="stylesheet" href="/assets/css/styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Dashboard</h1>
-      <p class="helper">Authentication module complete. Business widgets are intentionally out of scope.</p>
-      <div class="links">
-        <a href="/account/profile">Profile</a>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Sunave AI OS</title>
+  <meta name="description" content="Sunave AI OS executive dashboard — real-time KPIs, widgets, and platform overview." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/dashboard.css" />
+</head>
+<body class="dash-root" id="dash-root">
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DASHBOARD SHELL
+═══════════════════════════════════════════════════════════════════════════════ -->
+<div class="dash-shell">
+
+  <!-- ── Top Header ─────────────────────────────────────────────────────── -->
+  <header class="dash-header" role="banner">
+    <!-- Mobile menu toggle -->
+    <button class="dash-icon-btn" id="dash-menu-toggle" aria-label="Open navigation menu" style="display:none">☰</button>
+
+    <!-- Logo -->
+    <a href="/dashboard" class="dash-header-logo" aria-label="Sunave Home">
+      <div class="dash-header-logo-mark">✦</div>
+      <span>Sunave</span>
+    </a>
+
+    <div class="dash-header-divider" aria-hidden="true"></div>
+
+    <!-- Global Search -->
+    <div class="dash-search" role="search">
+      <span class="dash-search-icon" aria-hidden="true">🔍</span>
+      <input
+        type="search"
+        id="dash-global-search"
+        placeholder="Search modules, widgets, settings…"
+        aria-label="Global search"
+        autocomplete="off"
+      />
     </div>
-  </body>
+
+    <!-- Header Actions -->
+    <div class="dash-header-actions" role="toolbar" aria-label="Header actions">
+      <!-- Live clock -->
+      <div id="dash-clock" style="font-size:0.82rem;font-weight:600;color:var(--dash-text-muted);padding:0 0.25rem;white-space:nowrap" aria-live="polite"></div>
+
+      <!-- Notifications -->
+      <button class="dash-icon-btn" id="dash-notif-btn" aria-label="Notifications (2 unread)">
+        🔔
+        <span class="badge-dot" aria-hidden="true"></span>
+      </button>
+
+      <!-- Help -->
+      <button class="dash-icon-btn" aria-label="Help">❓</button>
+
+      <!-- User menu -->
+      <button class="dash-user-btn" id="dash-user-btn" aria-haspopup="true" aria-label="User menu">
+        <div class="dash-avatar" id="dash-user-avatar" aria-hidden="true">AC</div>
+        <span class="dash-user-name" id="dash-user-name">Account</span>
+        <span aria-hidden="true" style="font-size:0.65rem;color:var(--dash-text-faint)">▼</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Body ──────────────────────────────────────────────────────────── -->
+  <div class="dash-body">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+    <aside class="dash-sidebar" id="dash-sidebar" aria-label="Main navigation">
+      <nav class="dash-nav" role="navigation">
+
+        <!-- Platform -->
+        <div class="dash-nav-section-label">Platform</div>
+        <a href="/dashboard" class="dash-nav-item active" id="nav-dashboard" aria-current="page">
+          <span class="dash-nav-icon" aria-hidden="true">🏠</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/organizations" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🏢</span>
+          <span>Organisation</span>
+        </a>
+
+        <!-- Modules -->
+        <div class="dash-nav-section-label">Modules</div>
+        <a href="/goals" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🎯</span>
+          <span>Goals</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/projects" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">📁</span>
+          <span>Projects</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/workers" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">⚙️</span>
+          <span>Workers</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/ai" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🤖</span>
+          <span>AI Gateway</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/crm" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🤝</span>
+          <span>CRM</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/finance" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">💰</span>
+          <span>Finance</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/hr" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">👥</span>
+          <span>HR</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+        <a href="/marketplace" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🛒</span>
+          <span>Marketplace</span>
+          <span class="dash-nav-badge">Soon</span>
+        </a>
+
+        <!-- Admin -->
+        <div class="dash-nav-section-label">Admin</div>
+        <a href="/users" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">👤</span>
+          <span>Users</span>
+        </a>
+        <a href="/teams" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">👥</span>
+          <span>Teams</span>
+        </a>
+        <a href="/roles" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🛡️</span>
+          <span>Roles</span>
+        </a>
+        <a href="/settings" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">⚙️</span>
+          <span>Settings</span>
+        </a>
+
+        <!-- Dashboard -->
+        <div class="dash-nav-section-label">Dashboard</div>
+        <a href="/dashboard/widgets" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">📦</span>
+          <span>Widget Catalog</span>
+        </a>
+        <a href="/dashboard/settings" class="dash-nav-item">
+          <span class="dash-nav-icon" aria-hidden="true">🎨</span>
+          <span>Layout Settings</span>
+        </a>
+
+      </nav>
+
+      <!-- Sidebar footer -->
+      <div style="padding:0.75rem;border-top:1px solid var(--dash-border);display:flex;gap:0.5rem">
+        <button class="dash-icon-btn" id="dash-sidebar-collapse" title="Collapse sidebar" style="flex:1">←</button>
+        <a href="/account/profile" class="dash-icon-btn" title="My profile" style="flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center">👤</a>
+      </div>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <div class="dash-sidebar-overlay" id="dash-sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- ── Main Content ────────────────────────────────────────────────── -->
+    <main class="dash-main" id="dash-main" role="main">
+
+      <!-- Page Header -->
+      <div class="dash-page-header">
+        <div>
+          <h1 class="dash-page-title">Executive Dashboard</h1>
+          <p class="dash-page-subtitle" id="dash-page-subtitle">Welcome back — here's your organisation at a glance.</p>
+        </div>
+        <div class="dash-page-actions">
+          <button class="dash-btn dash-btn-secondary" id="dash-reset-layout">↺ Reset Layout</button>
+          <a href="/dashboard/widgets" class="dash-btn dash-btn-secondary">📦 Widgets</a>
+          <a href="/dashboard/settings" class="dash-btn dash-btn-primary">⚙ Customise</a>
+        </div>
+      </div>
+
+      <!-- AI Summary Banner (placeholder) -->
+      <div class="ai-summary-banner" role="region" aria-label="AI Summary">
+        <div class="ai-summary-icon" aria-hidden="true">✦</div>
+        <div class="ai-summary-content">
+          <div class="ai-summary-label">AI Insight · Just now</div>
+          <div class="ai-summary-text" id="ai-summary-text">
+            Revenue is up 8.9% month-over-month. 3 projects are overdue — Engineering team has the highest workload.
+            1 worker requires immediate attention. All AI providers are online with 144ms average latency.
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions" role="toolbar" aria-label="Quick actions">
+        <button class="quick-action-btn" id="qa-new-goal">🎯 New Goal</button>
+        <button class="quick-action-btn" id="qa-new-project">📁 New Project</button>
+        <button class="quick-action-btn" id="qa-invite-member">👋 Invite Member</button>
+        <button class="quick-action-btn" id="qa-run-report">📊 Run Report</button>
+        <button class="quick-action-btn" id="qa-view-workers">⚙️ View Workers</button>
+        <button class="quick-action-btn" id="qa-ai-chat">🤖 Ask AI</button>
+      </div>
+
+      <!-- Section: Executive KPIs + Widgets -->
+      <div class="dash-section-label">Live Widgets</div>
+
+      <!-- Widget Grid — widgets self-register and are rendered by dashboard.js -->
+      <div class="widget-grid" id="dashboard-grid" role="region" aria-label="Dashboard widgets">
+        <!-- Widgets are injected here by dashboard.js -->
+      </div>
+
+      <!-- Section: Pinned Widgets placeholder -->
+      <div class="dash-section-label" style="margin-top:2rem">Pinned</div>
+      <div id="pinned-widgets-placeholder" style="padding:1.5rem;text-align:center;color:var(--dash-text-faint);border:2px dashed var(--dash-border);border-radius:var(--dash-radius);font-size:0.85rem">
+        📌 Pin widgets using the pin button (📌) on any widget to see them here.
+      </div>
+
+    </main>
+  </div><!-- /.dash-body -->
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+  <footer class="dash-footer" role="contentinfo">
+    <div>
+      <span>✦ Sunave AI OS</span>
+      <span style="margin:0 0.5rem">·</span>
+      <span>Dashboard Framework v1.0</span>
+    </div>
+    <div style="display:flex;gap:1rem">
+      <a href="/settings/system">System</a>
+      <a href="/settings">Settings</a>
+      <a href="/account/profile">Profile</a>
+    </div>
+  </footer>
+
+</div><!-- /.dash-shell -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCRIPTS — Load order matters:
+     1. registry.js  — must be first (defines DashboardRegistry)
+     2. providers.js — defines DashboardProviders and mock data
+     3. layout-engine.js — defines createLayoutEngine
+     4. Widget files — each calls DashboardRegistry.registerWidget()
+     5. dashboard.js — bootstraps after all widgets are registered
+═══════════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Framework -->
+<script src="/assets/js/auth-client.js"></script>
+<script src="/assets/js/dashboard/registry.js"></script>
+<script src="/assets/js/dashboard/providers.js"></script>
+<script src="/assets/js/dashboard/layout-engine.js"></script>
+
+<!-- Widgets (order = priority) -->
+<script src="/assets/js/dashboard/widgets/executive-summary.js"></script>
+<script src="/assets/js/dashboard/widgets/goals-overview.js"></script>
+<script src="/assets/js/dashboard/widgets/projects-overview.js"></script>
+<script src="/assets/js/dashboard/widgets/recent-activity.js"></script>
+<script src="/assets/js/dashboard/widgets/notifications.js"></script>
+<script src="/assets/js/dashboard/widgets/system-health.js"></script>
+<script src="/assets/js/dashboard/widgets/ai-status.js"></script>
+<script src="/assets/js/dashboard/widgets/worker-status.js"></script>
+<script src="/assets/js/dashboard/widgets/storage-usage.js"></script>
+<script src="/assets/js/dashboard/widgets/org-overview.js"></script>
+
+<!-- Bootstrap (must be last) -->
+<script src="/assets/js/dashboard/dashboard.js"></script>
+
+<script>
+  // ── Populate user info from auth cookie / localStorage (best-effort) ──────
+  (function () {
+    const name = localStorage.getItem('sunave_user_name') || 'User';
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'U';
+    const avatar = document.getElementById('dash-user-avatar');
+    const nameEl = document.getElementById('dash-user-name');
+    if (avatar) avatar.textContent = initials;
+    if (nameEl) nameEl.textContent = name;
+
+    const subtitle = document.getElementById('dash-page-subtitle');
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    if (subtitle) subtitle.textContent = `${greeting}, ${name.split(' ')[0]} — here's your organisation at a glance.`;
+
+    // Show mobile menu toggle on small screens
+    const toggle = document.getElementById('dash-menu-toggle');
+    if (toggle && window.innerWidth <= 768) toggle.style.display = 'flex';
+    window.addEventListener('resize', () => {
+      if (toggle) toggle.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+    });
+
+    // Quick action stubs
+    ['qa-new-goal','qa-new-project','qa-invite-member','qa-run-report','qa-view-workers','qa-ai-chat'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', () => {
+        const labels = {
+          'qa-new-goal': '/goals', 'qa-new-project': '/projects',
+          'qa-invite-member': '/organizations/invitations', 'qa-run-report': '#',
+          'qa-view-workers': '/workers', 'qa-ai-chat': '/ai'
+        };
+        const target = labels[id] ?? '#';
+        if (target !== '#') window.location.href = target;
+      });
+    });
+  })();
+</script>
+
+</body>
 </html>

@@ -1,7 +1,7 @@
 # Project Memory
 
 ## Current Sprint
-- Sprint 3: Users, Teams & RBAC (IAM) module.
+- Sprint 4: Dashboard Framework module.
 
 ## Architecture Summary
 - Multi-tenant, API-first, plugin-oriented platform.
@@ -27,6 +27,7 @@
 - Organizations & Multi-Tenancy
 - Users, Teams & RBAC (IAM)
 - Settings & Configuration Engine
+- Dashboard Framework
 
 ## Completed Modules
 - Foundation scaffolding
@@ -36,9 +37,10 @@
 - Teams
 - RBAC
 - Settings & Configuration Engine
+- Dashboard Framework
 
 ## Pending Modules
-- Dashboard
+- Goal Management
 - AI Gateway
 - AI Providers
 - Plugin runtime loader
@@ -52,6 +54,16 @@
 - Team endpoints are available under `/api/teams/*`.
 - Role endpoints are available under `/api/roles/*`.
 - Permission list is available at `/api/roles/permissions`.
+- Dashboard endpoints are available under `/api/dashboard/*`.
+  - `GET /api/dashboard` — full config (widgets + layout + preferences)
+  - `GET /api/dashboard/widgets` — widget registry (supports ?category= and ?enabled= filters)
+  - `GET /api/dashboard/widgets/:id` — single widget definition
+  - `POST /api/dashboard/layout` — save a layout
+  - `PUT /api/dashboard/layout` — update active layout
+  - `PUT /api/dashboard/layout/reset` — restore default layout
+  - `GET /api/dashboard/preferences` — user dashboard preferences
+  - `PUT /api/dashboard/preferences` — update preferences
+  - `GET /api/dashboard/data/:providerKey` — fetch mock provider data
 - Settings endpoints are available under `/api/settings/*`.
 - Feature flag endpoints are available at `/api/settings/feature-flags`.
 - Responses use a common `success/data/error` envelope.

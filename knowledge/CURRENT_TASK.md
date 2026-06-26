@@ -4,10 +4,10 @@
 - Sprint 4
 
 ## Module
-- Dashboard Framework
+- Goal Management
 
 ## Goal
-- Implement the dashboard framework with widgets, layout management, and quick-access to key platform metrics.
+- Implement full Goal Management module: goal creation, tracking, milestones, assignments, and progress reporting.
 
 ## Allowed Files
 - `apps/api/**`
@@ -23,17 +23,17 @@
 ## Out-of-Scope Files
 - Workers, AI, agents, goals, projects, marketplace modules.
 
-## Acceptance Criteria (Previous Sprint — Settings)
-- [x] Configuration Engine (resolve, get, set, has, remove, typed accessors, cache, invalidate)
-- [x] Settings Management (GET/PUT /api/settings/system, /organization, /user)
-- [x] User Preferences (appearance, general, notifications, accessibility categories)
-- [x] Organization Settings (via /api/settings/organization, backed by organization_settings table)
-- [x] Feature Flags (boolean/percentage/org_rollout/role_rollout; 10 seeded flags)
-- [x] Theme Management (light/dark/system via user appearance preferences)
-- [x] Security Settings (password policy, session, lockout, audit, API access)
-- [x] Notification Settings (email/in-app/SMS placeholder/push placeholder)
-- [x] Configuration Cache (in-memory with TTL, targeted invalidation)
-- [x] Audit Logging (org settings changes recorded via existing audit_logs table)
+## Acceptance Criteria (Previous Sprint — Dashboard Framework)
+- [x] Dashboard Framework (DashboardRegistry, DashboardDataProvider)
+- [x] Widget Registry (registerWidget, removeWidget, getWidgets, getWidget)
+- [x] Dashboard Layout Engine (move, resize, hide, pin, restoreDefaults)
+- [x] User Layout Persistence (localStorage per user)
+- [x] Placeholder Widgets (10 widgets with mock data)
+- [x] Mock Data (executive, activity, notifications, health, AI, org)
+- [x] Responsive Design (12-column grid, mobile sidebar)
+- [x] API Endpoints (GET/POST/PUT /api/dashboard/*)
+- [x] Widget Catalog page (/dashboard/widgets)
+- [x] Dashboard Settings page (/dashboard/settings)
 - [x] Documentation Updated
 
 ## Next Module

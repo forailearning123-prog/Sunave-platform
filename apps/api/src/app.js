@@ -12,6 +12,8 @@ import { buildUsersRouter } from './routes/users.js';
 import { buildTeamsRouter } from './routes/teams.js';
 import { buildRolesRouter } from './routes/roles.js';
 import { buildSettingsRouter } from './routes/settings.js';
+import { buildDashboardRouter } from './routes/dashboard.js';
+import { createDashboardService } from './services/dashboardService.js';
 import { createAuthRepository } from './repositories/authRepository.js';
 import { createOrganizationRepository } from './repositories/organizationRepository.js';
 import { createUserRepository } from './repositories/userRepository.js';
@@ -62,6 +64,9 @@ export async function createApp({ pool } = {}) {
   app.use('/api/teams', buildTeamsRouter(teamRepo, orgRepo, permService));
   app.use('/api/roles', buildRolesRouter(roleRepo, orgRepo, permService));
   app.use('/api/settings', buildSettingsRouter(settingsRepo, configService, orgRepo, permService));
+
+  const dashboardService = createDashboardService();
+  app.use('/api/dashboard', buildDashboardRouter(dashboardService));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

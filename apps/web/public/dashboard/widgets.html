@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget Catalog — Sunave AI OS</title>
+  <meta name="description" content="Browse and manage all registered dashboard widgets in Sunave AI OS." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/dashboard.css" />
+</head>
+<body class="dash-root">
+<div class="dash-shell">
+
+  <!-- Header -->
+  <header class="dash-header" role="banner">
+    <button class="dash-icon-btn" id="dash-menu-toggle" aria-label="Menu" style="display:none">☰</button>
+    <a href="/dashboard" class="dash-header-logo">
+      <div class="dash-header-logo-mark">✦</div>
+      <span>Sunave</span>
+    </a>
+    <div class="dash-header-divider"></div>
+    <div style="font-size:0.85rem;color:var(--dash-text-muted)">
+      <a href="/dashboard" style="color:var(--dash-text-muted);text-decoration:none">Dashboard</a>
+      <span style="margin:0 0.4rem">›</span>
+      <span style="color:var(--dash-text)">Widget Catalog</span>
+    </div>
+    <div class="dash-header-actions" style="margin-left:auto">
+      <a href="/dashboard" class="dash-btn dash-btn-secondary">← Back to Dashboard</a>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <!-- Sidebar (minimal) -->
+    <aside class="dash-sidebar" id="dash-sidebar" aria-label="Navigation">
+      <nav class="dash-nav">
+        <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">🏠</span><span>Dashboard</span></a>
+        <div class="dash-nav-section-label">Dashboard</div>
+        <a href="/dashboard/widgets" class="dash-nav-item active" aria-current="page"><span class="dash-nav-icon">📦</span><span>Widget Catalog</span></a>
+        <a href="/dashboard/settings" class="dash-nav-item"><span class="dash-nav-icon">🎨</span><span>Layout Settings</span></a>
+        <div class="dash-nav-section-label">Admin</div>
+        <a href="/settings" class="dash-nav-item"><span class="dash-nav-icon">⚙️</span><span>Settings</span></a>
+      </nav>
+    </aside>
+    <div class="dash-sidebar-overlay" id="dash-sidebar-overlay"></div>
+
+    <main class="dash-main" role="main">
+      <!-- Page Header -->
+      <div class="dash-page-header">
+        <div>
+          <h1 class="dash-page-title">Widget Catalog</h1>
+          <p class="dash-page-subtitle">All registered dashboard widgets. Future modules register here automatically.</p>
+        </div>
+        <div class="dash-page-actions">
+          <!-- Category filter -->
+          <select class="dash-select" id="widget-category-filter" style="width:auto" aria-label="Filter by category">
+            <option value="">All Categories</option>
+            <option value="executive">Executive</option>
+            <option value="goals">Goals</option>
+            <option value="projects">Projects</option>
+            <option value="ai">AI</option>
+            <option value="workers">Workers</option>
+            <option value="notifications">Notifications</option>
+            <option value="system">System</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stats bar -->
+      <div id="widgets-stats" style="display:flex;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Widget Catalog Grid -->
+      <div class="widget-catalog-grid" id="widget-catalog-grid" role="list" aria-label="Widget catalog">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Empty state -->
+      <div id="widgets-empty" class="dash-empty" style="display:none">
+        <div class="dash-empty-icon">📦</div>
+        <div class="dash-empty-title">No widgets found</div>
+        <div class="dash-empty-text">Try a different category filter.</div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="dash-footer" role="contentinfo">
+    <span>✦ Sunave AI OS · Widget Catalog</span>
+    <a href="/dashboard">← Dashboard</a>
+  </footer>
+</div>
+
+<script src="/assets/js/dashboard/registry.js"></script>
+<script src="/assets/js/dashboard/providers.js"></script>
+<script src="/assets/js/dashboard/layout-engine.js"></script>
+<script src="/assets/js/dashboard/widgets/executive-summary.js"></script>
+<script src="/assets/js/dashboard/widgets/goals-overview.js"></script>
+<script src="/assets/js/dashboard/widgets/projects-overview.js"></script>
+<script src="/assets/js/dashboard/widgets/recent-activity.js"></script>
+<script src="/assets/js/dashboard/widgets/notifications.js"></script>
+<script src="/assets/js/dashboard/widgets/system-health.js"></script>
+<script src="/assets/js/dashboard/widgets/ai-status.js"></script>
+<script src="/assets/js/dashboard/widgets/worker-status.js"></script>
+<script src="/assets/js/dashboard/widgets/storage-usage.js"></script>
+<script src="/assets/js/dashboard/widgets/org-overview.js"></script>
+
+<script>
+  const CATEGORY_LABEL = {
+    executive:'Executive', goals:'Goals', projects:'Projects', ai:'AI',
+    workers:'Workers', documents:'Documents', knowledge:'Knowledge', crm:'CRM',
+    finance:'Finance', hr:'HR', notifications:'Notifications', system:'System', custom:'Custom'
+  };
+
+  const SIZE_LABEL = {
+    small:'Small', medium:'Medium', large:'Large', full:'Full Width'
+  };
+
+  function renderCatalog(category) {
+    const grid = document.getElementById('widget-catalog-grid');
+    const empty = document.getElementById('widgets-empty');
+    const stats = document.getElementById('widgets-stats');
+
+    const widgets = window.DashboardRegistry.getWidgets({ category: category || undefined });
+
+    // Stats
+    const total = window.DashboardRegistry.getWidgets().length;
+    const enabled = window.DashboardRegistry.getWidgets({ enabledOnly: true }).length;
+    stats.innerHTML = `
+      <span class="dash-tag dash-tag-accent">${total} Total Widgets</span>
+      <span class="dash-tag dash-tag-success">${enabled} Enabled</span>
+      <span class="dash-tag dash-tag-muted">${total - enabled} Disabled</span>`;
+
+    if (!widgets.length) {
+      grid.innerHTML = '';
+      empty.style.display = '';
+      return;
+    }
+    empty.style.display = 'none';
+
+    grid.innerHTML = widgets.map(w => `
+      <div class="widget-card" role="listitem" data-widget-id="${w.id}">
+        <div class="widget-card-icon">${w.icon}</div>
+        <div class="widget-card-body">
+          <div class="widget-card-title">${w.title}</div>
+          <div class="widget-card-desc">${w.description}</div>
+          <div class="widget-card-meta">
+            <span class="dash-tag dash-tag-accent">${CATEGORY_LABEL[w.category] ?? w.category}</span>
+            <span class="dash-tag dash-tag-muted">${SIZE_LABEL[w.size] ?? w.size}</span>
+            ${w.permissions.length ? `<span class="dash-tag dash-tag-warning">🔒 Auth</span>` : ''}
+            ${w.refreshInterval ? `<span class="dash-tag dash-tag-info">↺ ${w.refreshInterval}s</span>` : ''}
+          </div>
+        </div>
+        <div>
+          <label class="toggle-switch" title="${w.enabled ? 'Disable' : 'Enable'} widget" aria-label="${w.enabled ? 'Disable' : 'Enable'} ${w.title}">
+            <input type="checkbox" ${w.enabled ? 'checked' : ''} onchange="toggleWidget('${w.id}', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleWidget(id, enabled) {
+    window.DashboardRegistry.setEnabled(id, enabled);
+    const card = document.querySelector(`[data-widget-id="${id}"]`);
+    if (card) {
+      card.style.opacity = enabled ? '1' : '0.5';
+    }
+  }
+
+  document.getElementById('widget-category-filter').addEventListener('change', function () {
+    renderCatalog(this.value);
+  });
+
+  document.addEventListener('DOMContentLoaded', () => renderCatalog(''));
+
+  // Mobile menu
+  const toggle = document.getElementById('dash-menu-toggle');
+  const sidebar = document.getElementById('dash-sidebar');
+  const overlay = document.getElementById('dash-sidebar-overlay');
+  if (toggle) {
+    toggle.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+    toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+    overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+    window.addEventListener('resize', () => { toggle.style.display = window.innerWidth <= 768 ? 'flex' : 'none'; });
+  }
+</script>
+</body>
+</html>
