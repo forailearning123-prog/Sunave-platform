@@ -1,5 +1,11 @@
-FROM busybox:1.36
-WORKDIR /www
-COPY apps/web/public/ /www/
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/core/package.json ./packages/core/package.json
+RUN npm ci
+COPY . .
+WORKDIR /app/apps/web
 EXPOSE 3000
-CMD ["httpd", "-f", "-p", "3000", "-h", "/www"]
+CMD ["npm", "start"]

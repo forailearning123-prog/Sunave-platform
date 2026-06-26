@@ -1,14 +1,21 @@
 # Coolify Deployment Guide
 
 ## Deployment Model
-- Deploy via `docker-compose.coolify.yml`
-- Traffic managed by Traefik labels
-- Environment variables managed in Coolify project settings
 
-## Required Coolify Variables
+- Use `docker-compose.coolify.yml`
+- Route traffic with Traefik labels
+- Manage all configuration in Coolify environment variables
+
+## Required Host Variables
+
 - `SUNAVE_API_HOST`
 - `SUNAVE_WEB_HOST`
-- all variables in `.env.example`
 
-## External Services
-- Keep Ollama, LiteLLM/AI Gateway, PostgreSQL, Redis, STT, and TTS external.
+## Required Auth Variables
+
+- `AUTH_ACCESS_TOKEN_SECRET`
+- `AUTH_REFRESH_TOKEN_SECRET`
+
+## Platform Constraints
+
+Ollama, LiteLLM/AI Gateway, PostgreSQL, Redis, STT, and TTS remain external platform services.

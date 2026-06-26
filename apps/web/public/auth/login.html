@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container" id="root"></div>
+    <script type="module">
+      import { renderForm } from '/assets/js/form-component.js';
+      import { request, valuesFromForm } from '/assets/js/auth-client.js';
+
+      const ui = renderForm({
+        rootId: 'root',
+        title: 'Login',
+        submitLabel: 'Sign In',
+        helper: 'Use your email and password to continue.',
+        fields: [
+          { name: 'email', label: 'Email', type: 'email' },
+          { name: 'password', label: 'Password', type: 'password' },
+          { name: 'rememberSession', label: 'Remember session', type: 'checkbox' }
+        ]
+      });
+
+      ui.form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        ui.error.textContent = '';
+        try {
+          const values = valuesFromForm(ui.form);
+          const data = await request('/api/auth/login', 'POST', values);
+          window.location.href = data.needsOrganization ? '/auth/organization' : '/dashboard';
+        } catch (error) {
+          ui.error.textContent = error.message;
+        }
+      });
+    </script>
+    <div class="container links">
+      <a href="/auth/register">Register</a>
+      <a href="/auth/forgot-password">Forgot password?</a>
+    </div>
+  </body>
+</html>

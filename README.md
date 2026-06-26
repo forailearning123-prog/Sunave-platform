@@ -1,38 +1,83 @@
 # Sunave AI OS
 
-Sunave AI OS is a Docker-first, multi-tenant, API-first business operating system foundation.
+Sunave AI OS is a Docker-first, multi-tenant, API-first business operating system.
 
-This repository currently contains **foundation-only scaffolding** for Sprint 1 implementation:
-- Monorepo structure for apps, packages, and plugins
-- Engineering constitution and project memory templates for AI assistants
-- Docker and Coolify deployment templates
-- Shared documentation and environment configuration references
+This repository now includes **Sprint 1 - Authentication Module** as the first functional platform module.
 
 ## Monorepo Layout
 
-- `apps/` – deployable applications (`api`, `web` placeholders)
-- `packages/` – shared internal libraries
-- `plugins/` – plugin modules/extensions
-- `docs/` – developer and operations documentation
-- `knowledge/` – AI-optimized architectural memory and governance
-- `scripts/` – repository automation scripts
+- `apps/api` - Authentication API and security middleware
+- `apps/web` - Authentication and profile UI pages
+- `packages/core` - Shared validation schemas, response contracts, and RBAC definitions
+- `docs` - Development and deployment documentation
+- `knowledge` - Constitution, project memory, task scope, and decisions
+- `scripts` - Setup helpers
 
-## Quick Start
+## Implemented Authentication Capabilities
 
-1. Copy environment template:
-   ```bash
-   cp .env.example .env
-   ```
-2. Build and run placeholders:
-   ```bash
-   docker compose up --build
-   ```
-3. Read docs:
-   - `/docs/LOCAL_DEVELOPMENT.md`
-   - `/docs/DOCKER_GUIDE.md`
-   - `/docs/COOLIFY_DEPLOYMENT_GUIDE.md`
+- Email/password registration with strong-password validation
+- Login, logout, refresh-token flow, remember session
+- Session metadata tracking and logout-all
+- Forgot/reset password with expiring reset tokens
+- Change password
+- First-login organization creation (Owner assignment)
+- Profile read/update
+- RBAC middleware with Owner/Admin/Manager/User roles
 
-## Current Scope
+## API Endpoints
 
-No business features are implemented yet by design.
-Sprint 1 should begin from the module-scoped workflow defined in `/knowledge/CURRENT_TASK.md`.
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+- `POST /api/auth/logout`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
+- `POST /api/auth/change-password`
+- `GET /api/auth/me`
+- `PUT /api/auth/profile`
+- `GET /api/auth/sessions`
+- `POST /api/auth/logout-all`
+- `POST /api/auth/complete-onboarding`
+
+All endpoints return a consistent object format:
+
+- success: `{"success": true, "data": {...}}`
+- failure: `{"success": false, "error": {"code": "...", "message": "..."}}`
+
+## Frontend Routes
+
+- `/auth/login`
+- `/auth/register`
+- `/auth/forgot-password`
+- `/auth/reset-password`
+- `/account/profile`
+- `/auth/organization` (first login setup)
+
+## Local Development
+
+```bash
+cp .env.example .env
+npm install
+npm test
+npm run lint
+npm run build
+npm run dev
+```
+
+Run with Docker:
+
+```bash
+docker compose up --build
+```
+
+## Security Notes
+
+- Passwords are hashed with Argon2
+- Access and refresh token cookies are httpOnly
+- CSRF protection uses double-submit token checks
+- Login and forgot-password endpoints are rate-limited
+- Internal server errors are not exposed to clients
+
+## Scope Guardrails
+
+Only authentication is implemented in this sprint. AI, workers, agents, goals, dashboard features, and business modules remain out of scope.

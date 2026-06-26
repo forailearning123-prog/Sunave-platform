@@ -1,22 +1,38 @@
-# Current Task Template
+# Current Task
 
 ## Sprint
-- [Sprint identifier]
+- Sprint 1
 
 ## Module
-- [Single module name]
+- Authentication (Complete)
 
 ## Goal
-- [One-sentence expected outcome]
+- Deliver production-ready email/password authentication with secure session management and RBAC foundations.
 
 ## Allowed Files
-- [List exact files/directories allowed for this task]
+- `apps/api/**`
+- `apps/web/**`
+- `packages/core/**`
+- `docs/**`
+- `.env.example`
+- `docker-compose*.yml`
+- `knowledge/PROJECT_MEMORY.md`
+- `knowledge/CURRENT_TASK.md`
+- `knowledge/DECISIONS.md`
 
 ## Out-of-Scope Files
-- [List files/directories that must not be modified]
+- Workers, AI, agents, goals, dashboard business modules, marketplace modules, and unrelated plugin implementations.
 
 ## Acceptance Criteria
-- [ ] Contract/behavior implemented for this module only
-- [ ] Tests updated for changed behavior
-- [ ] Documentation updated for changed interfaces/config
-- [ ] Security and tenant-safety checks complete
+- [x] User registration
+- [x] Login and logout
+- [x] Password reset and change password
+- [x] Secure session handling (access + refresh + logout all)
+- [x] First login organization creation
+- [x] RBAC middleware foundation
+- [x] Responsive auth/profile pages
+- [x] Unit and API tests
+- [x] Documentation updates
+
+## Next Module
+- Organizations

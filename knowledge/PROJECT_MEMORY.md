@@ -1,41 +1,48 @@
 # Project Memory
 
 ## Current Sprint
-- Sprint 0: Foundation and engineering standards.
+- Sprint 1: Authentication module.
 
 ## Architecture Summary
-- Multi-tenant, API-first, plugin-oriented business OS.
-- AI integrations routed through external AI gateway.
+- Multi-tenant, API-first, plugin-oriented platform.
+- Authentication implemented as first bounded module.
+- External infrastructure consumed via configuration only.
 
 ## Tech Stack
+- Node.js + Express (API + Web)
+- PostgreSQL SQL migrations
 - Docker / Docker Compose
 - Coolify + Traefik deployment labels
-- External PostgreSQL, Redis, Ollama, STT, TTS
 
 ## Folder Structure
-- `apps/`, `packages/`, `plugins/`, `docs/`, `knowledge/`, `scripts/`
+- `apps/api`: auth API, middleware, migrations
+- `apps/web`: auth and profile UI pages
+- `packages/core`: shared schemas, RBAC, response contracts
+- `knowledge`: constitution, decisions, sprint context
 
 ## Active Modules
-- Foundation scaffolding
-- Documentation baseline
-- Deployment templates
+- Authentication
 
 ## Completed Modules
-- Engineering constitution
-- Initial decisions log
-- Current task template
+- Foundation scaffolding
+- Authentication
 
 ## Pending Modules
-- API contracts package
-- Tenant/auth middleware
+- Organizations module (next)
 - Plugin runtime loader
 - Worker orchestration
 
 ## API Contracts
-- Not implemented yet; to be created in Sprint 1 under API-first process.
+- Authentication endpoints are available under `/api/auth/*`.
+- Responses use a common `success/data/error` envelope.
 
 ## Database Summary
-- External PostgreSQL (shared service), schema pending.
+- Implemented auth schema tables:
+  - `users`
+  - `organizations`
+  - `organization_members`
+  - `sessions`
+  - `password_reset_tokens`
 
 ## Current Decisions
-- See `/knowledge/DECISIONS.md`.
+- See `/knowledge/DECISIONS.md` for all architectural and authentication decisions.
