@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appearance - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .theme-cards { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 0.5rem 0 1rem; }
+      .theme-card { border: 2px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; cursor: pointer; text-align: center; min-width: 100px; }
+      .theme-card.selected { border-color: var(--primary); background: var(--neutral-bg); }
+      .theme-card span { display: block; font-size: 1.5rem; margin-bottom: 0.25rem; }
+      .color-swatch { display: inline-block; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); vertical-align: middle; margin-left: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Appearance</h1>
+      <p class="helper">Customize your visual experience — theme, layout, and sidebar behaviour.</p>
+
+      <h2>Theme</h2>
+      <div class="theme-cards" id="theme-cards">
+        <div class="theme-card" data-theme="light"><span>☀️</span>Light</div>
+        <div class="theme-card" data-theme="dark"><span>🌙</span>Dark</div>
+        <div class="theme-card" data-theme="system"><span>🖥️</span>System</div>
+      </div>
+
+      <form id="appearance-form">
+        <label for="layout">Layout Density</label>
+        <select id="layout" name="layout">
+          <option value="comfortable">Comfortable</option>
+          <option value="compact">Compact</option>
+        </select>
+
+        <label for="sidebarMode">Sidebar</label>
+        <select id="sidebarMode" name="sidebarMode">
+          <option value="expanded">Always Expanded</option>
+          <option value="collapsed">Always Collapsed</option>
+        </select>
+
+        <label for="accentColor">Accent Color</label>
+        <input type="color" id="accentColor" name="accentColor" value="#6366f1" style="width:3rem;height:2rem;padding:0;border:none;cursor:pointer;" />
+
+        <button type="submit">Save Appearance</button>
+      </form>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/general">General</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('appearance-form');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+      let selectedTheme = 'system';
+
+      function selectTheme(theme) {
+        selectedTheme = theme;
+        for (const card of document.querySelectorAll('.theme-card')) {
+          card.classList.toggle('selected', card.dataset.theme === theme);
+        }
+      }
+
+      for (const card of document.querySelectorAll('.theme-card')) {
+        card.addEventListener('click', () => selectTheme(card.dataset.theme));
+      }
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/user?category=appearance', 'GET');
+          const prefs = data.preferences || {};
+          selectTheme(prefs.theme || 'system');
+          if (prefs.layout) form.layout.value = prefs.layout;
+          if (prefs.sidebarMode) form.sidebarMode.value = prefs.sidebarMode;
+          if (prefs.accentColor) form.accentColor.value = prefs.accentColor;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          await request('/api/settings/user', 'PUT', {
+            category: 'appearance',
+            preferences: {
+              theme: selectedTheme,
+              layout: form.layout.value,
+              sidebarMode: form.sidebarMode.value,
+              accentColor: form.accentColor.value
+            }
+          });
+          successEl.textContent = 'Appearance saved.';
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

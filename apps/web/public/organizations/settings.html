@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Organization Settings - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Organization Settings</h1>
+      <p id="org-title" class="helper"></p>
+
+      <nav class="org-nav" id="tabs">
+        <a href="#general" class="active">General</a>
+        <a href="#branding">Branding</a>
+        <a href="#regional">Regional</a>
+        <a href="#billing">Billing</a>
+        <a href="#security">Security</a>
+        <a href="#ai">AI</a>
+        <a href="#notifications">Notifications</a>
+        <a href="#storage">Storage</a>
+      </nav>
+
+      <div id="settings-panels">
+        <p class="helper">Loading settings…</p>
+      </div>
+
+      <p id="status-msg" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/organizations">← Organizations</a>
+      <a href="/organizations/members">Members</a>
+    </div>
+
+    <script type="module">
+      import { request, valuesFromForm } from '/assets/js/auth-client.js';
+
+      const panelsEl = document.getElementById('settings-panels');
+      const statusEl = document.getElementById('status-msg');
+      const errorEl = document.getElementById('error');
+      const orgTitleEl = document.getElementById('org-title');
+
+      const CATEGORIES = ['general','branding','regional','billing','security','ai','notifications','storage'];
+
+      const FIELDS = {
+        general: [
+          { name: 'displayName', label: 'Display Name' },
+          { name: 'description', label: 'Description', type: 'textarea' }
+        ],
+        branding: [
+          { name: 'primaryColor', label: 'Primary Color (hex)' },
+          { name: 'logoUrl', label: 'Logo URL (placeholder)' }
+        ],
+        regional: [
+          { name: 'dateFormat', label: 'Date Format (e.g. YYYY-MM-DD)' },
+          { name: 'weekStartsOn', label: 'Week Starts On (0=Sun, 1=Mon)' }
+        ],
+        billing: [
+          { name: 'billingEmail', label: 'Billing Email' },
+          { name: 'taxId', label: 'Tax ID' }
+        ],
+        security: [
+          { name: 'mfaRequired', label: 'Require MFA (true/false)' },
+          { name: 'allowedDomains', label: 'Allowed Email Domains (comma-separated)' }
+        ],
+        ai: [
+          { name: 'defaultModel', label: 'Default AI Model capability' },
+          { name: 'contentFilter', label: 'Content Filter Level (low/medium/high)' }
+        ],
+        notifications: [
+          { name: 'emailDigest', label: 'Email Digest Frequency (daily/weekly/never)' },
+          { name: 'slackWebhook', label: 'Slack Webhook URL (placeholder)' }
+        ],
+        storage: [
+          { name: 'defaultRetentionDays', label: 'Default Retention (days)' },
+          { name: 'encryptAtRest', label: 'Encrypt at Rest (true/false)' }
+        ]
+      };
+
+      let currentCategory = 'general';
+      let allSettings = {};
+
+      function renderPanel(category, saved) {
+        const fields = FIELDS[category] || [];
+        const fieldHtml = fields.map((f) => {
+          const val = (saved[category] || {})[f.name] || '';
+          if (f.type === 'textarea') {
+            return `<label>${f.label}</label><textarea name="${f.name}" rows="3">${val}</textarea>`;
+          }
+          return `<label>${f.label}</label><input type="text" name="${f.name}" value="${val}" />`;
+        }).join('');
+
+        return `
+          <div id="panel-${category}" class="panel" style="display:none">
+            <h2>${category.charAt(0).toUpperCase() + category.slice(1)} Settings</h2>
+            <form id="form-${category}">
+              ${fieldHtml || '<p class="helper">No configurable fields for this category yet.</p>'}
+              <button type="submit" style="width:auto;margin-top:1rem;padding:0.5rem 1.25rem;">Save ${category.charAt(0).toUpperCase() + category.slice(1)}</button>
+            </form>
+          </div>
+        `;
+      }
+
+      function showPanel(cat) {
+        currentCategory = cat;
+        for (const c of CATEGORIES) {
+          const el = document.getElementById(`panel-${c}`);
+          if (el) el.style.display = c === cat ? 'block' : 'none';
+        }
+        for (const link of document.querySelectorAll('.org-nav a')) {
+          link.classList.toggle('active', link.getAttribute('href') === `#${cat}`);
+        }
+      }
+
+      async function saveSettings(category) {
+        statusEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          const form = document.getElementById(`form-${category}`);
+          const raw = valuesFromForm(form);
+          await request(`/api/organizations/settings/${category}`, 'PUT', { settings: raw });
+          allSettings[category] = raw;
+          statusEl.textContent = `${category} settings saved.`;
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      }
+
+      async function load() {
+        try {
+          const orgData = await request('/api/organizations/current', 'GET');
+          orgTitleEl.textContent = orgData.organization.name;
+
+          const settingsData = await request('/api/organizations/settings', 'GET');
+          allSettings = settingsData.settings;
+
+          panelsEl.innerHTML = CATEGORIES.map((c) => renderPanel(c, allSettings)).join('');
+
+          for (const cat of CATEGORIES) {
+            const form = document.getElementById(`form-${cat}`);
+            if (form) {
+              form.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(cat); });
+            }
+          }
+
+          for (const link of document.querySelectorAll('.org-nav a')) {
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              showPanel(link.getAttribute('href').replace('#', ''));
+            });
+          }
+
+          showPanel('general');
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      load();
+    </script>
+  </body>
+</html>

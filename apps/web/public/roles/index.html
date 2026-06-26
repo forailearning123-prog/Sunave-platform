@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roles - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <h1>Roles</h1>
+        <button id="create-btn" style="width:auto;margin:0;padding:0.5rem 1rem;">+ New Role</button>
+      </div>
+
+      <nav class="iam-nav">
+        <a href="/users">Users</a>
+        <a href="/teams">Teams</a>
+        <a href="/roles" class="active">Roles</a>
+        <a href="/permissions">Permissions</a>
+      </nav>
+
+      <div id="roles-list"><p class="helper">Loading roles…</p></div>
+      <p id="error" class="error"></p>
+    </div>
+
+    <!-- Create Role Dialog -->
+    <div class="dialog-overlay" id="create-dialog">
+      <div class="dialog">
+        <h2>New Role</h2>
+        <form id="create-form">
+          <label>Role Name</label>
+          <input type="text" name="name" required />
+          <label>Description</label>
+          <input type="text" name="description" />
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button type="submit" style="flex:1;margin:0;">Create</button>
+            <button type="button" id="cancel-create" class="secondary" style="flex:1;margin:0;">Cancel</button>
+          </div>
+          <p id="create-error" class="error"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Role Dialog -->
+    <div class="dialog-overlay" id="edit-dialog">
+      <div class="dialog">
+        <h2>Edit Role</h2>
+        <form id="edit-form">
+          <input type="hidden" name="roleId" />
+          <label>Role Name</label>
+          <input type="text" name="name" required />
+          <label>Description</label>
+          <input type="text" name="description" />
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button type="submit" style="flex:1;margin:0;">Save</button>
+            <button type="button" id="cancel-edit" class="secondary" style="flex:1;margin:0;">Cancel</button>
+          </div>
+          <p id="edit-error" class="error"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="container links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/permissions">Permissions</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const listEl = document.getElementById('roles-list');
+      const errorEl = document.getElementById('error');
+      const createDialog = document.getElementById('create-dialog');
+      const editDialog = document.getElementById('edit-dialog');
+
+      async function loadRoles() {
+        try {
+          const data = await request('/api/roles', 'GET');
+          const roles = data.roles;
+
+          if (!roles.length) {
+            listEl.innerHTML = '<div class="empty"><h3>No roles</h3></div>';
+            return;
+          }
+
+          listEl.innerHTML = `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${roles.map((r) => `
+                    <tr>
+                      <td style="font-weight:600;">${r.name}</td>
+                      <td style="color:var(--muted);font-size:0.88rem;">${r.description || '—'}</td>
+                      <td>${r.systemRole ? '<span class="badge owner">System</span>' : '<span class="badge user">Custom</span>'}</td>
+                      <td>
+                        ${!r.systemRole ? `
+                          <button class="sm secondary" style="margin:0;margin-right:0.3rem;" onclick="editRole('${r.id}','${r.name}','${r.description || ''}')">Edit</button>
+                          <button class="sm danger" style="margin:0;" onclick="deleteRole('${r.id}')">Delete</button>
+                        ` : '<span style="color:var(--muted);font-size:0.82rem;">Protected</span>'}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      window.editRole = (id, name, description) => {
+        const form = document.getElementById('edit-form');
+        form.roleId.value = id;
+        form.name.value = name;
+        form.description.value = description;
+        editDialog.classList.add('open');
+      };
+
+      window.deleteRole = async (id) => {
+        if (!confirm('Delete this role? This cannot be undone.')) return;
+        try {
+          await request(`/api/roles/${id}`, 'DELETE');
+          loadRoles();
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      };
+
+      document.getElementById('create-btn').addEventListener('click', () => {
+        createDialog.classList.add('open');
+      });
+
+      document.getElementById('cancel-create').addEventListener('click', () => {
+        createDialog.classList.remove('open');
+      });
+
+      document.getElementById('cancel-edit').addEventListener('click', () => {
+        editDialog.classList.remove('open');
+      });
+
+      document.getElementById('create-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('create-error');
+        errEl.textContent = '';
+        try {
+          await request('/api/roles', 'POST', { name: e.target.name.value, description: e.target.description.value });
+          createDialog.classList.remove('open');
+          e.target.reset();
+          loadRoles();
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      document.getElementById('edit-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('edit-error');
+        errEl.textContent = '';
+        const roleId = e.target.roleId.value;
+        try {
+          await request(`/api/roles/${roleId}`, 'PUT', { name: e.target.name.value, description: e.target.description.value });
+          editDialog.classList.remove('open');
+          loadRoles();
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      loadRoles();
+    </script>
+  </body>
+</html>

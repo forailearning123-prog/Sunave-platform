@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .settings-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+      .settings-nav a { padding: 0.4rem 0.9rem; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+      .settings-nav a:hover { background: var(--neutral-bg); color: var(--text); }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Settings</h1>
+      <p class="helper">Manage your personal preferences and platform configuration.</p>
+
+      <nav class="settings-nav">
+        <a href="/settings/general">General</a>
+        <a href="/settings/appearance">Appearance</a>
+        <a href="/settings/notifications">Notifications</a>
+        <a href="/settings/security">Security</a>
+        <a href="/settings/branding">Branding</a>
+        <a href="/settings/ai">AI</a>
+        <a href="/settings/system">System</a>
+        <a href="/settings/feature-flags">Feature Flags</a>
+      </nav>
+
+      <p id="status" class="helper">Select a settings section above to configure.</p>
+    </div>
+
+    <div class="container links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/organizations/settings">Organization Settings</a>
+    </div>
+  </body>
+</html>

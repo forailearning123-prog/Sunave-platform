@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container" id="root"></div>
+    <script type="module">
+      import { renderForm } from '/assets/js/form-component.js';
+      import { request, valuesFromForm } from '/assets/js/auth-client.js';
+
+      const ui = renderForm({
+        rootId: 'root',
+        title: 'Profile',
+        submitLabel: 'Save Profile',
+        helper: 'Avatar upload is currently a placeholder URL field.',
+        fields: [
+          { name: 'firstName', label: 'First Name' },
+          { name: 'lastName', label: 'Last Name' },
+          { name: 'avatarUrl', label: 'Avatar URL Placeholder' },
+          { name: 'timezone', label: 'Timezone' },
+          { name: 'language', label: 'Language' }
+        ]
+      });
+
+      async function preload() {
+        try {
+          const data = await request('/api/auth/me', 'GET');
+          ui.form.firstName.value = data.user.firstName;
+          ui.form.lastName.value = data.user.lastName;
+          ui.form.avatarUrl.value = data.user.avatarUrl || '';
+          ui.form.timezone.value = data.user.timezone;
+          ui.form.language.value = data.user.language;
+        } catch (error) {
+          ui.error.textContent = error.message;
+        }
+      }
+
+      ui.form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        ui.error.textContent = '';
+        ui.success.textContent = '';
+        try {
+          await request('/api/auth/profile', 'PUT', valuesFromForm(ui.form));
+          ui.success.textContent = 'Profile updated.';
+        } catch (error) {
+          ui.error.textContent = error.message;
+        }
+      });
+
+      preload();
+    </script>
+    <div class="container links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/auth/login" id="logoutLink">Logout</a>
+    </div>
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+      document.getElementById('logoutLink').addEventListener('click', async (event) => {
+        event.preventDefault();
+        await request('/api/auth/logout', 'POST');
+        window.location.href = '/auth/login';
+      });
+    </script>
+  </body>
+</html>

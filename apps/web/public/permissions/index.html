@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Permissions - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Permissions</h1>
+
+      <nav class="iam-nav">
+        <a href="/users">Users</a>
+        <a href="/teams">Teams</a>
+        <a href="/roles">Roles</a>
+        <a href="/permissions" class="active">Permissions</a>
+      </nav>
+
+      <p class="helper">All permissions available in the platform. Permissions are assigned to roles — never to users directly.</p>
+
+      <div id="perm-matrix"><p class="helper">Loading permissions…</p></div>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/roles">← Roles</a>
+      <a href="/dashboard">Dashboard</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const matrixEl = document.getElementById('perm-matrix');
+      const errorEl = document.getElementById('error');
+
+      async function load() {
+        try {
+          const data = await request('/api/roles/permissions', 'GET');
+          const permissions = data.permissions;
+
+          if (!permissions.length) {
+            matrixEl.innerHTML = '<div class="empty"><h3>No permissions found</h3></div>';
+            return;
+          }
+
+          // Group by category
+          const byCategory = {};
+          for (const p of permissions) {
+            const cat = p.category || 'other';
+            if (!byCategory[cat]) byCategory[cat] = [];
+            byCategory[cat].push(p);
+          }
+
+          let html = '';
+          for (const [cat, perms] of Object.entries(byCategory)) {
+            html += `
+              <h2 style="display:flex;align-items:center;gap:0.5rem;">
+                <span class="badge ${cat}">${cat}</span>
+              </h2>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Permission</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${perms.map((p) => `
+                      <tr>
+                        <td>
+                          <code style="background:var(--neutral-bg);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.85rem;">${p.name}</code>
+                        </td>
+                        <td style="color:var(--muted);font-size:0.88rem;">${p.description || '—'}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `;
+          }
+
+          matrixEl.innerHTML = html;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      load();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+      .toggle-row:last-child { border-bottom: none; }
+      .toggle-row .label-group { flex: 1; }
+      .toggle-row .label-group strong { display: block; }
+      .toggle-row .label-group small { color: var(--muted); font-size: 0.85rem; }
+      .badge { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--neutral-bg); color: var(--muted); margin-left: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <h1>Notification Settings</h1>
+      <p class="helper">Choose how and where you receive notifications.</p>
+
+      <form id="notification-form">
+        <h2>Channels</h2>
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>Email</strong>
+            <small>Receive notifications via email</small>
+          </div>
+          <input type="checkbox" id="emailEnabled" name="emailEnabled" />
+        </div>
+
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>In-App</strong>
+            <small>Show notifications inside the platform</small>
+          </div>
+          <input type="checkbox" id="inAppEnabled" name="inAppEnabled" />
+        </div>
+
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>SMS <span class="badge">Placeholder</span></strong>
+            <small>Receive SMS notifications (not yet available)</small>
+          </div>
+          <input type="checkbox" id="smsEnabled" name="smsEnabled" disabled />
+        </div>
+
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>Push <span class="badge">Placeholder</span></strong>
+            <small>Browser push notifications (not yet available)</small>
+          </div>
+          <input type="checkbox" id="pushEnabled" name="pushEnabled" disabled />
+        </div>
+
+        <h2>Future Integrations</h2>
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>Slack <span class="badge">Coming Soon</span></strong>
+            <small>Deliver notifications to a Slack channel</small>
+          </div>
+          <input type="checkbox" disabled />
+        </div>
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>Microsoft Teams <span class="badge">Coming Soon</span></strong>
+            <small>Deliver notifications to a Teams channel</small>
+          </div>
+          <input type="checkbox" disabled />
+        </div>
+        <div class="toggle-row">
+          <div class="label-group">
+            <strong>WhatsApp <span class="badge">Coming Soon</span></strong>
+            <small>Receive WhatsApp notifications</small>
+          </div>
+          <input type="checkbox" disabled />
+        </div>
+
+        <button type="submit" style="margin-top:1.25rem;">Save Notification Settings</button>
+      </form>
+
+      <p id="success" class="success" style="margin-top:0.75rem;"></p>
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/settings">← Settings</a>
+      <a href="/settings/security">Security</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('notification-form');
+      const successEl = document.getElementById('success');
+      const errorEl = document.getElementById('error');
+
+      async function load() {
+        try {
+          const data = await request('/api/settings/user?category=notifications', 'GET');
+          const prefs = data.preferences || {};
+          form.emailEnabled.checked = prefs.emailEnabled !== false;
+          form.inAppEnabled.checked = prefs.inAppEnabled !== false;
+          form.smsEnabled.checked = Boolean(prefs.smsEnabled);
+          form.pushEnabled.checked = Boolean(prefs.pushEnabled);
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successEl.textContent = '';
+        errorEl.textContent = '';
+        try {
+          await request('/api/settings/user', 'PUT', {
+            category: 'notifications',
+            preferences: {
+              emailEnabled: form.emailEnabled.checked,
+              inAppEnabled: form.inAppEnabled.checked,
+              smsEnabled: false,
+              pushEnabled: false
+            }
+          });
+          successEl.textContent = 'Notification settings saved.';
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

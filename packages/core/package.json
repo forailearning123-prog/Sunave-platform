@@ -1,0 +1,14 @@
+{
+  "name": "@sunave/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node -e \"console.log('core build: no transpilation required')\"",
+    "lint": "eslint src --max-warnings=0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

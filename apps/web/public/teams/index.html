@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teams - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <h1>Teams</h1>
+        <button id="create-btn" style="width:auto;margin:0;padding:0.5rem 1rem;">+ New Team</button>
+      </div>
+
+      <nav class="iam-nav">
+        <a href="/users">Users</a>
+        <a href="/teams" class="active">Teams</a>
+        <a href="/roles">Roles</a>
+        <a href="/permissions">Permissions</a>
+      </nav>
+
+      <div id="team-tree"><p class="helper">Loading teams…</p></div>
+      <p id="error" class="error"></p>
+    </div>
+
+    <!-- Create Team Dialog -->
+    <div class="dialog-overlay" id="create-dialog">
+      <div class="dialog">
+        <h2>New Team</h2>
+        <form id="create-form">
+          <label>Team Name</label>
+          <input type="text" name="name" required />
+          <label>Description</label>
+          <input type="text" name="description" />
+          <label>Color (hex)</label>
+          <input type="text" name="color" placeholder="#3b82f6" />
+          <label>Parent Team (optional)</label>
+          <select name="parentTeamId" id="parent-select">
+            <option value="">— None —</option>
+          </select>
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button type="submit" style="flex:1;margin:0;">Create</button>
+            <button type="button" id="cancel-create" class="secondary" style="flex:1;margin:0;">Cancel</button>
+          </div>
+          <p id="create-error" class="error"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="container links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/users">Users</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const treeEl = document.getElementById('team-tree');
+      const errorEl = document.getElementById('error');
+      const createDialog = document.getElementById('create-dialog');
+      let flatTeams = [];
+
+      function renderTree(nodes, depth = 0) {
+        if (!nodes.length) return '';
+        return `<div class="${depth === 0 ? 'tree-root' : 'tree-node'}">
+          ${nodes.map((t) => `
+            <div>
+              <div class="tree-item" onclick="window.location.href='/teams/detail?id=${t.id}'">
+                <div class="tree-icon" style="${t.color ? `background:${t.color}` : ''}">${(t.icon || t.name.charAt(0)).toUpperCase()}</div>
+                <div>
+                  <div class="tree-name">${t.name}</div>
+                  <div class="tree-meta">${t.description || 'No description'}</div>
+                </div>
+                ${t.archived ? '<span class="badge archived" style="margin-left:auto;">archived</span>' : ''}
+              </div>
+              ${t.children?.length ? renderTree(t.children, depth + 1) : ''}
+            </div>
+          `).join('')}
+        </div>`;
+      }
+
+      async function loadTeams() {
+        try {
+          const data = await request('/api/teams', 'GET');
+          const tree = data.teams;
+
+          // Fetch flat list for parent selector
+          const flatData = await request('/api/teams?flat=true', 'GET');
+          flatTeams = flatData.teams;
+
+          const parentSelect = document.getElementById('parent-select');
+          parentSelect.innerHTML = '<option value="">— None —</option>' +
+            flatTeams.map((t) => `<option value="${t.id}">${t.name}</option>`).join('');
+
+          if (!tree.length) {
+            treeEl.innerHTML = `<div class="empty"><h3>No teams yet</h3><p>Create your first team to organize your members.</p></div>`;
+            return;
+          }
+
+          treeEl.innerHTML = renderTree(tree);
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      document.getElementById('create-btn').addEventListener('click', () => {
+        createDialog.classList.add('open');
+      });
+
+      document.getElementById('cancel-create').addEventListener('click', () => {
+        createDialog.classList.remove('open');
+      });
+
+      document.getElementById('create-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('create-error');
+        errEl.textContent = '';
+        try {
+          const parentTeamId = e.target.parentTeamId.value || null;
+          const payload = {
+            name: e.target.name.value,
+            description: e.target.description.value,
+            color: e.target.color.value,
+            parentTeamId
+          };
+          await request('/api/teams', 'POST', payload);
+          createDialog.classList.remove('open');
+          e.target.reset();
+          loadTeams();
+        } catch (err) {
+          errEl.textContent = err.message;
+        }
+      });
+
+      loadTeams();
+    </script>
+  </body>
+</html>
