@@ -7,7 +7,9 @@ import { fail } from '@sunave/core';
 import { createPool } from './db/pool.js';
 import { runMigrations } from './db/migrate.js';
 import { buildAuthRouter } from './routes/auth.js';
+import { buildOrganizationsRouter } from './routes/organizations.js';
 import { createAuthRepository } from './repositories/authRepository.js';
+import { createOrganizationRepository } from './repositories/organizationRepository.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -31,13 +33,15 @@ export async function createApp({ pool } = {}) {
     await runMigrations(dbPool);
   }
 
-  const repo = createAuthRepository(dbPool);
+  const authRepo = createAuthRepository(dbPool);
+  const orgRepo = createOrganizationRepository(dbPool);
 
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
 
-  app.use('/api/auth', buildAuthRouter(repo));
+  app.use('/api/auth', buildAuthRouter(authRepo));
+  app.use('/api/organizations', buildOrganizationsRouter(orgRepo));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

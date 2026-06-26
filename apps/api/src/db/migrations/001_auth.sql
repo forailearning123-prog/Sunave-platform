@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS organization_members (
   id UUID PRIMARY KEY,
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  role VARCHAR(20) NOT NULL CHECK (role IN ('Owner','Admin','Manager','User')),
+  role VARCHAR(20) NOT NULL CHECK (role IN ('Owner','Admin','Manager','User','Guest')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (organization_id, user_id)
 );

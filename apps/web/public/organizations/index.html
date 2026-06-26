@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Organizations - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <h1>Organizations</h1>
+        <a href="/organizations/new"><button style="width:auto;margin:0;padding:0.5rem 1rem;">+ New Organization</button></a>
+      </div>
+
+      <div id="org-list">
+        <p class="helper">Loading organizations…</p>
+      </div>
+
+      <p id="error" class="error"></p>
+    </div>
+
+    <div class="container links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/account/profile">Profile</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const listEl = document.getElementById('org-list');
+      const errorEl = document.getElementById('error');
+
+      function roleBadge(role) {
+        return `<span class="badge ${role.toLowerCase()}">${role}</span>`;
+      }
+
+      function statusBadge(status) {
+        return `<span class="badge ${status}">${status}</span>`;
+      }
+
+      async function switchOrg(orgId) {
+        try {
+          await request('/api/organizations/switch', 'POST', { organizationId: orgId });
+          window.location.reload();
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      }
+
+      async function load() {
+        try {
+          const currentData = await request('/api/organizations/current', 'GET').catch(() => null);
+          const currentOrgId = currentData?.organization?.id;
+
+          const data = await request('/api/organizations', 'GET');
+          const orgs = data.organizations;
+
+          if (!orgs.length) {
+            listEl.innerHTML = `<div class="empty"><h3>No organizations yet</h3><p>Create your first organization to get started.</p><a href="/organizations/new"><button style="width:auto;margin-top:0.5rem;">Create Organization</button></a></div>`;
+            return;
+          }
+
+          listEl.innerHTML = orgs.map((org) => `
+            <div class="org-card ${org.id === currentOrgId ? 'current' : ''}" data-id="${org.id}">
+              <div class="org-avatar">${org.name.charAt(0).toUpperCase()}</div>
+              <div class="org-info">
+                <div class="org-name">${org.name}</div>
+                <div class="org-meta">${org.industry} · ${org.country} · ${roleBadge(org.memberRole)} ${statusBadge(org.status)}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:flex-end;">
+                ${org.id !== currentOrgId ? `<button class="sm secondary" onclick="event.stopPropagation();switchOrg('${org.id}')">Switch</button>` : '<span class="badge active">Active</span>'}
+                <a href="/organizations/settings" style="font-size:0.82rem;">Settings</a>
+              </div>
+            </div>
+          `).join('');
+
+          for (const card of document.querySelectorAll('.org-card')) {
+            card.addEventListener('click', () => switchOrg(card.dataset.id));
+          }
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      window.switchOrg = switchOrg;
+      load();
+    </script>
+  </body>
+</html>

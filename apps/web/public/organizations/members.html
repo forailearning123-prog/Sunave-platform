@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Members - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <h1>Members</h1>
+        <button id="invite-btn" style="width:auto;margin:0;padding:0.5rem 1rem;">Invite Member</button>
+      </div>
+      <p id="org-title" class="helper"></p>
+
+      <div id="member-table">
+        <p class="helper">Loading members…</p>
+      </div>
+
+      <p id="error" class="error"></p>
+    </div>
+
+    <!-- Invite Dialog -->
+    <div class="dialog-overlay" id="invite-dialog">
+      <div class="dialog">
+        <h2>Invite Member</h2>
+        <form id="invite-form">
+          <label>Email</label>
+          <input type="email" name="email" required />
+
+          <label>Role</label>
+          <select name="role">
+            <option value="User">User</option>
+            <option value="Guest">Guest</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+          </select>
+
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button type="submit" style="flex:1;margin:0;">Send Invite</button>
+            <button type="button" id="cancel-invite" class="secondary" style="flex:1;margin:0;">Cancel</button>
+          </div>
+          <p id="invite-error" class="error"></p>
+          <p id="invite-success" class="success"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Confirm Remove Dialog -->
+    <div class="dialog-overlay" id="confirm-dialog">
+      <div class="dialog">
+        <h2>Remove Member</h2>
+        <p>Are you sure you want to remove this member?</p>
+        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+          <button id="confirm-remove" class="danger" style="flex:1;margin:0;">Remove</button>
+          <button id="cancel-remove" class="secondary" style="flex:1;margin:0;">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container links">
+      <a href="/organizations">← Organizations</a>
+      <a href="/organizations/settings">Settings</a>
+      <a href="/organizations/invitations">Invitations</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const tableEl = document.getElementById('member-table');
+      const errorEl = document.getElementById('error');
+      const orgTitleEl = document.getElementById('org-title');
+      const inviteDialog = document.getElementById('invite-dialog');
+      const confirmDialog = document.getElementById('confirm-dialog');
+      let pendingRemoveId = null;
+
+      function roleBadge(role) {
+        return `<span class="badge ${role.toLowerCase()}">${role}</span>`;
+      }
+
+      async function loadMembers() {
+        try {
+          const orgData = await request('/api/organizations/current', 'GET');
+          orgTitleEl.textContent = orgData.organization.name;
+
+          const data = await request('/api/organizations/members', 'GET');
+          const members = data.members;
+
+          if (!members.length) {
+            tableEl.innerHTML = '<div class="empty"><h3>No members</h3></div>';
+            return;
+          }
+
+          tableEl.innerHTML = `
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${members.map((m) => `
+                    <tr>
+                      <td>${m.user ? `${m.user.firstName} ${m.user.lastName}` : '—'}</td>
+                      <td style="color:var(--muted);font-size:0.88rem;">${m.user?.email || '—'}</td>
+                      <td>${roleBadge(m.role)}</td>
+                      <td style="color:var(--muted);font-size:0.88rem;">${m.title || '—'}</td>
+                      <td><span class="badge ${m.status}">${m.status}</span></td>
+                      <td>
+                        ${m.role !== 'Owner' ? `<button class="sm danger" onclick="removeMember('${m.id}')">Remove</button>` : ''}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      window.removeMember = (id) => {
+        pendingRemoveId = id;
+        confirmDialog.classList.add('open');
+      };
+
+      document.getElementById('invite-btn').addEventListener('click', () => {
+        inviteDialog.classList.add('open');
+      });
+
+      document.getElementById('cancel-invite').addEventListener('click', () => {
+        inviteDialog.classList.remove('open');
+      });
+
+      document.getElementById('cancel-remove').addEventListener('click', () => {
+        confirmDialog.classList.remove('open');
+        pendingRemoveId = null;
+      });
+
+      document.getElementById('confirm-remove').addEventListener('click', async () => {
+        if (!pendingRemoveId) return;
+        try {
+          const csrf = (await request('/api/auth/csrf-token', 'GET').catch(() => ({}))).csrfToken || document.cookie.split('; ').find((c) => c.startsWith('csrf_token='))?.split('=')[1] || '';
+          await request(`/api/organizations/members/${pendingRemoveId}`, 'DELETE');
+          confirmDialog.classList.remove('open');
+          pendingRemoveId = null;
+          loadMembers();
+        } catch (err) {
+          errorEl.textContent = err.message;
+          confirmDialog.classList.remove('open');
+        }
+      });
+
+      document.getElementById('invite-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inviteError = document.getElementById('invite-error');
+        const inviteSuccess = document.getElementById('invite-success');
+        inviteError.textContent = '';
+        inviteSuccess.textContent = '';
+        try {
+          const email = e.target.email.value;
+          const role = e.target.role.value;
+          const data = await request('/api/organizations/invite', 'POST', { email, role });
+          inviteSuccess.textContent = `Invitation sent to ${email}.`;
+          if (data.inviteToken) {
+            inviteSuccess.textContent += ` (dev token: ${data.inviteToken})`;
+          }
+          e.target.reset();
+        } catch (err) {
+          inviteError.textContent = err.message;
+        }
+      });
+
+      loadMembers();
+    </script>
+  </body>
+</html>

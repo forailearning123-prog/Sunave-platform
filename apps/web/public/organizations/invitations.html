@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invitations - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <h1>Invitations</h1>
+        <a href="/organizations/members"><button style="width:auto;margin:0;padding:0.5rem 1rem;">Manage Members</button></a>
+      </div>
+      <p id="org-title" class="helper"></p>
+
+      <div id="invite-list">
+        <p class="helper">Loading invitations…</p>
+      </div>
+
+      <p id="error" class="error"></p>
+    </div>
+
+    <!-- Accept Invitation Panel (for new users) -->
+    <div class="container" id="accept-panel" style="display:none;">
+      <h1>Accept Invitation</h1>
+      <p class="helper">Enter your invitation token to join an organization.</p>
+      <form id="accept-form">
+        <label>Invitation Token</label>
+        <input type="text" name="token" required placeholder="Paste your invitation token" />
+        <button type="submit">Accept Invitation</button>
+        <p id="accept-error" class="error"></p>
+        <p id="accept-success" class="success"></p>
+      </form>
+    </div>
+
+    <div class="container links">
+      <a href="/organizations">← Organizations</a>
+      <a href="/organizations/members">Members</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const listEl = document.getElementById('invite-list');
+      const errorEl = document.getElementById('error');
+      const orgTitleEl = document.getElementById('org-title');
+      const acceptPanel = document.getElementById('accept-panel');
+
+      function statusBadge(status) {
+        return `<span class="badge ${status}">${status}</span>`;
+      }
+
+      async function loadInvitations() {
+        try {
+          const orgData = await request('/api/organizations/current', 'GET').catch(() => null);
+
+          if (!orgData) {
+            // User has no org — show accept panel
+            listEl.style.display = 'none';
+            acceptPanel.style.display = 'block';
+            return;
+          }
+
+          orgTitleEl.textContent = orgData.organization.name;
+
+          const data = await request('/api/organizations/invitations', 'GET').catch(() => null);
+          const invitations = data?.invitations || [];
+
+          if (!invitations.length) {
+            listEl.innerHTML = '<div class="empty"><h3>No invitations sent yet</h3><p>Use the Members page to invite people.</p></div>';
+          } else {
+            listEl.innerHTML = `
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Invited By</th>
+                      <th>Expires</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${invitations.map((inv) => `
+                      <tr>
+                        <td>${inv.email}</td>
+                        <td><span class="badge ${inv.role.toLowerCase()}">${inv.role}</span></td>
+                        <td>${statusBadge(inv.status)}</td>
+                        <td style="color:var(--muted);font-size:0.88rem;">${inv.invitedBy ? `${inv.invitedBy.firstName} ${inv.invitedBy.lastName}` : '—'}</td>
+                        <td style="color:var(--muted);font-size:0.88rem;">${new Date(inv.expiresAt).toLocaleDateString()}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `;
+          }
+
+          // Also show accept panel below
+          acceptPanel.style.display = 'block';
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      }
+
+      document.getElementById('accept-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const acceptError = document.getElementById('accept-error');
+        const acceptSuccess = document.getElementById('accept-success');
+        acceptError.textContent = '';
+        acceptSuccess.textContent = '';
+        try {
+          const data = await request('/api/organizations/invitations/accept', 'POST', {
+            token: e.target.token.value.trim()
+          });
+          acceptSuccess.textContent = data.message || 'Invitation accepted!';
+          setTimeout(() => { window.location.href = '/organizations'; }, 1500);
+        } catch (err) {
+          acceptError.textContent = err.message;
+        }
+      });
+
+      loadInvitations();
+    </script>
+  </body>
+</html>

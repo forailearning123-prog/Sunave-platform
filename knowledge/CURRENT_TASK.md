@@ -1,13 +1,13 @@
 # Current Task
 
 ## Sprint
-- Sprint 1
+- Sprint 2
 
 ## Module
-- Authentication (Complete)
+- Organizations & Multi-Tenancy (Complete)
 
 ## Goal
-- Deliver production-ready email/password authentication with secure session management and RBAC foundations.
+- Implement full multi-tenant organization module: CRUD, membership, invitations, tenant middleware, settings, audit logging.
 
 ## Allowed Files
 - `apps/api/**`
@@ -24,15 +24,16 @@
 - Workers, AI, agents, goals, dashboard business modules, marketplace modules, and unrelated plugin implementations.
 
 ## Acceptance Criteria
-- [x] User registration
-- [x] Login and logout
-- [x] Password reset and change password
-- [x] Secure session handling (access + refresh + logout all)
-- [x] First login organization creation
-- [x] RBAC middleware foundation
-- [x] Responsive auth/profile pages
-- [x] Unit and API tests
-- [x] Documentation updates
+- [x] Organizations CRUD (create, read, update, archive, restore)
+- [x] Multi-Tenant Architecture (requireOrg middleware, tenant isolation)
+- [x] Organization Switcher (POST /switch, current_org_id cookie)
+- [x] Member Management (list, update, remove)
+- [x] Invitations (send, accept, list)
+- [x] Middleware (requireOrg, requireOrgPermission)
+- [x] Organization Settings (CRUD per category)
+- [x] Audit Logging (created, updated, archived, restored, member events, invitation events)
+- [x] Tests (28 API tests including multi-tenant isolation)
+- [x] Documentation Updated
 
 ## Next Module
-- Organizations
+- Users & Teams

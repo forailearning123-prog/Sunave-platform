@@ -29,6 +29,11 @@ const pageRoutes = {
   '/auth/reset-password': 'auth/reset-password.html',
   '/auth/organization': 'auth/organization.html',
   '/account/profile': 'account/profile.html',
+  '/organizations': 'organizations/index.html',
+  '/organizations/new': 'organizations/new.html',
+  '/organizations/settings': 'organizations/settings.html',
+  '/organizations/members': 'organizations/members.html',
+  '/organizations/invitations': 'organizations/invitations.html',
   '/dashboard': 'dashboard.html',
   '/': 'auth/login.html'
 };

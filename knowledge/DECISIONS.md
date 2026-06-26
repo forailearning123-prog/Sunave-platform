@@ -39,3 +39,35 @@
 
 6. **RBAC checks are centralized in middleware using shared role/permission contracts.**
    - Rationale: avoid page-level permission hardcoding and maintain policy consistency.
+
+## 2026-06-26 - Organizations & Multi-Tenancy Decisions
+
+1. **Active organization is stored in a `current_org_id` httpOnly cookie.**
+   - Rationale: stateless approach that avoids modifying access tokens on every org switch. The cookie persists across requests without requiring a new JWT.
+
+2. **Multi-tenant middleware (`requireOrg`) resolves org context from cookie, falling back to the user's first active membership.**
+   - Rationale: seamless UX for users belonging to one org; explicit switcher for multi-org users.
+
+3. **Organization role permissions are enforced via `requireOrgPermission` using `req.org.role`, not the JWT `req.auth.role`.**
+   - Rationale: a user may have different roles in different organizations. The JWT role is only used for profile-level operations.
+
+4. **No permanent deletion of organizations — archive/restore only.**
+   - Rationale: data preservation and audit integrity; matches business requirement.
+
+5. **Invitation tokens are UUID pairs stored as SHA-256 hashes, matching the password reset pattern.**
+   - Rationale: consistency with existing token security model.
+
+6. **Invitations automatically allow re-invite by replacing pending invitations for the same email+org.**
+   - Rationale: simplifies UX when an invitation expires and needs to be resent.
+
+7. **Organization settings use JSONB per category with UPSERT semantics.**
+   - Rationale: flexible, schema-free settings storage that can grow per category without migrations.
+
+8. **Audit logs use fire-and-forget inserts (failures are silently swallowed).**
+   - Rationale: audit log failure must never break the primary business flow.
+
+9. **Migration versioning table (`schema_migrations`) tracks applied migrations.**
+   - Rationale: each migration file runs exactly once, enabling incremental schema evolution without idempotency hacks in DDL.
+
+10. **`Guest` role added to initial CHECK constraint in `001_auth.sql` (not via ALTER TABLE in 002).**
+    - Rationale: pg-mem (test in-memory DB) does not support named inline CHECK constraint modification. Since the project has no production database yet, updating the original migration is acceptable and cleaner than workarounds.

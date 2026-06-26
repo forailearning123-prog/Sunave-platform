@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Organization - Sunave</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Create Organization</h1>
+      <form id="app-form">
+        <label>Organization Name *</label>
+        <input type="text" name="name" required minlength="2" maxlength="120" />
+
+        <label>Industry *</label>
+        <select name="industry" required>
+          <option value="">Select industry…</option>
+          <option>Technology</option>
+          <option>Healthcare</option>
+          <option>Finance</option>
+          <option>Retail</option>
+          <option>Education</option>
+          <option>Manufacturing</option>
+          <option>Consulting</option>
+          <option>Media</option>
+          <option>Real Estate</option>
+          <option>Other</option>
+        </select>
+
+        <label>Country *</label>
+        <input type="text" name="country" required minlength="2" maxlength="80" placeholder="e.g. US, UK, DE" />
+
+        <label>Slug <span style="font-weight:400;color:var(--muted)">(auto-generated if blank)</span></label>
+        <input type="text" name="slug" pattern="[a-z0-9\-]+" placeholder="my-org" maxlength="120" />
+
+        <label>Timezone</label>
+        <input type="text" name="timezone" placeholder="UTC" maxlength="100" />
+
+        <label>Currency</label>
+        <input type="text" name="currency" placeholder="USD" maxlength="10" />
+
+        <label>Website</label>
+        <input type="url" name="website" placeholder="https://example.com" />
+
+        <label>Contact Email</label>
+        <input type="email" name="email" placeholder="contact@example.com" />
+
+        <button type="submit">Create Organization</button>
+        <p id="error" class="error"></p>
+      </form>
+    </div>
+
+    <div class="container links">
+      <a href="/organizations">← Back to Organizations</a>
+    </div>
+
+    <script type="module">
+      import { request, valuesFromForm } from '/assets/js/auth-client.js';
+
+      const form = document.getElementById('app-form');
+      const errorEl = document.getElementById('error');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorEl.textContent = '';
+        try {
+          const values = valuesFromForm(form);
+          // Remove empty optional fields
+          for (const key of Object.keys(values)) {
+            if (values[key] === '') delete values[key];
+          }
+          await request('/api/organizations', 'POST', values);
+          window.location.href = '/organizations';
+        } catch (err) {
+          if (err.message.includes('Authentication')) {
+            window.location.href = '/auth/login';
+          } else {
+            errorEl.textContent = err.message;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
