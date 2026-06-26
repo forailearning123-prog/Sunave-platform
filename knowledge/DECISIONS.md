@@ -132,3 +132,40 @@
 9. **`configurationService` is injected into the settings router — no singleton.**
    - Rationale: follows the established dependency injection pattern used by all other routers. Avoids global mutable state and makes testing straightforward.
 
+## 2026-06-26 - AI Gateway Decisions (Prompts 9 & 10)
+
+1. **All AI capability requests go through `aiGatewayService` — never directly to providers.**
+   - Rationale: enforces the CONSTITUTION rule "No Hardcoded AI Model Names" and "Capability-Based AI Requests". Business modules are permanently decoupled from provider/model churn. Swapping providers requires zero code changes in business logic.
+
+2. **Capabilities are requested by name (e.g., `'reasoning'`, `'vision'`), not by model name.**
+   - Rationale: directly implements CONSTITUTION §8. This allows the gateway to route to the best available provider for each capability, and enables future A/B testing and cost optimization without touching business code.
+
+3. **All 9 provider stubs return mock responses — no real AI calls in this module.**
+   - Rationale: the gateway abstraction and all interfaces are production-ready. Real API integration is gated behind provider enablement and key configuration. Shipping mock-first avoids provider-specific bugs blocking the platform build.
+
+4. **Provider credentials are encrypted at rest using AES-256-GCM.**
+   - Rationale: CONSTITUTION §12 (Security Baseline). Credentials stored as plaintext in the DB would be a critical vulnerability. AES-256-GCM provides authenticated encryption — tampering with the ciphertext is detectable. The key is sourced from `AI_CREDENTIAL_ENCRYPTION_KEY` env var; a dev fallback is provided but not secure for production.
+
+5. **Raw credentials are NEVER returned in API responses — only masked (`****xxxx`).**
+   - Rationale: follows the same principle as password handling. The API surface must never expose secrets regardless of authentication state. `credentialService.toApiSafe()` is the single path for credential externalization.
+
+6. **Credential rotation is supported via the `ai_provider_credentials` table (named key store).**
+   - Rationale: providers may have multiple keys (primary/secondary) and keys must be rotatable without downtime. The `rotated_at` timestamp enables audit and rotation policy enforcement.
+
+7. **Health monitoring auto-disables providers with success_rate < 50%.**
+   - Rationale: a provider that fails more than half the time adds latency and noise to the routing path. Auto-disable with DB persistence ensures the gateway adapts to degraded providers without operator intervention.
+
+8. **Routing policies are stored in `ai_provider_policies` table — not hardcoded.**
+   - Rationale: CONSTITUTION §4 (Configuration-Driven Development). Routing policy must be changeable without code deployment. Global policy seeds `local_first` by default; org-level overrides are stored as scoped policy rows.
+
+9. **`aiGatewayService` is instantiated once in `app.js` and injected into the AI router — no singleton.**
+   - Rationale: consistent with the dependency injection pattern established by all other services. Enables testing with mocked repositories.
+
+10. **The `sunave_local` provider is seeded as the default provider (priority 1) and cannot be deleted.**
+    - Rationale: guarantees there is always at least one available provider so the gateway is never in a zero-provider state. Local provider requires no external credentials and works offline.
+
+11. **Provider capability matrix is stored in two places: column flags on `ai_providers` and rows in `ai_provider_capabilities`.**
+    - Rationale: the column flags (supports_chat, supports_vision, etc.) enable fast queries without joins. The `ai_provider_capabilities` table supports the detailed capability matrix with custom capabilities, notes, and per-provider toggles for advanced admin use.
+
+12. **`ai_provider_health` is a time-series table — one row per check, never updated in place.**
+    - Rationale: preserves health history for trend analysis and debugging. The `ai_providers.health_status` column is a denormalized cache of the latest state for fast reads. Health queries use `DISTINCT ON (provider_id)` for latest-per-provider.

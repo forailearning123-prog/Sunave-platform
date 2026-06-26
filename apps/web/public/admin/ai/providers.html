@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Providers — Sunave Admin</title>
+    <meta name="description" content="Manage AI providers, credentials, and capability configurations for the Sunave AI Gateway." />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      :root {
+        --ai-purple: #7c3aed;
+        --ai-purple-light: #ede9fe;
+        --ai-green: #059669;
+        --ai-green-light: #d1fae5;
+        --ai-red: #dc2626;
+        --ai-red-light: #fee2e2;
+        --ai-orange: #d97706;
+        --ai-orange-light: #fef3c7;
+        --ai-gray: #6b7280;
+      }
+
+      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+      .page-header h1 { margin: 0; }
+
+      .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+      .badge-healthy { background: var(--ai-green-light); color: var(--ai-green); }
+      .badge-degraded { background: var(--ai-orange-light); color: var(--ai-orange); }
+      .badge-offline  { background: var(--ai-red-light); color: var(--ai-red); }
+      .badge-unknown  { background: #f3f4f6; color: var(--ai-gray); }
+
+      .provider-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem; }
+
+      .provider-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        transition: box-shadow 0.2s;
+      }
+      .provider-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+      .provider-card.disabled { opacity: 0.6; }
+
+      .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+      .card-header h3 { margin: 0; font-size: 1rem; }
+      .card-type { font-size: 0.78rem; color: var(--ai-gray); margin-top: 0.1rem; font-family: monospace; }
+
+      .cap-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+      .cap-chip {
+        font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px;
+        background: var(--ai-purple-light); color: var(--ai-purple); font-weight: 500;
+      }
+      .cap-chip.off { background: #f3f4f6; color: #9ca3af; text-decoration: line-through; }
+
+      .card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.25rem; }
+      .btn-sm { font-size: 0.8rem; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; border: 1px solid #e5e7eb; background: #fff; transition: background 0.15s; }
+      .btn-sm:hover { background: #f3f4f6; }
+      .btn-sm.danger { color: var(--ai-red); border-color: var(--ai-red-light); }
+      .btn-sm.danger:hover { background: var(--ai-red-light); }
+      .btn-sm.primary { background: var(--ai-purple); color: #fff; border-color: var(--ai-purple); }
+      .btn-sm.primary:hover { background: #6d28d9; }
+
+      .stat-row { display: flex; gap: 1rem; font-size: 0.82rem; color: var(--ai-gray); }
+      .stat-row span { display: flex; align-items: center; gap: 0.25rem; }
+
+      /* Add Provider Panel */
+      .panel-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+      .panel-overlay.open { display: flex; }
+      .panel {
+        background: #fff; border-radius: 14px; padding: 1.75rem;
+        width: 100%; max-width: 540px; max-height: 90vh;
+        overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      }
+      .panel h2 { margin: 0 0 1.25rem; font-size: 1.15rem; }
+      .panel label { font-size: 0.85rem; display: block; margin-bottom: 0.2rem; font-weight: 500; }
+      .panel input, .panel select, .panel textarea {
+        width: 100%; box-sizing: border-box; padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem;
+        margin-bottom: 0.85rem;
+      }
+      .panel input:focus, .panel select:focus { outline: 2px solid var(--ai-purple); border-color: var(--ai-purple); }
+      .cap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-bottom: 0.85rem; }
+      .cap-check { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
+      .panel-actions { display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+      .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ai-gray); }
+      .empty-state h3 { margin-bottom: 0.5rem; color: #374151; }
+
+      #msg { font-size: 0.9rem; margin-top: 1rem; }
+
+      .priority-badge { font-size: 0.72rem; background: #f3f4f6; color: #374151; padding: 0.15rem 0.45rem; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <div class="page-header">
+        <div>
+          <h1>🤖 AI Providers</h1>
+          <p style="margin:0.25rem 0 0; color:#6b7280; font-size:0.9rem;">
+            Configure AI providers for the Sunave Gateway. Business modules never call providers directly.
+          </p>
+        </div>
+        <div style="display:flex;gap:0.75rem;">
+          <a href="/admin/ai/health" class="btn-sm">📊 Health</a>
+          <a href="/admin/ai/configuration" class="btn-sm">⚙️ Config</a>
+          <button id="btn-add" class="btn-sm primary">+ Add Provider</button>
+        </div>
+      </div>
+
+      <div id="msg"></div>
+      <div id="provider-grid" class="provider-grid">
+        <div class="empty-state"><p>Loading providers…</p></div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Provider Panel -->
+    <div class="panel-overlay" id="panel-overlay">
+      <div class="panel">
+        <h2 id="panel-title">Add AI Provider</h2>
+        <form id="provider-form">
+          <input type="hidden" id="edit-id" />
+          <label for="prov-name">Name *</label>
+          <input type="text" id="prov-name" placeholder="e.g. My OpenAI Account" required />
+
+          <label for="prov-type">Provider Type *</label>
+          <select id="prov-type" required>
+            <option value="">— Select Type —</option>
+            <option value="sunave_local">Sunave Local</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="vertex_ai">Google Vertex AI</option>
+            <option value="azure_openai">Azure OpenAI</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="litellm">LiteLLM</option>
+            <option value="ollama">Ollama (Local)</option>
+            <option value="custom">Custom</option>
+          </select>
+
+          <label for="prov-url">Base URL</label>
+          <input type="url" id="prov-url" placeholder="https://api.openai.com/v1" />
+
+          <label for="prov-key">API Key (leave blank to keep existing)</label>
+          <input type="password" id="prov-key" placeholder="sk-…" autocomplete="new-password" />
+
+          <label for="prov-priority">Priority <small>(lower = higher priority)</small></label>
+          <input type="number" id="prov-priority" value="10" min="1" max="99" />
+
+          <label for="prov-timeout">Timeout (ms)</label>
+          <input type="number" id="prov-timeout" value="30000" min="1000" max="120000" />
+
+          <label>Capabilities</label>
+          <div class="cap-grid">
+            <label class="cap-check"><input type="checkbox" name="cap_chat" checked /> Chat</label>
+            <label class="cap-check"><input type="checkbox" name="cap_vision" /> Vision</label>
+            <label class="cap-check"><input type="checkbox" name="cap_embeddings" /> Embeddings</label>
+            <label class="cap-check"><input type="checkbox" name="cap_speech" /> Speech</label>
+            <label class="cap-check"><input type="checkbox" name="cap_streaming" checked /> Streaming</label>
+            <label class="cap-check"><input type="checkbox" name="cap_function_calling" /> Function Calling</label>
+            <label class="cap-check"><input type="checkbox" name="cap_reasoning" /> Reasoning</label>
+          </div>
+
+          <label class="cap-check" style="margin-bottom:0.85rem;">
+            <input type="checkbox" id="prov-enabled" checked /> Enabled
+          </label>
+
+          <label class="cap-check" style="margin-bottom:0.85rem;">
+            <input type="checkbox" id="prov-default" /> Set as Default Provider
+          </label>
+
+          <label for="prov-notes">Notes</label>
+          <textarea id="prov-notes" rows="2" placeholder="Optional notes…" style="resize:vertical;"></textarea>
+
+          <div class="panel-actions">
+            <button type="button" id="btn-cancel" class="btn-sm">Cancel</button>
+            <button type="submit" class="btn-sm primary" id="btn-save">Save Provider</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="container links">
+      <a href="/dashboard">← Dashboard</a>
+      <a href="/admin/ai/health">Health</a>
+      <a href="/admin/ai/configuration">Configuration</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const grid = document.getElementById('provider-grid');
+      const msg  = document.getElementById('msg');
+      const overlay = document.getElementById('panel-overlay');
+
+      const CAPABILITY_LABELS = {
+        chat: 'Chat', vision: 'Vision', embeddings: 'Embeddings',
+        speech: 'Speech', streaming: 'Streaming',
+        functionCalling: 'Fn Calls', reasoning: 'Reasoning'
+      };
+
+      const STATUS_BADGE = {
+        healthy:  '<span class="badge badge-healthy">● Healthy</span>',
+        degraded: '<span class="badge badge-degraded">⚠ Degraded</span>',
+        offline:  '<span class="badge badge-offline">✕ Offline</span>',
+        unknown:  '<span class="badge badge-unknown">? Unknown</span>'
+      };
+
+      function capChips(caps) {
+        return Object.entries(caps).map(([k, v]) =>
+          `<span class="cap-chip ${v ? '' : 'off'}">${CAPABILITY_LABELS[k] || k}</span>`
+        ).join('');
+      }
+
+      function renderProviders(providers) {
+        if (!providers.length) {
+          grid.innerHTML = `<div class="empty-state">
+            <h3>No providers configured</h3>
+            <p>Click "Add Provider" to configure your first AI provider.</p>
+          </div>`;
+          return;
+        }
+        grid.innerHTML = providers.map(p => `
+          <div class="provider-card ${p.enabled ? '' : 'disabled'}" data-id="${p.id}">
+            <div class="card-header">
+              <div>
+                <h3>${p.name} ${p.isDefault ? '<span class="priority-badge">DEFAULT</span>' : ''}</h3>
+                <div class="card-type">${p.type}</div>
+              </div>
+              ${STATUS_BADGE[p.healthStatus] || STATUS_BADGE.unknown}
+            </div>
+
+            <div class="cap-chips">${capChips(p.capabilities)}</div>
+
+            <div class="stat-row">
+              <span>Priority: <strong>${p.priority}</strong></span>
+              ${p.latestHealth ? `<span>Latency: <strong>${p.latestHealth.latencyMs ?? '—'}ms</strong></span>` : ''}
+              ${p.apiKey?.hasValue ? '<span>🔑 Key set</span>' : '<span style="color:#dc2626">⚠ No key</span>'}
+            </div>
+
+            <div class="card-actions">
+              <button class="btn-sm" onclick="testProvider('${p.id}')">🔌 Test</button>
+              <button class="btn-sm" onclick="syncModels('${p.id}')">🔄 Sync</button>
+              <button class="btn-sm" onclick="editProvider(${JSON.stringify(p).replace(/"/g,'&quot;')})">✏️ Edit</button>
+              ${p.type !== 'sunave_local' ? `<button class="btn-sm danger" onclick="deleteProvider('${p.id}','${p.name}')">🗑</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      async function load() {
+        try {
+          const data = await request('/api/ai/providers', 'GET');
+          renderProviders(data.providers || []);
+        } catch (err) {
+          if (err.message?.includes('Authentication')) { window.location.href = '/auth/login'; return; }
+          msg.innerHTML = `<span style="color:#dc2626">Failed to load providers: ${err.message}</span>`;
+        }
+      }
+
+      window.testProvider = async (id) => {
+        msg.innerHTML = 'Testing connection…';
+        try {
+          const data = await request('/api/ai/providers/test', 'POST', { providerId: id });
+          msg.innerHTML = `<span style="color:#059669">✅ Connected — ${data.modelsFound} models found (${data.latencyMs}ms)</span>`;
+          load();
+        } catch (err) { msg.innerHTML = `<span style="color:#dc2626">Test failed: ${err.message}</span>`; }
+      };
+
+      window.syncModels = async (id) => {
+        msg.innerHTML = 'Syncing models…';
+        try {
+          const data = await request('/api/ai/providers/sync-models', 'POST', { providerId: id });
+          msg.innerHTML = `<span style="color:#059669">✅ Synced — ${data.modelsFound} models</span>`;
+        } catch (err) { msg.innerHTML = `<span style="color:#dc2626">Sync failed: ${err.message}</span>`; }
+      };
+
+      window.editProvider = (p) => {
+        document.getElementById('panel-title').textContent = 'Edit Provider';
+        document.getElementById('edit-id').value = p.id;
+        document.getElementById('prov-name').value = p.name;
+        document.getElementById('prov-type').value = p.type;
+        document.getElementById('prov-url').value = p.baseUrl || '';
+        document.getElementById('prov-key').value = '';
+        document.getElementById('prov-priority').value = p.priority;
+        document.getElementById('prov-timeout').value = p.timeoutMs;
+        document.getElementById('prov-enabled').checked = p.enabled;
+        document.getElementById('prov-default').checked = p.isDefault;
+        document.getElementById('prov-notes').value = p.notes || '';
+        document.querySelector('[name=cap_chat]').checked = p.capabilities.chat;
+        document.querySelector('[name=cap_vision]').checked = p.capabilities.vision;
+        document.querySelector('[name=cap_embeddings]').checked = p.capabilities.embeddings;
+        document.querySelector('[name=cap_speech]').checked = p.capabilities.speech;
+        document.querySelector('[name=cap_streaming]').checked = p.capabilities.streaming;
+        document.querySelector('[name=cap_function_calling]').checked = p.capabilities.functionCalling;
+        document.querySelector('[name=cap_reasoning]').checked = p.capabilities.reasoning;
+        overlay.classList.add('open');
+      };
+
+      window.deleteProvider = async (id, name) => {
+        if (!confirm(`Delete provider "${name}"? This cannot be undone.`)) return;
+        try {
+          await request(`/api/ai/providers/${id}`, 'DELETE');
+          msg.innerHTML = `<span style="color:#059669">Provider deleted.</span>`;
+          load();
+        } catch (err) { msg.innerHTML = `<span style="color:#dc2626">Delete failed: ${err.message}</span>`; }
+      };
+
+      document.getElementById('btn-add').addEventListener('click', () => {
+        document.getElementById('panel-title').textContent = 'Add Provider';
+        document.getElementById('provider-form').reset();
+        document.getElementById('edit-id').value = '';
+        document.getElementById('prov-priority').value = 10;
+        document.getElementById('prov-timeout').value = 30000;
+        overlay.classList.add('open');
+      });
+
+      document.getElementById('btn-cancel').addEventListener('click', () => overlay.classList.remove('open'));
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+      document.getElementById('provider-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const apiKey = document.getElementById('prov-key').value;
+        const body = {
+          name: document.getElementById('prov-name').value,
+          type: document.getElementById('prov-type').value,
+          baseUrl: document.getElementById('prov-url').value || null,
+          enabled: document.getElementById('prov-enabled').checked,
+          isDefault: document.getElementById('prov-default').checked,
+          priority: Number(document.getElementById('prov-priority').value),
+          timeoutMs: Number(document.getElementById('prov-timeout').value),
+          notes: document.getElementById('prov-notes').value,
+          supportsChat: document.querySelector('[name=cap_chat]').checked,
+          supportsVision: document.querySelector('[name=cap_vision]').checked,
+          supportsEmbeddings: document.querySelector('[name=cap_embeddings]').checked,
+          supportsSpeech: document.querySelector('[name=cap_speech]').checked,
+          supportsStreaming: document.querySelector('[name=cap_streaming]').checked,
+          supportsFunctionCalling: document.querySelector('[name=cap_function_calling]').checked,
+          supportsReasoning: document.querySelector('[name=cap_reasoning]').checked,
+        };
+        if (apiKey) body.apiKey = apiKey;
+
+        try {
+          if (id) {
+            await request(`/api/ai/providers/${id}`, 'PUT', body);
+            msg.innerHTML = `<span style="color:#059669">✅ Provider updated.</span>`;
+          } else {
+            await request('/api/ai/providers', 'POST', body);
+            msg.innerHTML = `<span style="color:#059669">✅ Provider created.</span>`;
+          }
+          overlay.classList.remove('open');
+          load();
+        } catch (err) {
+          msg.innerHTML = `<span style="color:#dc2626">Save failed: ${err.message}</span>`;
+        }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

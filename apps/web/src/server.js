@@ -57,6 +57,10 @@ const pageRoutes = {
   '/tasks': 'tasks/index.html',
   '/timeline': 'timeline/index.html',
   '/dashboard': 'dashboard.html',
+  // ─── Admin: AI Gateway & Provider Management ────────────────────────────
+  '/admin/ai/providers':      'admin/ai/providers.html',
+  '/admin/ai/health':         'admin/ai/health.html',
+  '/admin/ai/configuration':  'admin/ai/configuration.html',
   '/': 'auth/login.html'
 };
 

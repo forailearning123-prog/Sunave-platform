@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Gateway Configuration — Sunave Admin</title>
+    <meta name="description" content="View AI Gateway routing policies, capability matrix, and provider priorities for Sunave." />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      :root {
+        --purple: #7c3aed; --purple-bg: #ede9fe;
+        --green: #059669;  --green-bg: #d1fae5;
+        --gray: #6b7280;   --gray-bg: #f3f4f6;
+        --blue: #2563eb;   --blue-bg: #dbeafe;
+      }
+
+      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+      .page-header h1 { margin: 0; }
+
+      .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.4rem; margin-bottom: 1.25rem; }
+      .section h2 { margin: 0 0 1rem; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+      /* Architecture diagram */
+      .arch-flow {
+        display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+        background: var(--gray-bg); border-radius: 10px; padding: 1rem 1.25rem;
+        overflow-x: auto;
+      }
+      .arch-box {
+        background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+        padding: 0.5rem 0.85rem; font-size: 0.82rem; font-weight: 600;
+        white-space: nowrap;
+      }
+      .arch-box.highlight { background: var(--purple-bg); border-color: var(--purple); color: var(--purple); }
+      .arch-arrow { font-size: 1.1rem; color: var(--gray); padding: 0 0.35rem; }
+
+      /* Policy cards */
+      .policy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+      .policy-card {
+        border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.85rem 1rem;
+        cursor: default; transition: border-color 0.15s;
+      }
+      .policy-card.active { border-color: var(--purple); background: var(--purple-bg); }
+      .policy-card h4 { margin: 0 0 0.3rem; font-size: 0.88rem; }
+      .policy-card p { margin: 0; font-size: 0.78rem; color: var(--gray); }
+      .policy-badge { font-size: 0.68rem; background: var(--purple); color: #fff; padding: 0.1rem 0.45rem; border-radius: 4px; margin-left: 0.4rem; }
+
+      /* Capability matrix */
+      .matrix-scroll { overflow-x: auto; }
+      .matrix-table { border-collapse: collapse; min-width: 600px; width: 100%; font-size: 0.82rem; }
+      .matrix-table th { background: #f9fafb; padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb; font-weight: 600; white-space: nowrap; }
+      .matrix-table td { padding: 0.4rem 0.75rem; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+      .matrix-table tr:last-child td { border-bottom: none; }
+      .matrix-table .prov-name { font-weight: 600; }
+      .matrix-table .prov-type { font-size: 0.72rem; color: var(--gray); font-family: monospace; }
+      .check { color: var(--green); font-size: 1rem; }
+      .cross { color: #d1d5db; font-size: 1rem; }
+      .priority-num { background: var(--gray-bg); border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.8rem; font-weight: 700; }
+
+      /* Capabilities reference */
+      .cap-ref { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; }
+      .cap-ref-item { background: var(--gray-bg); border-radius: 8px; padding: 0.55rem 0.8rem; }
+      .cap-ref-item h4 { margin: 0 0 0.2rem; font-size: 0.85rem; }
+      .cap-ref-item p { margin: 0; font-size: 0.75rem; color: var(--gray); }
+      .provider-list { font-size: 0.7rem; margin-top: 0.25rem; color: var(--purple); }
+
+      .info-banner { background: var(--blue-bg); color: var(--blue); border-radius: 8px; padding: 0.6rem 0.9rem; font-size: 0.85rem; margin-bottom: 1rem; }
+
+      .btn-sm { font-size: 0.82rem; padding: 0.4rem 0.9rem; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; text-decoration: none; display: inline-block; }
+      .btn-sm:hover { background: #f3f4f6; }
+    </style>
+  </head>
+  <body>
+    <div class="container wide">
+      <div class="page-header">
+        <div>
+          <h1>⚙️ AI Gateway Configuration</h1>
+          <p style="margin:0.25rem 0 0;color:#6b7280;font-size:0.9rem;">
+            Gateway routing policies, capability matrix, and provider priorities.
+          </p>
+        </div>
+        <div style="display:flex;gap:0.75rem;">
+          <a href="/admin/ai/providers" class="btn-sm">⚙ Providers</a>
+          <a href="/admin/ai/health" class="btn-sm">📊 Health</a>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        ℹ️ Provider editing is done in <a href="/admin/ai/providers">AI Providers</a>. This page shows gateway-level configuration and routing policies.
+      </div>
+
+      <!-- Architecture -->
+      <div class="section">
+        <h2>🏗 Gateway Architecture</h2>
+        <div class="arch-flow">
+          <div class="arch-box">Business Module</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box">Capability Request</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box highlight">AI Gateway</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box">Provider Router</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box">Provider</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box">Response</div>
+        </div>
+        <p style="font-size:0.82rem;color:#6b7280;margin:0.85rem 0 0;">
+          Business modules request <strong>capabilities</strong> (e.g., "reasoning", "vision") — never model names.
+          The AI Gateway selects the provider transparently based on the active routing policy.
+        </p>
+      </div>
+
+      <!-- Routing Policies -->
+      <div class="section">
+        <h2>🔀 Routing Policies</h2>
+        <p style="font-size:0.85rem;color:#6b7280;margin:0 0 1rem;">
+          The active policy determines which provider handles each capability request.
+          Global policy is set by the platform administrator.
+        </p>
+        <div class="policy-grid" id="policy-grid">
+          <div style="color:#6b7280">Loading…</div>
+        </div>
+      </div>
+
+      <!-- Provider Priority Matrix -->
+      <div class="section">
+        <h2>📋 Provider Capability Matrix</h2>
+        <p style="font-size:0.85rem;color:#6b7280;margin:0 0 1rem;">
+          Shows which capabilities each configured provider supports, ordered by priority.
+        </p>
+        <div class="matrix-scroll">
+          <table class="matrix-table" id="matrix-table">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Chat</th>
+                <th>Vision</th>
+                <th>Embed</th>
+                <th>Speech</th>
+                <th>Stream</th>
+                <th>Fn Call</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-body">
+              <tr><td colspan="10" style="text-align:center;color:#6b7280;padding:1.5rem;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Capabilities Reference -->
+      <div class="section">
+        <h2>🎯 Capability Reference</h2>
+        <p style="font-size:0.85rem;color:#6b7280;margin:0 0 1rem;">
+          All supported capabilities and which provider types handle them.
+        </p>
+        <div class="cap-ref" id="cap-ref">
+          <div style="color:#6b7280">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container links">
+      <a href="/admin/ai/providers">← Providers</a>
+      <a href="/admin/ai/health">Health</a>
+    </div>
+
+    <script type="module">
+      import { request } from '/assets/js/auth-client.js';
+
+      const STATUS_BADGE = {
+        healthy:  '<span style="color:#059669;font-weight:600">● Healthy</span>',
+        degraded: '<span style="color:#d97706;font-weight:600">⚠ Degraded</span>',
+        offline:  '<span style="color:#dc2626;font-weight:600">✕ Offline</span>',
+        unknown:  '<span style="color:#9ca3af">? Unknown</span>'
+      };
+
+      const POLICY_DESCRIPTIONS = {
+        lowest_cost:     { icon: '💰', title: 'Lowest Cost', desc: 'Routes to the cheapest provider for each request. Best for cost optimization at scale.' },
+        highest_quality: { icon: '⭐', title: 'Highest Quality', desc: 'Routes to highest-priority (quality-ranked) provider. Best for critical tasks.' },
+        fastest:         { icon: '⚡', title: 'Fastest', desc: 'Routes to the provider with lowest measured latency. Best for real-time use cases.' },
+        local_first:     { icon: '🏠', title: 'Local First', desc: 'Prefers local/self-hosted providers (Sunave Local, Ollama) before cloud. Best for privacy.' },
+        cloud_first:     { icon: '☁️', title: 'Cloud First', desc: 'Prefers cloud providers before local. Best when cloud quality is critical.' },
+        org_override:    { icon: '🏢', title: 'Org Override', desc: 'Organization-specific policy. Overrides global routing for this organization.' }
+      };
+
+      const CAP_DESCRIPTIONS = {
+        reasoning:      'Complex multi-step reasoning and analysis tasks.',
+        coding:         'Code generation, review, and debugging.',
+        vision:         'Image and video understanding.',
+        speech:         'Text-to-speech and audio synthesis.',
+        translation:    'Multi-language translation.',
+        ocr:            'Optical character recognition from images.',
+        embeddings:     'Text-to-vector embeddings for semantic search.',
+        summarization:  'Document and content summarization.',
+        planning:       'Task planning and goal decomposition.',
+        classification: 'Text and content classification.',
+        extraction:     'Structured data extraction from unstructured text.',
+        generation:     'Creative and structured content generation.',
+        function_calling: 'Structured function call / tool use.',
+        chat:           'General conversational interaction.',
+        streaming:      'Token-streaming for real-time output.',
+        moderation:     'Content safety and moderation.'
+      };
+
+      async function load() {
+        try {
+          const [capData, provData, policyData] = await Promise.all([
+            request('/api/ai/capabilities', 'GET'),
+            request('/api/ai/providers', 'GET'),
+            request('/api/ai/policies', 'GET')
+          ]);
+
+          renderPolicies(policyData);
+          renderMatrix(provData.providers || []);
+          renderCapabilities(capData.capabilities || {});
+        } catch (err) {
+          if (err.message?.includes('Authentication')) { window.location.href = '/auth/login'; return; }
+          document.getElementById('policy-grid').innerHTML = `<p style="color:#dc2626">Failed to load: ${err.message}</p>`;
+        }
+      }
+
+      function renderPolicies(data) {
+        const { policies = [], availablePolicies = [] } = data;
+        const activeTypes = new Set(policies.map(p => p.policy_type));
+        const allPolicies = availablePolicies.length ? availablePolicies : Object.keys(POLICY_DESCRIPTIONS);
+
+        document.getElementById('policy-grid').innerHTML = allPolicies.map(pt => {
+          const def = POLICY_DESCRIPTIONS[pt] || { icon: '📌', title: pt, desc: '' };
+          const isActive = activeTypes.has(pt);
+          return `<div class="policy-card ${isActive ? 'active' : ''}">
+            <h4>${def.icon} ${def.title} ${isActive ? '<span class="policy-badge">ACTIVE</span>' : ''}</h4>
+            <p>${def.desc}</p>
+          </div>`;
+        }).join('');
+      }
+
+      function renderMatrix(providers) {
+        if (!providers.length) {
+          document.getElementById('matrix-body').innerHTML = `<tr><td colspan="10" style="text-align:center;color:#6b7280;padding:1.5rem;">No providers configured.</td></tr>`;
+          return;
+        }
+
+        const sorted = [...providers].sort((a, b) => a.priority - b.priority);
+        const chk = (v) => v ? '<span class="check">✓</span>' : '<span class="cross">—</span>';
+
+        document.getElementById('matrix-body').innerHTML = sorted.map(p => `
+          <tr>
+            <td>
+              <div class="prov-name">${p.name}</div>
+              <div class="prov-type">${p.type}</div>
+            </td>
+            <td><span class="priority-num">${p.priority}</span></td>
+            <td>${STATUS_BADGE[p.healthStatus] || STATUS_BADGE.unknown}</td>
+            <td>${chk(p.capabilities?.chat)}</td>
+            <td>${chk(p.capabilities?.vision)}</td>
+            <td>${chk(p.capabilities?.embeddings)}</td>
+            <td>${chk(p.capabilities?.speech)}</td>
+            <td>${chk(p.capabilities?.streaming)}</td>
+            <td>${chk(p.capabilities?.functionCalling)}</td>
+            <td>${chk(p.capabilities?.reasoning)}</td>
+          </tr>
+        `).join('');
+      }
+
+      function renderCapabilities(capMap) {
+        const ref = document.getElementById('cap-ref');
+        const caps = Object.entries(capMap);
+        if (!caps.length) {
+          ref.innerHTML = '<div style="color:#6b7280">No capability data available.</div>';
+          return;
+        }
+
+        ref.innerHTML = caps.map(([cap, providerTypes]) => `
+          <div class="cap-ref-item">
+            <h4>${cap.replace(/_/g,' ')}</h4>
+            <p>${CAP_DESCRIPTIONS[cap] || ''}</p>
+            <div class="provider-list">${(providerTypes || []).join(', ')}</div>
+          </div>
+        `).join('');
+      }
+
+      load();
+    </script>
+  </body>
+</html>

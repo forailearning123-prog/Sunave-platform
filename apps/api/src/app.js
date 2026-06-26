@@ -19,6 +19,7 @@ import { buildTasksRouter } from './routes/tasks.js';
 import { buildCommentsRouter } from './routes/comments.js';
 import { buildAttachmentsRouter } from './routes/attachments.js';
 import { buildActivityRouter } from './routes/activity.js';
+import { buildAiRouter } from './routes/ai.js';
 import { createAuthRepository } from './repositories/authRepository.js';
 import { createOrganizationRepository } from './repositories/organizationRepository.js';
 import { createUserRepository } from './repositories/userRepository.js';
@@ -32,8 +33,11 @@ import { createTaskRepository } from './repositories/taskRepository.js';
 import { createCommentRepository } from './repositories/commentRepository.js';
 import { createAttachmentRepository } from './repositories/attachmentRepository.js';
 import { createActivityRepository } from './repositories/activityRepository.js';
+import { createAiProviderRepository } from './repositories/aiProviderRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
+import { createAiGatewayService } from './services/aiGatewayService.js';
+import { createCredentialService } from './services/credentialService.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -75,6 +79,11 @@ export async function createApp({ pool } = {}) {
   const attachmentRepo = createAttachmentRepository(dbPool);
   const activityRepo   = createActivityRepository(dbPool);
 
+  // AI Gateway platform
+  const aiProviderRepo    = createAiProviderRepository(dbPool);
+  const credentialService = createCredentialService();
+  const aiGatewayService  = createAiGatewayService(aiProviderRepo);
+
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
@@ -94,6 +103,9 @@ export async function createApp({ pool } = {}) {
   app.use('/api/comments',    buildCommentsRouter(commentRepo, orgRepo));
   app.use('/api/attachments', buildAttachmentsRouter(attachmentRepo, orgRepo));
   app.use('/api/activity',    buildActivityRouter(activityRepo, orgRepo));
+
+  // AI Gateway & Provider Management
+  app.use('/api/ai', buildAiRouter(aiProviderRepo, aiGatewayService, credentialService, orgRepo, permService));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));
