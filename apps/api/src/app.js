@@ -12,12 +12,26 @@ import { buildUsersRouter } from './routes/users.js';
 import { buildTeamsRouter } from './routes/teams.js';
 import { buildRolesRouter } from './routes/roles.js';
 import { buildSettingsRouter } from './routes/settings.js';
+import { buildGoalsRouter } from './routes/goals.js';
+import { buildProjectsRouter } from './routes/projects.js';
+import { buildMilestonesRouter } from './routes/milestones.js';
+import { buildTasksRouter } from './routes/tasks.js';
+import { buildCommentsRouter } from './routes/comments.js';
+import { buildAttachmentsRouter } from './routes/attachments.js';
+import { buildActivityRouter } from './routes/activity.js';
 import { createAuthRepository } from './repositories/authRepository.js';
 import { createOrganizationRepository } from './repositories/organizationRepository.js';
 import { createUserRepository } from './repositories/userRepository.js';
 import { createTeamRepository } from './repositories/teamRepository.js';
 import { createRoleRepository } from './repositories/roleRepository.js';
 import { createSettingsRepository } from './repositories/settingsRepository.js';
+import { createGoalRepository } from './repositories/goalRepository.js';
+import { createProjectRepository } from './repositories/projectRepository.js';
+import { createMilestoneRepository } from './repositories/milestoneRepository.js';
+import { createTaskRepository } from './repositories/taskRepository.js';
+import { createCommentRepository } from './repositories/commentRepository.js';
+import { createAttachmentRepository } from './repositories/attachmentRepository.js';
+import { createActivityRepository } from './repositories/activityRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { config } from './config.js';
@@ -52,6 +66,15 @@ export async function createApp({ pool } = {}) {
   const permService = createPermissionService(dbPool);
   const configService = createConfigurationService(settingsRepo, orgRepo);
 
+  // Goals & Projects platform repositories
+  const goalRepo       = createGoalRepository(dbPool);
+  const projectRepo    = createProjectRepository(dbPool);
+  const milestoneRepo  = createMilestoneRepository(dbPool);
+  const taskRepo       = createTaskRepository(dbPool);
+  const commentRepo    = createCommentRepository(dbPool);
+  const attachmentRepo = createAttachmentRepository(dbPool);
+  const activityRepo   = createActivityRepository(dbPool);
+
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
@@ -62,6 +85,15 @@ export async function createApp({ pool } = {}) {
   app.use('/api/teams', buildTeamsRouter(teamRepo, orgRepo, permService));
   app.use('/api/roles', buildRolesRouter(roleRepo, orgRepo, permService));
   app.use('/api/settings', buildSettingsRouter(settingsRepo, configService, orgRepo, permService));
+
+  // Goals & Projects platform
+  app.use('/api/goals',       buildGoalsRouter(goalRepo, projectRepo, milestoneRepo, taskRepo, commentRepo, activityRepo, orgRepo));
+  app.use('/api/projects',    buildProjectsRouter(projectRepo, milestoneRepo, taskRepo, commentRepo, activityRepo, orgRepo));
+  app.use('/api/milestones',  buildMilestonesRouter(milestoneRepo, activityRepo, orgRepo));
+  app.use('/api/tasks',       buildTasksRouter(taskRepo, commentRepo, activityRepo, orgRepo));
+  app.use('/api/comments',    buildCommentsRouter(commentRepo, orgRepo));
+  app.use('/api/attachments', buildAttachmentsRouter(attachmentRepo, orgRepo));
+  app.use('/api/activity',    buildActivityRouter(activityRepo, orgRepo));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

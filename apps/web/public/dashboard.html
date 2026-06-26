@@ -1,18 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Sunave</title>
-    <link rel="stylesheet" href="/assets/css/styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Dashboard</h1>
-      <p class="helper">Authentication module complete. Business widgets are intentionally out of scope.</p>
-      <div class="links">
-        <a href="/account/profile">Profile</a>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Sunave AI OS</title>
+  <meta name="description" content="Executive Dashboard">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search across Sunave...">
       </div>
+      <div class="dash-header-actions">
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar">U</div>
+          <span class="dash-user-name">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item active"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div>
+            <h1 class="dash-page-title">Executive Dashboard</h1>
+            <div class="dash-page-subtitle">Your strategic overview.</div>
+          </div>
+          <div class="dash-page-actions">
+            <button class="dash-btn dash-btn-secondary" onclick="document.getElementById('widget-drawer').classList.add('open')">Add Widget</button>
+          </div>
+        </div>
+
+        <!-- The framework mounts widgets here -->
+        <div class="widget-grid" id="dashboard-widget-container"></div>
+      </main>
     </div>
-  </body>
+  </div>
+
+  <div class="dash-drawer" id="widget-drawer">
+    <div class="dash-drawer-header">
+      <div class="dash-drawer-title">Widget Catalog</div>
+      <button class="dash-btn dash-btn-ghost dash-btn-sm" onclick="document.getElementById('widget-drawer').classList.remove('open')">Close</button>
+    </div>
+    <div class="dash-drawer-body" id="widget-catalog-container"></div>
+  </div>
+
+  <script src="/assets/js/dashboard-framework.js"></script>
+  <script src="/assets/js/dashboard/widgets/goal-progress.js"></script>
+  <script src="/assets/js/dashboard/widgets/project-health.js"></script>
+  <script src="/assets/js/dashboard/widgets/my-tasks.js"></script>
+  <script src="/assets/js/dashboard/widgets/upcoming-milestones.js"></script>
+  <script src="/assets/js/dashboard/widgets/recent-projects.js"></script>
+  <script src="/assets/js/dashboard/widgets/overdue-tasks.js"></script>
+  <script src="/assets/js/dashboard/widgets/goal-timeline-widget.js"></script>
+  <script src="/assets/js/dashboard/widgets/budget-summary.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.DashboardRegistry.initialize();
+    });
+  </script>
+</body>
 </html>

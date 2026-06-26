@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Workspace - Sunave AI OS</title>
+  <meta name="description" content="Project workspace.">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dash-root">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a href="/dashboard" class="dash-header-logo">
+        <div class="dash-header-logo-mark">S</div>
+        Sunave AI
+      </a>
+      <div class="dash-header-divider"></div>
+      <div class="dash-search">
+        <span class="dash-search-icon">🔍</span>
+        <input type="text" placeholder="Search...">
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-user-btn" aria-label="User Menu">
+          <div class="dash-avatar">U</div>
+          <span class="dash-user-name">User</span>
+        </button>
+      </div>
+    </header>
+    <div class="dash-body">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          <div class="dash-nav-section-label">Platform</div>
+          <a href="/dashboard" class="dash-nav-item"><span class="dash-nav-icon">📊</span>Dashboard</a>
+          <a href="/goals" class="dash-nav-item"><span class="dash-nav-icon">🎯</span>Goals</a>
+          <a href="/projects" class="dash-nav-item active"><span class="dash-nav-icon">📁</span>Projects</a>
+          <a href="/tasks" class="dash-nav-item"><span class="dash-nav-icon">✓</span>Tasks</a>
+          <a href="/timeline" class="dash-nav-item"><span class="dash-nav-icon">📅</span>Timeline</a>
+        </nav>
+      </aside>
+      <main class="dash-main">
+        <div class="dash-page-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <a href="/projects" style="color:var(--dash-text-muted); text-decoration:none; font-size:0.85rem;">&larr; Back to Projects</a>
+          </div>
+          <div class="dash-page-actions">
+            <button class="dash-btn dash-btn-primary">Add Task</button>
+            <button class="dash-btn dash-btn-secondary">Add Milestone</button>
+          </div>
+        </div>
+        
+        <div class="detail-hero">
+          <div class="detail-hero-header">
+            <div class="detail-hero-icon" style="background: #6366f1; color: #fff;">🔌</div>
+            <div style="flex:1;">
+              <h1 class="detail-hero-title">API Gateway v2</h1>
+              <div class="detail-hero-meta">
+                <span class="status-badge status-active">Active</span>
+                <span class="health-badge health-on_track">On Track</span>
+                <span style="font-size:0.75rem; color:var(--dash-accent); font-weight:600;">Goal: Increase Revenue</span>
+              </div>
+            </div>
+            <div class="progress-ring" style="width:80px; height:80px;">
+              <svg width="80" height="80">
+                <circle class="progress-ring-track" stroke-width="6" cx="40" cy="40" r="34"></circle>
+                <circle class="progress-ring-fill" stroke="var(--dash-success)" stroke-width="6" cx="40" cy="40" r="34" style="stroke-dasharray: 213; stroke-dashoffset: 60;"></circle>
+              </svg>
+              <div class="progress-ring-label" style="font-size:1.1rem;">72%</div>
+            </div>
+          </div>
+          <div class="detail-hero-desc">Overhaul the API gateway for better rate limiting, authentication, and routing performance.</div>
+          <div class="detail-stats-row">
+            <div class="detail-stat">
+              <span class="detail-stat-label">Owner</span>
+              <span class="detail-stat-value">James Park</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-label">Timeline</span>
+              <span class="detail-stat-value">Feb 1 - May 30</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tabs">
+          <button class="dash-tab active" data-target="board">Board</button>
+          <button class="dash-tab" data-target="tasks">Tasks</button>
+          <button class="dash-tab" data-target="milestones">Milestones</button>
+          <button class="dash-tab" data-target="timeline">Timeline</button>
+          <button class="dash-tab" data-target="activity">Activity</button>
+        </div>
+
+        <div class="dash-tab-panel active" id="board">
+          <div class="kanban-board">
+            <!-- Todo -->
+            <div class="kanban-column">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title">Todo</span>
+                <span class="kanban-col-count">2</span>
+              </div>
+              <div class="kanban-col-body" id="col-todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="task-card" draggable="true" ondragstart="drag(event)" id="task-1">
+                  <div class="task-card-title">Define rate limiting rules</div>
+                  <div class="task-card-footer">
+                    <div class="task-assignee"><div class="task-assignee-avatar">JP</div></div>
+                    <div class="task-due">Apr 15</div>
+                  </div>
+                </div>
+                <div class="task-card" draggable="true" ondragstart="drag(event)" id="task-2">
+                  <div class="task-card-title">Setup staging environment</div>
+                  <div class="task-card-footer">
+                    <div class="task-assignee"><div class="task-assignee-avatar">SC</div></div>
+                    <div class="task-due">Apr 20</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- In Progress -->
+            <div class="kanban-column">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title">In Progress</span>
+                <span class="kanban-col-count">1</span>
+              </div>
+              <div class="kanban-col-body" id="col-inprog" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="task-card" draggable="true" ondragstart="drag(event)" id="task-3">
+                  <div class="task-card-title">Implement JWT validation middleware</div>
+                  <div class="task-card-footer">
+                    <div class="task-assignee"><div class="task-assignee-avatar">JP</div></div>
+                    <div class="task-due overdue">Apr 10</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Blocked -->
+            <div class="kanban-column">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title">Blocked</span>
+                <span class="kanban-col-count">0</span>
+              </div>
+              <div class="kanban-col-body" id="col-blocked" ondrop="drop(event)" ondragover="allowDrop(event)">
+              </div>
+            </div>
+            <!-- Review -->
+            <div class="kanban-column">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title">Review</span>
+                <span class="kanban-col-count">1</span>
+              </div>
+              <div class="kanban-col-body" id="col-review" ondrop="drop(event)" ondragover="allowDrop(event)">
+                 <div class="task-card" draggable="true" ondragstart="drag(event)" id="task-4">
+                  <div class="task-card-title">Load testing results analysis</div>
+                  <div class="task-card-footer">
+                    <div class="task-assignee"><div class="task-assignee-avatar">MT</div></div>
+                    <div class="task-due">Apr 12</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Done -->
+            <div class="kanban-column">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title">Done</span>
+                <span class="kanban-col-count">1</span>
+              </div>
+              <div class="kanban-col-body" id="col-done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                 <div class="task-card" draggable="true" ondragstart="drag(event)" id="task-5">
+                  <div class="task-card-title">Architecture review</div>
+                  <div class="task-card-footer">
+                    <div class="task-assignee"><div class="task-assignee-avatar">JP</div></div>
+                    <div class="task-due">Mar 15</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="tasks">
+          <div class="dash-empty">
+            <div class="dash-empty-title">Tasks List View</div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="milestones">
+          <div class="milestone-item">
+            <div class="milestone-check completed">✓</div>
+            <div class="milestone-body">
+              <div class="milestone-title">Design Complete</div>
+              <div class="milestone-meta">Due: Mar 1, 2026</div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-check"></div>
+            <div class="milestone-body">
+              <div class="milestone-title">Beta Release</div>
+              <div class="milestone-meta">Due: May 15, 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="timeline">
+          <div class="dash-empty">
+            <div class="dash-empty-title">Timeline</div>
+            <div class="dash-empty-text">Full timeline view at /timeline</div>
+            <a href="/timeline" class="dash-btn dash-btn-secondary" style="margin-top:1rem;">View Timeline</a>
+          </div>
+        </div>
+
+        <div class="dash-tab-panel" id="activity">
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon-wrap">📝</div>
+              <div class="activity-body">
+                <div class="activity-subject">James Park moved task "Architecture review" to Done</div>
+                <div class="activity-time">2 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    function allowDrop(ev) {
+      ev.preventDefault();
+      ev.currentTarget.classList.add('drag-over');
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+      ev.target.classList.add('dragging');
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const colBody = ev.currentTarget;
+      colBody.classList.remove('drag-over');
+      var data = ev.dataTransfer.getData("text");
+      var draggedEl = document.getElementById(data);
+      if(draggedEl && colBody.classList.contains('kanban-col-body')) {
+         colBody.appendChild(draggedEl);
+         draggedEl.classList.remove('dragging');
+         
+         // Update counts (mock logic)
+         document.querySelectorAll('.kanban-column').forEach(col => {
+           const count = col.querySelectorAll('.task-card').length;
+           col.querySelector('.kanban-col-count').textContent = count;
+         });
+      }
+    }
+    
+    document.addEventListener('dragend', (e) => {
+      e.target.classList.remove('dragging');
+      document.querySelectorAll('.kanban-col-body').forEach(el => el.classList.remove('drag-over'));
+    });
+    
+    document.addEventListener('dragleave', (e) => {
+      if(e.target.classList && e.target.classList.contains('kanban-col-body')) {
+        e.target.classList.remove('drag-over');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.dash-tab');
+      const panels = document.querySelectorAll('.dash-tab-panel');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.target).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
