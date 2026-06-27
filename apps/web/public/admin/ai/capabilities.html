@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Capabilities - Sunave</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-primary: #0f1117; --bg-secondary: #181b24; --bg-card: #1e2130;
+      --bg-hover: #262a3a; --border: #2a2e3e; --text-primary: #e8eaed;
+      --text-secondary: #9ca3b0; --text-muted: #6b7280; --accent: #6366f1;
+      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); }
+    .layout { display: flex; }
+    .sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 1.5rem; position: fixed; height: 100vh; overflow-y: auto; }
+    .sidebar h2 { font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; color: var(--text-secondary); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+    .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-item.active { background: var(--accent); color: white; }
+    .nav-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 1rem; margin-bottom: 0.5rem; margin-top: 1rem; }
+    .main { margin-left: 260px; flex: 1; padding: 2rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.5rem; font-weight: 600; }
+    .header p { color: var(--text-secondary); font-size: 0.9rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+    .stat-card .label { color: var(--text-muted); font-size: 0.8rem; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; }
+    .category-group { margin-bottom: 2rem; }
+    .category-title { font-size: 1rem; font-weight: 600; color: var(--accent); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+    .badge.success { background: rgba(34,197,94,0.15); color: var(--success); }
+    .badge.muted { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+    .cap-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .cap-card:last-child { margin-bottom: 0; }
+    .provider-map { display: flex; gap: 4px; flex-wrap: wrap; }
+    .provider-tag { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; background: var(--bg-hover); color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h2>🤖 AI OS</h2>
+      <div class="nav-label">Management</div>
+      <a href="/admin/ai/index.html" class="nav-item"><i data-lucide="cpu"></i> Overview</a>
+      <a href="/admin/ai/providers.html" class="nav-item"><i data-lucide="server"></i> Providers</a>
+      <a href="/admin/ai/models.html" class="nav-item"><i data-lucide="layers"></i> Models</a>
+      <a href="/admin/ai/capabilities.html" class="nav-item active"><i data-lucide="zap"></i> Capabilities</a>
+      <a href="/admin/ai/policies.html" class="nav-item"><i data-lucide="route"></i> Policies</a>
+      <div class="nav-label">Monitoring</div>
+      <a href="/admin/ai/health.html" class="nav-item"><i data-lucide="heart-pulse"></i> Health</a>
+      <a href="/admin/ai/usage.html" class="nav-item"><i data-lucide="activity"></i> Usage</a>
+      <a href="/admin/ai/costs.html" class="nav-item"><i data-lucide="dollar-sign"></i> Costs</a>
+      <a href="/admin/ai/settings.html" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+    </nav>
+    <div class="main">
+      <div class="header">
+        <div><h1>AI Capabilities</h1><p>Capability registry and provider mapping</p></div>
+      </div>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div id="capabilityContent"><p style="color:var(--text-muted);">Loading capabilities...</p></div>
+    </div>
+  </div>
+  <script>
+    lucide.createIcons();
+    async function load() {
+      const data = await (await fetch('/api/ai/capabilities')).json();
+      if (!data.success) return;
+      const { capabilities, categories, providerCapabilityMap } = data.data || {};
+      if (!capabilities) return;
+
+      const enabled = capabilities.filter(c => c.enabled).length;
+      const system = capabilities.filter(c => c.isSystem).length;
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card"><div class="label">Total Capabilities</div><div class="value">${capabilities.length}</div></div>
+        <div class="stat-card"><div class="label">Enabled</div><div class="value">${enabled}</div></div>
+        <div class="stat-card"><div class="label">System</div><div class="value">${system}</div></div>
+        <div class="stat-card"><div class="label">Categories</div><div class="value">${categories ? categories.length : '—'}</div></div>`;
+
+      const content = document.getElementById('capabilityContent');
+      if (categories) {
+        content.innerHTML = categories.map(cat => `
+          <div class="category-group">
+            <div class="category-title"><i data-lucide="folder" style="width:16px;height:16px"></i> ${cat.category} (${cat.count})</div>
+            ${(cat.capabilities || []).map(c => {
+              const providers = providerCapabilityMap ? Object.entries(providerCapabilityMap).filter(([,caps]) => caps.includes(c.name)).map(([p]) => p) : [];
+              return `<div class="cap-card">
+                <div><strong>${c.display_name || c.name}</strong> <span class="badge ${c.enabled ? 'success' : 'muted'}">${c.enabled ? 'Enabled' : 'Disabled'}</span></div>
+                <div class="provider-map">${providers.map(p => `<span class="provider-tag">${p}</span>`).join('') || '<span style="color:var(--text-muted);font-size:0.75rem;">No providers</span>'}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        `).join('');
+        lucide.createIcons();
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

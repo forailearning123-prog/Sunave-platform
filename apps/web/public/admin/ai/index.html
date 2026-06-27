@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Management Platform - Sunave</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #181b24;
+      --bg-card: #1e2130;
+      --bg-hover: #262a3a;
+      --border: #2a2e3e;
+      --text-primary: #e8eaed;
+      --text-secondary: #9ca3b0;
+      --text-muted: #6b7280;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border);
+      padding: 1.5rem; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto;
+    }
+    .sidebar h2 { font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .sidebar h2 small { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem;
+      color: var(--text-secondary); text-decoration: none; border-radius: 8px;
+      font-size: 0.9rem; transition: all 0.15s; margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-item.active { background: var(--accent); color: white; }
+    .nav-item i { width: 18px; height: 18px; }
+    .nav-divider { border-top: 1px solid var(--border); margin: 1rem 0; }
+    .nav-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 1rem; margin-bottom: 0.5rem; }
+    .main { margin-left: 260px; flex: 1; padding: 2rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.5rem; font-weight: 600; }
+    .header p { color: var(--text-secondary); font-size: 0.9rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+    .stat-card .label { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.25rem; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; }
+    .stat-card .sub { color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.25rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .card h3 i { width: 18px; height: 18px; color: var(--accent); }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .status-dot.healthy { background: var(--success); }
+    .status-dot.degraded { background: var(--warning); }
+    .status-dot.offline { background: var(--danger); }
+    .status-dot.unknown { background: var(--text-muted); }
+    .provider-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+    .provider-item:last-child { border-bottom: none; }
+    .capability-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; background: var(--bg-hover); color: var(--text-secondary); }
+    .action-btn { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); cursor: pointer; font-size: 0.85rem; transition: all 0.15s; }
+    .action-btn:hover { background: var(--bg-hover); border-color: var(--accent); }
+    .action-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+    .action-btn.primary:hover { background: var(--accent-hover); }
+    .quick-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+    .badge.success { background: rgba(34,197,94,0.15); color: var(--success); }
+    .badge.warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .badge.danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .badge.info { background: rgba(59,130,246,0.15); color: var(--info); }
+    .badge.muted { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+    .failure-item { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    .failure-item:last-child { border-bottom: none; }
+    .failure-item strong { color: var(--danger); }
+    .failure-item .time { color: var(--text-muted); font-size: 0.75rem; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; position: relative; height: auto; }
+      .main { margin-left: 0; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h2>🤖 AI OS <small>v2.0</small></h2>
+      <div class="nav-label">Management</div>
+      <a href="/admin/ai/index.html" class="nav-item active"><i data-lucide="cpu"></i> Overview</a>
+      <a href="/admin/ai/providers.html" class="nav-item"><i data-lucide="server"></i> Providers</a>
+      <a href="/admin/ai/models.html" class="nav-item"><i data-lucide="layers"></i> Models</a>
+      <a href="/admin/ai/capabilities.html" class="nav-item"><i data-lucide="zap"></i> Capabilities</a>
+      <a href="/admin/ai/policies.html" class="nav-item"><i data-lucide="route"></i> Routing Policies</a>
+      <div class="nav-divider"></div>
+      <div class="nav-label">Monitoring</div>
+      <a href="/admin/ai/health.html" class="nav-item"><i data-lucide="heart-pulse"></i> Health</a>
+      <a href="/admin/ai/usage.html" class="nav-item"><i data-lucide="activity"></i> Usage</a>
+      <a href="/admin/ai/costs.html" class="nav-item"><i data-lucide="dollar-sign"></i> Costs</a>
+      <a href="/admin/ai/settings.html" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+    </nav>
+
+    <div class="main">
+      <div class="header">
+        <div>
+          <h1>AI Management Platform</h1>
+          <p>Provider registry, model catalog, capability mapping, and operational dashboard</p>
+        </div>
+        <div class="quick-actions">
+          <button class="action-btn" onclick="refreshModels()"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> Refresh Models</button>
+          <button class="action-btn primary" onclick="testGateway()"><i data-lucide="play" style="width:14px;height:14px"></i> Test Gateway</button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="label">Providers</div><div class="value" id="providerCount">—</div><div class="sub" id="providerSub">Loading...</div></div>
+        <div class="stat-card"><div class="label">Models Registered</div><div class="value" id="modelCount">—</div><div class="sub" id="modelSub">Loading...</div></div>
+        <div class="stat-card"><div class="label">Capabilities</div><div class="value" id="capabilityCount">—</div><div class="sub" id="capabilitySub">Loading...</div></div>
+        <div class="stat-card"><div class="label">Monthly Cost</div><div class="value" id="monthlyCost">—</div><div class="sub" id="costSub">Estimated USD</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3><i data-lucide="server"></i> Provider Health</h3>
+          <div id="providerHealthList"><p style="color:var(--text-muted);font-size:0.85rem;">Loading provider status...</p></div>
+        </div>
+        <div class="card">
+          <h3><i data-lucide="layers"></i> Top Models</h3>
+          <div id="topModelsList"><p style="color:var(--text-muted);font-size:0.85rem;">Loading top models...</p></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3><i data-lucide="alert-triangle"></i> Recent Failures</h3>
+          <div id="recentFailuresList"><p style="color:var(--text-muted);font-size:0.85rem;">Loading failures...</p></div>
+        </div>
+        <div class="card">
+          <h3><i data-lucide="zap"></i> Capability Usage</h3>
+          <div id="capabilityUsage"><p style="color:var(--text-muted);font-size:0.85rem;">Loading capability usage...</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    async function api(path) {
+      try {
+        const res = await fetch(path);
+        const data = await res.json();
+        return data.success ? data.data : null;
+      } catch { return null; }
+    }
+
+    async function loadDashboard() {
+      // Load providers
+      const provData = await api('/api/ai/providers');
+      if (provData) {
+        const providers = provData.providers || [];
+        document.getElementById('providerCount').textContent = providers.length;
+        const healthy = providers.filter(p => p.healthStatus === 'healthy').length;
+        const offline = providers.filter(p => p.healthStatus === 'offline').length;
+        document.getElementById('providerSub').textContent = `${healthy} healthy, ${offline} offline`;
+
+        const healthHtml = providers.map(p => `
+          <div class="provider-item">
+            <span><span class="status-dot ${p.healthStatus || 'unknown'}"></span>${p.name}</span>
+            <span class="badge ${p.healthStatus === 'healthy' ? 'success' : p.healthStatus === 'degraded' ? 'warning' : p.healthStatus === 'offline' ? 'danger' : 'muted'}">${p.healthStatus || 'unknown'}</span>
+          </div>
+        `).join('');
+        document.getElementById('providerHealthList').innerHTML = healthHtml || '<p style="color:var(--text-muted);font-size:0.85rem;">No providers registered.</p>';
+      }
+
+      // Load models
+      const modelData = await api('/api/ai/models');
+      if (modelData) {
+        const models = modelData.models || [];
+        document.getElementById('modelCount').textContent = models.length;
+        const active = models.filter(m => m.status === 'active').length;
+        document.getElementById('modelSub').textContent = `${active} active, ${models.length - active} others`;
+      }
+
+      // Load capabilities
+      const capData = await api('/api/ai/capabilities');
+      if (capData) {
+        const caps = capData.capabilities || [];
+        document.getElementById('capabilityCount').textContent = caps.length;
+        const enabled = caps.filter(c => c.enabled).length;
+        document.getElementById('capabilitySub').textContent = `${enabled} enabled`;
+
+        const capHtml = caps.map(c => `
+          <div class="provider-item">
+            <span><i data-lucide="${c.icon || 'zap'}" style="width:14px;height:14px;color:var(--accent)"></i> ${c.displayName}</span>
+            <span class="badge ${c.enabled ? 'success' : 'muted'}">${c.enabled ? 'Enabled' : 'Disabled'}</span>
+          </div>
+        `).join('');
+        document.getElementById('capabilityUsage').innerHTML = capHtml || '<p style="color:var(--text-muted);font-size:0.85rem;">No capabilities defined.</p>';
+        lucide.createIcons();
+      }
+
+      // Load statistics
+      const statsData = await api('/api/ai/statistics');
+      if (statsData) {
+        const mc = statsData.monthlyCost;
+        document.getElementById('monthlyCost').textContent = mc ? `$${Number(mc.totalEstimated || 0).toFixed(2)}` : '$0.00';
+        document.getElementById('costSub').textContent = mc ? `${Number(mc.totalActual || 0).toFixed(2)} actual` : 'Estimated USD';
+
+        const topModels = statsData.topModels || [];
+        const modelsHtml = topModels.map(m => `
+          <div class="provider-item">
+            <span>${m.display_name || m.name}</span>
+            <span style="color:var(--text-secondary);font-size:0.85rem;">${m.total_requests || 0} requests</span>
+          </div>
+        `).join('');
+        document.getElementById('topModelsList').innerHTML = modelsHtml || '<p style="color:var(--text-muted);font-size:0.85rem;">No usage data yet.</p>';
+
+        const failures = statsData.recentFailures || [];
+        const failuresHtml = failures.slice(0, 5).map(f => `
+          <div class="failure-item">
+            <strong>${f.error_message || 'Unknown error'}</strong> — ${f.provider_name || 'Unknown'}
+            <div class="time">${new Date(f.created_at).toLocaleString()}</div>
+          </div>
+        `).join('');
+        document.getElementById('recentFailuresList').innerHTML = failuresHtml || '<p style="color:var(--text-muted);font-size:0.85rem;">No recent failures.</p>';
+      }
+    }
+
+    async function refreshModels() {
+      const res = await fetch('/api/ai/models/refresh', { method: 'POST' });
+      if (res.ok) {
+        alert('Models refreshed successfully.');
+        loadDashboard();
+      } else {
+        alert('Failed to refresh models.');
+      }
+    }
+
+    async function testGateway() {
+      const res = await fetch('/api/ai/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ capability: 'chat', messages: [{ role: 'user', content: 'Hello, AI gateway test.' }] })
+      });
+      if (res.ok) {
+        alert('Gateway test passed! Check console for details.');
+      } else {
+        alert('Gateway test failed.');
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

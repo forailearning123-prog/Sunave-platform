@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Usage - Sunave</title><script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--bg-primary:#0f1117;--bg-secondary:#181b24;--bg-card:#1e2130;--bg-hover:#262a3a;--border:#2a2e3e;--text-primary:#e8eaed;--text-secondary:#9ca3b0;--text-muted:#6b7280;--accent:#6366f1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);}
+.layout{display:flex;}
+.sidebar{width:260px;background:var(--bg-secondary);border-right:1px solid var(--border);padding:1.5rem;position:fixed;height:100vh;overflow-y:auto;}
+.sidebar h2{font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:1.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1rem;color:var(--text-secondary);text-decoration:none;border-radius:8px;font-size:0.9rem;}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary);}
+.nav-item.active{background:var(--accent);color:white;}
+.nav-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding:0 1rem;margin-bottom:0.5rem;margin-top:1rem;}
+.main{margin-left:260px;flex:1;padding:2rem;}
+.header{margin-bottom:2rem;}
+.header h1{font-size:1.5rem;font-weight:600;}
+.header p{color:var(--text-secondary);font-size:0.9rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.stat-card .label{color:var(--text-muted);font-size:0.8rem;}
+.stat-card .value{font-size:1.5rem;font-weight:700;}
+.table{width:100%;border-collapse:collapse;}
+.table th{text-align:left;padding:0.75rem 1rem;color:var(--text-muted);font-size:0.8rem;font-weight:600;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.table td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);font-size:0.85rem;}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+<h2>🤖 AI OS</h2>
+<div class="nav-label">Management</div>
+<a href="/admin/ai/index.html" class="nav-item"><i data-lucide="cpu"></i> Overview</a>
+<a href="/admin/ai/providers.html" class="nav-item"><i data-lucide="server"></i> Providers</a>
+<a href="/admin/ai/models.html" class="nav-item"><i data-lucide="layers"></i> Models</a>
+<a href="/admin/ai/capabilities.html" class="nav-item"><i data-lucide="zap"></i> Capabilities</a>
+<a href="/admin/ai/policies.html" class="nav-item"><i data-lucide="route"></i> Policies</a>
+<div class="nav-label">Monitoring</div>
+<a href="/admin/ai/health.html" class="nav-item"><i data-lucide="heart-pulse"></i> Health</a>
+<a href="/admin/ai/usage.html" class="nav-item active"><i data-lucide="activity"></i> Usage</a>
+<a href="/admin/ai/costs.html" class="nav-item"><i data-lucide="dollar-sign"></i> Costs</a>
+<a href="/admin/ai/settings.html" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+</nav>
+<div class="main">
+<div class="header"><h1>AI Usage</h1><p>Token consumption, request counts, and usage patterns</p></div>
+<div class="stats-grid" id="usageStats"></div>
+<table class="table">
+<thead><tr><th>Date</th><th>Requests</th><th>Input Tokens</th><th>Output Tokens</th><th>Total</th><th>Success</th><th>Errors</th><th>Error Rate</th></tr></thead>
+<tbody id="usageBody"><tr><td colspan="8" style="color:var(--text-muted);text-align:center;padding:2rem;">Loading...</td></tr></tbody>
+</table>
+</div></div>
+<script>
+lucide.createIcons();
+async function load(){
+  const res=await(await fetch('/api/ai/statistics')).json();
+  if(!res.success)return;
+  const d=res.data;
+  if(d.summary){
+    document.getElementById('usageStats').innerHTML=`
+      <div class="stat-card"><div class="label">Total Requests</div><div class="value">${d.summary.total_requests||0}</div></div>
+      <div class="stat-card"><div class="label">Input Tokens</div><div class="value">${(d.summary.total_input_tokens||0).toLocaleString()}</div></div>
+      <div class="stat-card"><div class="label">Output Tokens</div><div class="value">${(d.summary.total_output_tokens||0).toLocaleString()}</div></div>
+      <div class="stat-card"><div class="label">Error Rate</div><div class="value">${Number(d.summary.total_errors||0)>0?((d.summary.total_errors/d.summary.total_requests)*100).toFixed(2):'0'}%</div></div>`;
+  }
+  if(d.usage&&d.usage.length>0){
+    document.getElementById('usageBody').innerHTML=d.usage.map(u=>`
+      <tr><td>${u.period?new Date(u.period).toLocaleDateString():'—'}</td>
+      <td>${u.total_requests||0}</td>
+      <td>${(u.total_input_tokens||0).toLocaleString()}</td>
+      <td>${(u.total_output_tokens||0).toLocaleString()}</td>
+      <td>${(u.total_tokens||0).toLocaleString()}</td>
+      <td>${u.total_success||0}</td>
+      <td>${u.total_errors||0}</td>
+      <td>${u.error_rate||'0'}%</td></tr>
+    `).join('');
+  }
+}
+load();
+</script>
+</body>
+</html>

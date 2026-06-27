@@ -28,6 +28,9 @@ import { createCommentRepository } from './repositories/commentRepository.js';
 import { createAttachmentRepository } from './repositories/attachmentRepository.js';
 import { createActivityRepository } from './repositories/activityRepository.js';
 import { createAiProviderRepository } from './repositories/aiProviderRepository.js';
+import { createAiModelRepository } from './repositories/aiModelRepository.js';
+import { createAiCapabilityRepository } from './repositories/aiCapabilityRepository.js';
+import { createAiUsageRepository } from './repositories/aiUsageRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { createAiGatewayService } from './services/aiGatewayService.js';
@@ -74,9 +77,12 @@ export async function createApp({ pool } = {}) {
   const activityRepo   = createActivityRepository(dbPool);
 
   // AI Gateway platform
-  const aiProviderRepo    = createAiProviderRepository(dbPool);
-  const credentialService = createCredentialService();
-  const aiGatewayService  = createAiGatewayService(aiProviderRepo);
+  const aiProviderRepo      = createAiProviderRepository(dbPool);
+  const aiModelRepo         = createAiModelRepository(dbPool);
+  const aiCapabilityRepo    = createAiCapabilityRepository(dbPool);
+  const aiUsageRepo         = createAiUsageRepository(dbPool);
+  const credentialService   = createCredentialService();
+  const aiGatewayService    = createAiGatewayService(aiProviderRepo);
 
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
@@ -91,6 +97,10 @@ export async function createApp({ pool } = {}) {
 
   const dashboardService = createDashboardService();
   app.use('/api/dashboard', buildDashboardRouter(dashboardService));
+  app.use('/api/ai', buildAiRouter(
+    aiProviderRepo, aiGatewayService, credentialService, orgRepo, permService,
+    aiModelRepo, aiCapabilityRepo, aiUsageRepo
+  ));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

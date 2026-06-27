@@ -1,266 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Health Dashboard — Sunave Admin</title>
-    <meta name="description" content="Real-time health monitoring for all AI providers in the Sunave Gateway." />
-    <link rel="stylesheet" href="/assets/css/styles.css" />
-    <style>
-      :root {
-        --green: #059669; --green-bg: #d1fae5;
-        --orange: #d97706; --orange-bg: #fef3c7;
-        --red: #dc2626;   --red-bg: #fee2e2;
-        --blue: #2563eb;  --blue-bg: #dbeafe;
-        --gray: #6b7280;  --gray-bg: #f3f4f6;
-      }
-
-      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
-      .page-header h1 { margin: 0; }
-
-      /* Summary bar */
-      .summary-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-      .summary-card {
-        flex: 1; min-width: 120px;
-        background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
-        padding: 0.9rem 1.1rem; text-align: center;
-      }
-      .summary-card .val { font-size: 2rem; font-weight: 700; line-height: 1; }
-      .summary-card .lbl { font-size: 0.78rem; color: var(--gray); margin-top: 0.3rem; }
-      .summary-card.healthy .val { color: var(--green); }
-      .summary-card.degraded .val { color: var(--orange); }
-      .summary-card.offline .val  { color: var(--red); }
-
-      /* Health cards */
-      .health-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.1rem; }
-
-      .health-card {
-        background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
-        padding: 1.1rem; display: flex; flex-direction: column; gap: 0.6rem;
-      }
-      .health-card.healthy  { border-left: 4px solid var(--green); }
-      .health-card.degraded { border-left: 4px solid var(--orange); }
-      .health-card.offline  { border-left: 4px solid var(--red); }
-      .health-card.unknown  { border-left: 4px solid #d1d5db; }
-
-      .hcard-header { display: flex; justify-content: space-between; align-items: flex-start; }
-      .hcard-header h3 { margin: 0; font-size: 0.95rem; }
-      .ptype { font-size: 0.72rem; color: var(--gray); font-family: monospace; }
-
-      .status-pill {
-        font-size: 0.73rem; font-weight: 700; padding: 0.2rem 0.65rem;
-        border-radius: 999px; letter-spacing: 0.02em;
-      }
-      .pill-healthy  { background: var(--green-bg);  color: var(--green); }
-      .pill-degraded { background: var(--orange-bg); color: var(--orange); }
-      .pill-offline  { background: var(--red-bg);    color: var(--red); }
-      .pill-unknown  { background: var(--gray-bg);   color: var(--gray); }
-
-      .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
-      .metric { text-align: center; }
-      .metric .mval { font-size: 1.1rem; font-weight: 700; color: #111827; }
-      .metric .mlbl { font-size: 0.7rem; color: var(--gray); }
-
-      .progress-bar-wrap { height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
-      .progress-bar { height: 100%; border-radius: 3px; transition: width 0.4s; }
-      .bar-healthy { background: var(--green); }
-      .bar-degraded { background: var(--orange); }
-      .bar-offline  { background: var(--red); }
-
-      .last-check { font-size: 0.74rem; color: var(--gray); }
-
-      /* Controls */
-      .controls { display: flex; gap: 0.75rem; align-items: center; }
-      .auto-refresh { font-size: 0.82rem; display: flex; align-items: center; gap: 0.4rem; }
-      .countdown { font-weight: 700; color: var(--blue); min-width: 2ch; }
-
-      .btn-refresh { font-size: 0.82rem; padding: 0.4rem 0.9rem; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; }
-      .btn-refresh:hover { background: #f3f4f6; }
-
-      #gateway-status { font-size: 0.9rem; margin-bottom: 1rem; }
-      .status-banner { padding: 0.6rem 1rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.5rem; }
-      .banner-healthy  { background: var(--green-bg);  color: var(--green); }
-      .banner-degraded { background: var(--orange-bg); color: var(--orange); }
-      .banner-offline  { background: var(--red-bg);    color: var(--red); }
-    </style>
-  </head>
-  <body>
-    <div class="container wide">
-      <div class="page-header">
-        <div>
-          <h1>📊 AI Health Dashboard</h1>
-          <p style="margin:0.25rem 0 0;color:#6b7280;font-size:0.9rem;">
-            Real-time health monitoring for all AI providers.
-          </p>
-        </div>
-        <div class="controls">
-          <span class="auto-refresh">Auto-refresh in <span class="countdown" id="countdown">30</span>s</span>
-          <button class="btn-refresh" id="btn-refresh">🔄 Refresh Now</button>
-          <a href="/admin/ai/providers" class="btn-refresh">⚙ Providers</a>
-        </div>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Health - Sunave</title><script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--bg-primary:#0f1117;--bg-secondary:#181b24;--bg-card:#1e2130;--bg-hover:#262a3a;--border:#2a2e3e;--text-primary:#e8eaed;--text-secondary:#9ca3b0;--text-muted:#6b7280;--accent:#6366f1;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);}
+.layout{display:flex;}
+.sidebar{width:260px;background:var(--bg-secondary);border-right:1px solid var(--border);padding:1.5rem;position:fixed;height:100vh;overflow-y:auto;}
+.sidebar h2{font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:1.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1rem;color:var(--text-secondary);text-decoration:none;border-radius:8px;font-size:0.9rem;}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary);}
+.nav-item.active{background:var(--accent);color:white;}
+.nav-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding:0 1rem;margin-bottom:0.5rem;margin-top:1rem;}
+.main{margin-left:260px;flex:1;padding:2rem;}
+.header{margin-bottom:2rem;}
+.header h1{font-size:1.5rem;font-weight:600;}
+.header p{color:var(--text-secondary);font-size:0.9rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.stat-card .label{color:var(--text-muted);font-size:0.8rem;}
+.stat-card .value{font-size:1.5rem;font-weight:700;}
+.stat-card .sub{color:var(--text-secondary);font-size:0.8rem;margin-top:0.25rem;}
+.provider-health{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;}
+.health-dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;}
+.health-dot.healthy{background:var(--success);}
+.health-dot.degraded{background:var(--warning);}
+.health-dot.offline{background:var(--danger);}
+.health-dot.unknown{background:var(--text-muted);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600;}
+.badge.success{background:rgba(34,197,94,0.15);color:var(--success);}
+.badge.danger{background:rgba(239,68,68,0.15);color:var(--danger);}
+.badge.warning{background:rgba(245,158,11,0.15);color:var(--warning);}
+.badge.muted{background:rgba(107,114,128,0.15);color:var(--text-muted);}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+<h2>🤖 AI OS</h2>
+<div class="nav-label">Management</div>
+<a href="/admin/ai/index.html" class="nav-item"><i data-lucide="cpu"></i> Overview</a>
+<a href="/admin/ai/providers.html" class="nav-item"><i data-lucide="server"></i> Providers</a>
+<a href="/admin/ai/models.html" class="nav-item"><i data-lucide="layers"></i> Models</a>
+<a href="/admin/ai/capabilities.html" class="nav-item"><i data-lucide="zap"></i> Capabilities</a>
+<a href="/admin/ai/policies.html" class="nav-item"><i data-lucide="route"></i> Policies</a>
+<div class="nav-label">Monitoring</div>
+<a href="/admin/ai/health.html" class="nav-item active"><i data-lucide="heart-pulse"></i> Health</a>
+<a href="/admin/ai/usage.html" class="nav-item"><i data-lucide="activity"></i> Usage</a>
+<a href="/admin/ai/costs.html" class="nav-item"><i data-lucide="dollar-sign"></i> Costs</a>
+<a href="/admin/ai/settings.html" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+</nav>
+<div class="main">
+<div class="header"><h1>Provider Health</h1><p>Real-time health monitoring for all AI providers</p></div>
+<div class="stats-grid" id="healthSummary"></div>
+<div id="providerHealthList"><p style="color:var(--text-muted);">Loading...</p></div>
+</div></div>
+<script>
+lucide.createIcons();
+async function load(){
+  const res=await(await fetch('/api/ai/health/summary')).json();
+  if(!res.success)return;
+  const d=res.data;
+  if(d.summary){
+    document.getElementById('healthSummary').innerHTML=`
+      <div class="stat-card"><div class="label">Total Providers</div><div class="value">${d.summary.total}</div></div>
+      <div class="stat-card"><div class="label">Healthy</div><div class="value" style="color:var(--success)">${d.summary.healthy||0}</div></div>
+      <div class="stat-card"><div class="label">Degraded</div><div class="value" style="color:var(--warning)">${d.summary.degraded||0}</div></div>
+      <div class="stat-card"><div class="label">Offline</div><div class="value" style="color:var(--danger)">${d.summary.offline||0}</div></div>`;
+  }
+  if(d.providers){
+    document.getElementById('providerHealthList').innerHTML=d.providers.map(p=>`
+      <div class="provider-health">
+        <div><span class="health-dot ${p.healthStatus||'unknown'}"></span><strong>${p.name}</strong> <span style="color:var(--text-secondary);font-size:0.85rem;">${p.type}</span></div>
+        <div><span class="badge ${p.healthStatus==='healthy'?'success':p.healthStatus==='degraded'?'warning':p.healthStatus==='offline'?'danger':'muted'}">${p.healthStatus||'unknown'}</span>
+        ${p.lastHealthCheck?`<span style="color:var(--text-muted);font-size:0.75rem;margin-left:8px;">${new Date(p.lastHealthCheck).toLocaleString()}</span>`:''}</div>
       </div>
-
-      <div id="gateway-status"></div>
-
-      <div class="summary-bar" id="summary-bar">
-        <div class="summary-card healthy"><div class="val" id="sum-healthy">—</div><div class="lbl">Healthy</div></div>
-        <div class="summary-card degraded"><div class="val" id="sum-degraded">—</div><div class="lbl">Degraded</div></div>
-        <div class="summary-card offline"><div class="val" id="sum-offline">—</div><div class="lbl">Offline</div></div>
-        <div class="summary-card"><div class="val" id="sum-total">—</div><div class="lbl">Total Providers</div></div>
-      </div>
-
-      <div class="health-grid" id="health-grid">
-        <p style="color:#6b7280">Loading health data…</p>
-      </div>
-    </div>
-
-    <div class="container links">
-      <a href="/admin/ai/providers">← Providers</a>
-      <a href="/admin/ai/configuration">Configuration</a>
-    </div>
-
-    <script type="module">
-      import { request } from '/assets/js/auth-client.js';
-
-      const grid     = document.getElementById('health-grid');
-      const statusEl = document.getElementById('gateway-status');
-      let countdownEl = document.getElementById('countdown');
-      let timer, countdownTimer, countdown = 30;
-
-      const PILL = {
-        healthy:  'pill-healthy',
-        degraded: 'pill-degraded',
-        offline:  'pill-offline',
-        unknown:  'pill-unknown'
-      };
-
-      function formatLatency(ms) {
-        if (ms == null) return '—';
-        return ms < 1000 ? `${ms}ms` : `${(ms/1000).toFixed(1)}s`;
-      }
-
-      function formatRate(rate) {
-        if (rate == null) return '—';
-        return `${(rate * 100).toFixed(1)}%`;
-      }
-
-      function barClass(rate) {
-        if (rate == null) return 'bar-healthy';
-        if (rate >= 0.9) return 'bar-healthy';
-        if (rate >= 0.5) return 'bar-degraded';
-        return 'bar-offline';
-      }
-
-      function timeSince(iso) {
-        if (!iso) return 'Never';
-        const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
-        if (diff < 60) return `${diff}s ago`;
-        if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-        return `${Math.floor(diff/3600)}h ago`;
-      }
-
-      function renderHealth(data) {
-        const { health } = data;
-        const { summary, providers: provResults, status, checkedAt } = health;
-
-        // Gateway banner
-        const bannerClass = { healthy: 'banner-healthy', degraded: 'banner-degraded', offline: 'banner-offline' }[status] || '';
-        const icon = { healthy: '✅', degraded: '⚠️', offline: '🔴' }[status] || '❓';
-        statusEl.innerHTML = `
-          <div class="status-banner ${bannerClass}">
-            ${icon} Gateway is <strong>${status.toUpperCase()}</strong>
-            &nbsp;·&nbsp; Last checked: ${timeSince(checkedAt)}
-          </div>`;
-
-        // Summary
-        document.getElementById('sum-healthy').textContent  = summary.healthy;
-        document.getElementById('sum-degraded').textContent = summary.degraded;
-        document.getElementById('sum-offline').textContent  = summary.offline;
-        document.getElementById('sum-total').textContent    = summary.total;
-
-        // Provider cards (pair with provider list for names)
-        request('/api/ai/providers', 'GET').then(pd => {
-          const providerMap = {};
-          (pd.providers || []).forEach(p => { providerMap[p.id] = p; });
-
-          grid.innerHTML = provResults.map(r => {
-            const prov = providerMap[r.providerId] || {};
-            const status2 = r.available ? 'healthy' : 'offline';
-            const pill = PILL[status2];
-            const rate = r.successRate ?? (r.available ? 1 : 0);
-            const barCls = barClass(rate);
-
-            return `<div class="health-card ${status2}">
-              <div class="hcard-header">
-                <div>
-                  <h3>${r.providerName || prov.name || '—'}</h3>
-                  <div class="ptype">${prov.type || '—'}</div>
-                </div>
-                <span class="status-pill ${pill}">${status2.toUpperCase()}</span>
-              </div>
-
-              <div class="metrics">
-                <div class="metric">
-                  <div class="mval">${r.available ? '✓' : '✕'}</div>
-                  <div class="mlbl">Available</div>
-                </div>
-                <div class="metric">
-                  <div class="mval">${formatLatency(r.latencyMs)}</div>
-                  <div class="mlbl">Latency</div>
-                </div>
-                <div class="metric">
-                  <div class="mval">${formatRate(rate)}</div>
-                  <div class="mlbl">Success Rate</div>
-                </div>
-              </div>
-
-              <div>
-                <div style="font-size:0.72rem;color:#6b7280;margin-bottom:3px;">Success Rate</div>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar ${barCls}" style="width:${(rate * 100).toFixed(1)}%"></div>
-                </div>
-              </div>
-
-              ${r.error ? `<div style="font-size:0.78rem;color:#dc2626;">⚠ ${r.error}</div>` : ''}
-              <div class="last-check">Last check: ${timeSince(r.checkedAt || checkedAt)}</div>
-            </div>`;
-          }).join('') || '<div style="grid-column:1/-1;color:#6b7280;text-align:center;padding:2rem;">No health data yet. Click Refresh.</div>';
-        }).catch(() => {
-          grid.innerHTML = '<div style="color:#dc2626">Failed to load provider details.</div>';
-        });
-      }
-
-      async function load() {
-        try {
-          const data = await request('/api/ai/health', 'GET');
-          renderHealth(data);
-        } catch (err) {
-          if (err.message?.includes('Authentication')) { window.location.href = '/auth/login'; return; }
-          grid.innerHTML = `<p style="color:#dc2626">Failed to load health data: ${err.message}</p>`;
-        }
-      }
-
-      function startCountdown() {
-        clearInterval(countdownTimer);
-        countdown = 30;
-        countdownEl.textContent = countdown;
-        countdownTimer = setInterval(() => {
-          countdown--;
-          countdownEl.textContent = countdown;
-          if (countdown <= 0) {
-            load();
-            countdown = 30;
-          }
-        }, 1000);
-      }
-
-      document.getElementById('btn-refresh').addEventListener('click', () => {
-        load();
-        startCountdown();
-      });
-
-      load();
-      startCountdown();
-    </script>
-  </body>
+    `).join('');
+  }
+}
+load();
+</script>
+</body>
 </html>

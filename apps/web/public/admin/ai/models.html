@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Models - Sunave</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-primary: #0f1117; --bg-secondary: #181b24; --bg-card: #1e2130;
+      --bg-hover: #262a3a; --border: #2a2e3e; --text-primary: #e8eaed;
+      --text-secondary: #9ca3b0; --text-muted: #6b7280; --accent: #6366f1;
+      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); }
+    .layout { display: flex; }
+    .sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 1.5rem; position: fixed; height: 100vh; overflow-y: auto; }
+    .sidebar h2 { font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; color: var(--text-secondary); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+    .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-item.active { background: var(--accent); color: white; }
+    .nav-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 1rem; margin-bottom: 0.5rem; margin-top: 1rem; }
+    .main { margin-left: 260px; flex: 1; padding: 2rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.5rem; font-weight: 600; }
+    .header p { color: var(--text-secondary); font-size: 0.9rem; }
+    .action-btn { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); cursor: pointer; font-size: 0.85rem; }
+    .action-btn:hover { background: var(--bg-hover); border-color: var(--accent); }
+    .action-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th { text-align: left; padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+    .table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .table tr:hover { background: var(--bg-hover); }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+    .badge.success { background: rgba(34,197,94,0.15); color: var(--success); }
+    .badge.warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .badge.danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .badge.info { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .badge.muted { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+    .filters { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .filter-select { padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); font-size: 0.85rem; }
+    .search-input { padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); font-size: 0.85rem; flex: 1; }
+    .cap-flags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .cap-flag { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); }
+    .cap-flag.on { background: var(--success); }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h2>🤖 AI OS</h2>
+      <div class="nav-label">Management</div>
+      <a href="/admin/ai/index.html" class="nav-item"><i data-lucide="cpu"></i> Overview</a>
+      <a href="/admin/ai/providers.html" class="nav-item"><i data-lucide="server"></i> Providers</a>
+      <a href="/admin/ai/models.html" class="nav-item active"><i data-lucide="layers"></i> Models</a>
+      <a href="/admin/ai/capabilities.html" class="nav-item"><i data-lucide="zap"></i> Capabilities</a>
+      <a href="/admin/ai/policies.html" class="nav-item"><i data-lucide="route"></i> Policies</a>
+      <div class="nav-label">Monitoring</div>
+      <a href="/admin/ai/health.html" class="nav-item"><i data-lucide="heart-pulse"></i> Health</a>
+      <a href="/admin/ai/usage.html" class="nav-item"><i data-lucide="activity"></i> Usage</a>
+      <a href="/admin/ai/costs.html" class="nav-item"><i data-lucide="dollar-sign"></i> Costs</a>
+      <a href="/admin/ai/settings.html" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+    </nav>
+    <div class="main">
+      <div class="header">
+        <div><h1>AI Models</h1><p>Model registry, versioning, and capability mapping</p></div>
+        <button class="action-btn primary" onclick="refreshAll()"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> Refresh All</button>
+      </div>
+      <div class="filters">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search models..." oninput="filterTable()">
+        <select class="filter-select" id="providerFilter" onchange="filterTable()"><option value="">All Providers</option></select>
+        <select class="filter-select" id="statusFilter" onchange="filterTable()">
+          <option value="">All Status</option><option value="active">Active</option><option value="beta">Beta</option><option value="deprecated">Deprecated</option><option value="experimental">Experimental</option><option value="retired">Retired</option>
+        </select>
+      </div>
+      <table class="table">
+        <thead><tr>
+          <th>Model Name</th><th>Provider</th><th>Version</th><th>Context</th><th>Capabilities</th><th>Status</th><th>Cost/1K</th>
+        </tr></thead>
+        <tbody id="modelTableBody"><tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem;">Loading models...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    lucide.createIcons();
+    let allModels = [];
+
+    async function fetchApi(path) {
+      const res = await fetch(path);
+      const d = await res.json();
+      return d.success ? d.data : null;
+    }
+
+    async function loadModels() {
+      const data = await fetchApi('/api/ai/models');
+      if (data) {
+        allModels = data.models || [];
+        const provData = await fetchApi('/api/ai/providers');
+        const provSelect = document.getElementById('providerFilter');
+        if (provData) {
+          const providers = provData.providers || [];
+          providers.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id; opt.textContent = p.name;
+            provSelect.appendChild(opt);
+          });
+        }
+        filterTable();
+      }
+    }
+
+    function filterTable() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const provider = document.getElementById('providerFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      const filtered = allModels.filter(m => {
+        if (search && !m.name.toLowerCase().includes(search) && !(m.displayName || '').toLowerCase().includes(search)) return false;
+        if (provider && m.providerId !== provider) return false;
+        if (status && m.status !== status) return false;
+        return true;
+      });
+      const tbody = document.getElementById('modelTableBody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem;">No models found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.map(m => {
+        const caps = m.supports || {};
+        const capFlags = Object.entries(caps).filter(([,v]) => v).map(([k]) => `<span class="cap-flag on" title="${k}"></span>`);
+        const statusClass = m.status === 'active' ? 'success' : m.status === 'beta' ? 'warning' : m.status === 'experimental' ? 'info' : 'muted';
+        return `<tr>
+          <td><strong>${m.displayName || m.name}</strong></td>
+          <td style="color:var(--text-secondary)">${m.providerName || m.providerType || '—'}</td>
+          <td>${m.version}</td>
+          <td>${m.contextWindow.toLocaleString()}</td>
+          <td><div class="cap-flags">${capFlags.join('')}</div></td>
+          <td><span class="badge ${statusClass}">${m.status}</span></td>
+          <td>$${Number(m.estimatedCostInput).toFixed(6)} / $${Number(m.estimatedCostOutput).toFixed(6)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    async function refreshAll() {
+      const res = await fetch('/api/ai/models/refresh', { method: 'POST' });
+      if (res.ok) { alert('Models refreshed.'); loadModels(); }
+      else { alert('Refresh failed.'); }
+    }
+
+    loadModels();
+  </script>
+</body>
+</html>

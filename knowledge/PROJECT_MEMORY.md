@@ -1,7 +1,7 @@
 # Project Memory
 
 ## Current Sprint
-- Sprint 4: Dashboard Framework module.
+- Sprint 6: AI Provider & Model Registry Platform.
 
 ## Architecture Summary
 - Multi-tenant, API-first, plugin-oriented platform.
@@ -28,6 +28,7 @@
 - Users, Teams & RBAC (IAM)
 - Settings & Configuration Engine
 - Dashboard Framework
+- AI Provider & Model Registry Platform
 
 ## Completed Modules
 - Foundation scaffolding
@@ -38,14 +39,17 @@
 - RBAC
 - Settings & Configuration Engine
 - Dashboard Framework
+- AI Provider & Model Registry Platform (Prompts 11 & 12)
 
 ## Pending Modules
 - Goal Management
-- AI Gateway
-- AI Providers
+- Conversation Platform & Prompt Library
 - Plugin runtime loader
 - Worker orchestration
 - Agents
+- Embeddings
+- Vision Processing
+- Speech Processing
 
 ## API Contracts
 - Authentication endpoints are available under `/api/auth/*`.
@@ -55,17 +59,23 @@
 - Role endpoints are available under `/api/roles/*`.
 - Permission list is available at `/api/roles/permissions`.
 - Dashboard endpoints are available under `/api/dashboard/*`.
-  - `GET /api/dashboard` — full config (widgets + layout + preferences)
-  - `GET /api/dashboard/widgets` — widget registry (supports ?category= and ?enabled= filters)
-  - `GET /api/dashboard/widgets/:id` — single widget definition
-  - `POST /api/dashboard/layout` — save a layout
-  - `PUT /api/dashboard/layout` — update active layout
-  - `PUT /api/dashboard/layout/reset` — restore default layout
-  - `GET /api/dashboard/preferences` — user dashboard preferences
-  - `PUT /api/dashboard/preferences` — update preferences
-  - `GET /api/dashboard/data/:providerKey` — fetch mock provider data
 - Settings endpoints are available under `/api/settings/*`.
 - Feature flag endpoints are available at `/api/settings/feature-flags`.
+- AI Provider & Model Registry endpoints are available under `/api/ai/*`:
+  - `GET/POST/PUT/DELETE /api/ai/providers` — Provider CRUD
+  - `GET/POST/PUT/DELETE /api/ai/models` — Model CRUD
+  - `GET/POST/PUT /api/ai/capabilities` — Capability registry
+  - `GET/PUT /api/ai/policies` — Routing policies
+  - `GET /api/ai/health` — Health monitoring
+  - `GET /api/ai/statistics` — Usage & cost statistics
+  - `GET /api/ai/usage` — Token usage logs
+  - `GET /api/ai/costs` — Cost tracking
+  - `GET/POST/PUT/DELETE /api/ai/budgets` — Budget management
+  - `POST /api/ai/providers/test` — Test provider connection
+  - `POST /api/ai/providers/sync` — Sync provider models
+  - `POST /api/ai/models/refresh` — Refresh all models
+  - `POST /api/ai/test` — Gateway test
+  - `POST /api/ai/estimate-cost` — Cost estimation
 - Responses use a common `success/data/error` envelope.
 
 ## Database Summary
@@ -91,6 +101,14 @@
   - `feature_flags` (10 flags seeded; boolean/percentage/org_rollout/role_rollout types)
   - `feature_flag_assignments` (org/role/user-scoped flag overrides)
   - `configuration_cache` (persistent cache layer for future Redis companion)
+- Implemented AI Provider & Model Registry tables (migration 007):
+  - `ai_models` — Model registry with capability flags, cost estimation, status
+  - `ai_capabilities` — Master capability list (17 system capabilities seeded)
+  - `ai_model_capabilities` — Model ↔ Capability mapping
+  - `ai_usage` — Aggregated usage tracking (daily/weekly/monthly/yearly)
+  - `ai_token_usage` — Granular per-request token and cost tracking
+  - `ai_cost_summary` — Cost summaries per period
+  - `ai_budgets` — Budget configuration with alerting
 - Migration tracking: `schema_migrations` table (each migration runs exactly once)
 
 ## Permission Engine

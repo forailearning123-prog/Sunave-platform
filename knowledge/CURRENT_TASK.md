@@ -4,10 +4,10 @@
 - Sprint 6
 
 ## Module
-- Goal Management
+- AI Provider & Model Registry Platform (Prompts 11 & 12)
 
 ## Goal
-- Implement full Goal Management module: goal creation, tracking, milestones, assignments, and progress reporting.
+- Build the complete AI Provider and Model Registry Platform including Provider Registry, Model Registry, Capability Registry, Routing Policies, Model Discovery, Health Monitoring, Usage Statistics, and Cost Tracking.
 
 ## Allowed Files
 - `apps/api/**`
@@ -19,20 +19,20 @@
 - `knowledge/MASTER_ROADMAP.md`
 
 ## Out-of-Scope Files
-- Workers, AI, agents, goals, projects, marketplace modules.
+- Prompt Execution, Workers, Agents, Memory, Conversation, Embeddings, Vision Processing, Speech Processing.
 
-## Acceptance Criteria (Previous Sprint — Dashboard Framework)
-- [x] Dashboard Framework (DashboardRegistry, DashboardDataProvider)
-- [x] Widget Registry (registerWidget, removeWidget, getWidgets, getWidget)
-- [x] Dashboard Layout Engine (move, resize, hide, pin, restoreDefaults)
-- [x] User Layout Persistence (localStorage per user)
-- [x] Placeholder Widgets (10 widgets with mock data)
-- [x] Mock Data (executive, activity, notifications, health, AI, org)
-- [x] Responsive Design (12-column grid, mobile sidebar)
-- [x] API Endpoints (GET/POST/PUT /api/dashboard/*)
-- [x] Widget Catalog page (/dashboard/widgets)
-- [x] Dashboard Settings page (/dashboard/settings)
+## Acceptance Criteria (Current Sprint)
+- [x] Provider Registry (CRUD, types, capability flags, credential encryption)
+- [x] Model Registry (CRUD, capability flags, status, cost estimation, external ID sync)
+- [x] Capability Registry (17 system capabilities, categories, provider mapping)
+- [x] Routing Policies (15 policy types, global seeds, org overrides)
+- [x] Model Discovery (sync, refresh, upsert by external ID)
+- [x] Health Monitoring (time-series health tracking, auto-disable unhealthy)
+- [x] Usage & Cost Tracking (per-request, aggregated, monthly cost summaries, budgets)
+- [x] AI Administration Portal (9 pages: overview, providers, models, capabilities, policies, health, usage, costs, settings)
+- [x] Dashboard Widgets (provider health, top models, capability usage, recent failures)
+- [x] Migration 007 (new tables: ai_models, ai_capabilities, ai_model_capabilities, ai_usage, ai_token_usage, ai_cost_summary, ai_budgets)
 - [x] Documentation Updated
 
 ## Next Module
-- AI Model Registry
+- Conversation Platform & Prompt Library

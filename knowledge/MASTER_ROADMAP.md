@@ -44,7 +44,7 @@
 - Responsive 12-column CSS grid, dark executive palette, animation system
 - Documentation updated
 
-## Prompt 7 — Goal Management (Next)
+## Prompt 7 — Goal Management (Planned)
 - Goal CRUD (create, update, archive, delete)
 - Goal types: outcome, output, initiative
 - Milestones and key results
@@ -53,10 +53,22 @@
 - Goal widget integration with dashboard registry
 
 ## Prompt 8 — Projects (Planned)
-## Prompt 9 — Workers (Planned)
-## Prompt 10 — AI Gateway (Planned)
-## Prompt 11 — Finance (Planned)
-## Prompt 12 — HR (Planned)
-## Prompt 13 — CRM (Planned)
-## Prompt 14 — Marketplace (Planned)
-## Prompt 15 — Analytics (Planned)
+## Prompt 9 — AI Gateway (Completed in Prompts 9 & 10)
+## Prompt 10 — AI Provider & Model Registry ✅
+- Provider Registry (CRUD, types, capability flags, credential encryption)
+- Model Registry (CRUD, capability flags, status, cost estimation, external ID sync)
+- Capability Registry (17 system capabilities, categories, provider mapping)
+- Routing Policies (15 policy types, global seeds, org overrides)
+- Model Discovery (sync, refresh, upsert by external ID)
+- Health Monitoring (time-series health tracking, auto-disable unhealthy)
+- Usage & Cost Tracking (per-request, aggregated, monthly cost summaries, budgets)
+- AI Administration Portal (9 pages: overview, providers, models, capabilities, policies, health, usage, costs, settings)
+- Dashboard Widgets (provider health, top models, capability usage, recent failures)
+- Migration 007 (new tables: ai_models, ai_capabilities, ai_model_capabilities, ai_usage, ai_token_usage, ai_cost_summary, ai_budgets)
+
+## Prompt 11 — Conversation Platform & Prompt Library (Next)
+## Prompt 12 — Finance (Planned)
+## Prompt 13 — HR (Planned)
+## Prompt 14 — CRM (Planned)
+## Prompt 15 — Marketplace (Planned)
+## Prompt 16 — Analytics (Planned)

@@ -169,3 +169,35 @@
 
 12. **`ai_provider_health` is a time-series table — one row per check, never updated in place.**
     - Rationale: preserves health history for trend analysis and debugging. The `ai_providers.health_status` column is a denormalized cache of the latest state for fast reads. Health queries use `DISTINCT ON (provider_id)` for latest-per-provider.
+
+## 2026-06-27 - AI Provider & Model Registry Platform (Prompts 11 & 12)
+
+1. **Model registry is a separate table (`ai_models`) from providers, not embedded as JSON.**
+    - Rationale: models have their own lifecycle (versioning, status, cost tracking). A separate table with capability flags enables efficient querying by capability and cost comparison without parsing JSON.
+
+2. **Capabilities are stored in their own table (`ai_capabilities`) with a many-to-many join table (`ai_model_capabilities`).**
+    - Rationale: capabilities are reusable across providers and models. The join table supports fine-grained enable/disable, priority, and per-mapping configuration without altering the model or capability definition.
+
+3. **17 system capabilities are seeded with deterministic UUIDs.**
+    - Rationale: ensures consistent capability IDs across environments. System capabilities are flagged `is_system = true` and cannot be deleted via API, following the same pattern as system roles.
+
+4. **Usage tracking is split into granular (`ai_token_usage`) and aggregated (`ai_usage`) tables.**
+    - Rationale: granular records support per-request audit trails for billing disputes. Aggregated records support fast dashboard queries. The upsert pattern with incrementing counters prevents duplicate rows during concurrent requests.
+
+5. **Cost tracking uses estimated and actual cost columns.**
+    - Rationale: estimated cost is calculated at request time using the model's per-token rates. Actual cost is populated when the provider returns billing data (or when using a metered provider). This supports both pre-billing estimates and post-billing reconciliation.
+
+6. **Budgets are organization-scoped with support for provider/model/capability/user sub-scopes.**
+    - Rationale: organizations need the ability to set budgets at different granularities — a global monthly cap for the org, per-provider caps for cost control, and per-model caps for experimentation governance.
+
+7. **Model discovery uses `external_id` for idempotent upsert and provider-specific model references.**
+    - Rationale: providers return model IDs in their API responses (e.g., `gpt-4o`, `claude-3-5-sonnet`). Storing these as `external_id` allows the system to detect model additions/removals on sync without relying on fragile name matching.
+
+8. **Routing policy CHECK constraint was extended via migration (not in initial schema) to support 15 policy types.**
+    - Rationale: the original migration 006 only supported 6 policy types. Rather than creating a new table, extending the CHECK constraint in migration 007 keeps the schema evolution clean and allows existing seeded policies to remain valid.
+
+9. **Health summary endpoint (`/api/ai/health/summary`) was added in addition to the existing `/api/ai/health`.**
+    - Rationale: the existing health endpoint runs health checks (adding latency to the response). The summary endpoint reads the last known health state from the database — suitable for dashboard widgets that need fast, cached data.
+
+10. **All usage/cost/statistics endpoints filter by organization ID for multi-tenant isolation.**
+    - Rationale: each organization's usage data must be isolated. The `organization_id` column on all usage/cost tables enables natural partitioning. Unauthenticated or cross-org queries return empty results.
