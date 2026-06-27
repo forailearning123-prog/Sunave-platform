@@ -84,6 +84,23 @@
 - API: /api/intelligence/* (memory, knowledge, embeddings, vector, context, search)
 - Frontend: /intelligence/* (overview, memory, search, context, knowledge, vector, admin)
 
+## Prompt 25 — Integration Platform ✅
+- Connector Framework with complete interface definition
+- Credential Vault with AES-256-GCM encryption
+- Authentication Framework (OAuth2, API Key, JWT, Basic, etc.)
+- Webhook Framework (incoming/outgoing, retry, logging, signature validation)
+- Connection Manager with pooling and lifecycle management
+- Health Monitoring with real-time tracking
+- Retry Policies (linear, exponential backoff, circuit breaker)
+- Rate Limiting (global, connector, organization scopes)
+- Request/Response Logging for complete audit trail
+- Connection Templates and Connector Metadata Registry
+- Integration Events system
+- Migration 014 (9 new tables: webhook_endpoints, webhook_logs, retry_policies, rate_limits, connection_templates, connector_metadata, integration_events, request_logs, response_logs)
+- API: /api/integrations/* (complete CRUD + webhooks + retry policies + rate limits + templates + events + logs)
+- Frontend: /integrations (full dashboard with statistics, filters, modals)
+- Documentation: knowledge/INTEGRATION_PLATFORM.md
+
 ## Prompt 17, 18 & 19 — Worker Platform ✅
 - Worker Registry (CRUD, versioning, dependencies, search, filter, tag)
 - Worker Runtime interface (validate, prepare, execute, retry, cancel, resume, pause, complete, fail, cleanup)

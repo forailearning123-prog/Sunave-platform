@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Integrations - Sunave AI OS</title>
-  <link rel="stylesheet" href="/styles/main.css">
-  <link rel="stylesheet" href="/styles/plugins.css">
+  <link rel="stylesheet" href="/styles/integrations.css">
 </head>
 <body>
   <div class="app-container">
@@ -13,76 +12,111 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <h1>Sunave</h1>
-        <span class="version">Integrations</span>
+        <span class="version">v1.0</span>
       </div>
+      
       <nav class="sidebar-nav">
-        <a href="/dashboard" class="nav-item">Dashboard</a>
-        <a href="/plugins" class="nav-item">Plugins</a>
-        <a href="/plugins/marketplace" class="nav-item">Marketplace</a>
-        <a href="/integrations" class="nav-item active">Integrations</a>
-        <a href="/workers" class="nav-item">Workers</a>
-        <a href="/agents" class="nav-item">Agents</a>
+        <a href="/dashboard" class="nav-item">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/workers" class="nav-item">
+          <span class="icon">⚙️</span>
+          <span>Workers</span>
+        </a>
+        <a href="/workflows" class="nav-item">
+          <span class="icon">🔄</span>
+          <span>Workflows</span>
+        </a>
+        <a href="/agents" class="nav-item">
+          <span class="icon">🤖</span>
+          <span>Agents</span>
+        </a>
+        <a href="/plugins" class="nav-item">
+          <span class="icon">🧩</span>
+          <span>Plugins</span>
+        </a>
+        <a href="/integrations" class="nav-item active">
+          <span class="icon">🔌</span>
+          <span>Integrations</span>
+        </a>
+        <a href="/intelligence" class="nav-item">
+          <span class="icon">🧠</span>
+          <span>Intelligence</span>
+        </a>
       </nav>
+
+      <div class="sidebar-footer">
+        <a href="/settings" class="nav-item">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
+      <!-- Header -->
       <header class="page-header">
-        <h1>Integration Manager</h1>
-        <div class="header-actions">
-          <button class="btn btn-primary" onclick="openCreateIntegrationModal()">+ New Integration</button>
+        <div class="header-left">
+          <h1>Integrations</h1>
+          <p class="subtitle">Connect external systems and services</p>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-secondary" onclick="app.checkAllHealth()">
+            <span class="icon">🏥</span>
+            Check All Health
+          </button>
+          <button class="btn btn-primary" onclick="app.showNewIntegrationModal()">
+            <span class="icon">➕</span>
+            New Integration
+          </button>
         </div>
       </header>
 
-      <!-- Filters -->
-      <div class="filters">
-        <input type="text" id="integrations-search" placeholder="Search integrations..." class="search-input">
-        <select id="integrations-provider-filter" class="filter-select">
-          <option value="">All Providers</option>
-          <option value="github">GitHub</option>
-          <option value="gitlab">GitLab</option>
-          <option value="jira">Jira</option>
-          <option value="confluence">Confluence</option>
-          <option value="slack">Slack</option>
-          <option value="microsoft_teams">Microsoft Teams</option>
-          <option value="salesforce">Salesforce</option>
-          <option value="hubspot">HubSpot</option>
-          <option value="twilio">Twilio</option>
-        </select>
-        <select id="integrations-status-filter" class="filter-select">
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="error">Error</option>
-        </select>
-      </div>
-
-      <!-- Integrations Grid -->
-      <div id="integrations-grid" class="plugins-grid">
-        <!-- Integrations will be loaded here -->
-      </div>
-    </main>
-  </div>
-
-  <!-- Create Integration Modal -->
-  <div id="create-integration-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Create New Integration</h2>
-        <button class="modal-close" onclick="closeModal('create-integration-modal')">&times;</button>
-      </div>
-      <form id="create-integration-form" class="modal-body">
-        <div class="form-group">
-          <label for="integration-name">Integration Name *</label>
-          <input type="text" id="integration-name" name="name" required>
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🔌</div>
+          <div class="stat-content">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Integrations</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="integration-provider">Provider *</label>
-          <select id="integration-provider" name="provider" required>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-value" id="stat-active">0</div>
+            <div class="stat-label">Active</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">❌</div>
+          <div class="stat-content">
+            <div class="stat-value" id="stat-error">0</div>
+            <div class="stat-label">Errors</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏥</div>
+          <div class="stat-content">
+            <div class="stat-value" id="stat-healthy">0</div>
+            <div class="stat-label">Healthy</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <input type="text" id="search-input" placeholder="Search integrations..." class="search-input">
+        </div>
+        <div class="filter-group">
+          <select id="provider-filter" class="filter-select">
+            <option value="">All Providers</option>
             <option value="github">GitHub</option>
             <option value="gitlab">GitLab</option>
             <option value="jira">Jira</option>
-            <option value="confluence">Confluence</option>
             <option value="slack">Slack</option>
             <option value="microsoft_teams">Microsoft Teams</option>
             <option value="salesforce">Salesforce</option>
@@ -91,50 +125,166 @@
             <option value="custom">Custom</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="integration-type">Integration Type *</label>
-          <select id="integration-type" name="integrationType" required>
-            <option value="rest">REST API</option>
-            <option value="graphql">GraphQL</option>
-            <option value="webhook">Webhook</option>
-            <option value="grpc">gRPC</option>
-            <option value="soap">SOAP</option>
+        <div class="filter-group">
+          <select id="status-filter" class="filter-select">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="error">Error</option>
+            <option value="pending">Pending</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="integration-auth-type">Authentication Type *</label>
-          <select id="integration-auth-type" name="authType" required>
-            <option value="api_key">API Key</option>
-            <option value="oauth2">OAuth 2.0</option>
-            <option value="jwt">JWT</option>
-            <option value="basic">Basic Auth</option>
-            <option value="none">None</option>
-          </select>
+      </div>
+
+      <!-- Integrations Grid -->
+      <div class="integrations-grid" id="integrations-grid">
+        <!-- Integration cards will be loaded here -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-icon">🔌</div>
+        <h2>No integrations found</h2>
+        <p>Get started by creating your first integration</p>
+        <button class="btn btn-primary" onclick="app.showNewIntegrationModal()">
+          Create Integration
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- New/Edit Integration Modal -->
+  <div class="modal" id="integration-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">New Integration</h2>
+        <button class="modal-close" onclick="app.closeModal()">&times;</button>
+      </div>
+      
+      <form id="integration-form" onsubmit="app.saveIntegration(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="integration-name">Name *</label>
+            <input type="text" id="integration-name" name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="integration-display-name">Display Name</label>
+            <input type="text" id="integration-display-name" name="displayName">
+          </div>
+
+          <div class="form-group">
+            <label for="integration-description">Description</label>
+            <textarea id="integration-description" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="integration-provider">Provider *</label>
+            <select id="integration-provider" name="provider" required onchange="app.onProviderChange()">
+              <option value="">Select a provider</option>
+              <option value="github">GitHub</option>
+              <option value="gitlab">GitLab</option>
+              <option value="azure_devops">Azure DevOps</option>
+              <option value="jira">Jira</option>
+              <option value="confluence">Confluence</option>
+              <option value="slack">Slack</option>
+              <option value="microsoft_teams">Microsoft Teams</option>
+              <option value="google_workspace">Google Workspace</option>
+              <option value="microsoft_365">Microsoft 365</option>
+              <option value="outlook">Outlook</option>
+              <option value="gmail">Gmail</option>
+              <option value="notion">Notion</option>
+              <option value="salesforce">Salesforce</option>
+              <option value="hubspot">HubSpot</option>
+              <option value="servicenow">ServiceNow</option>
+              <option value="sap">SAP</option>
+              <option value="oracle">Oracle</option>
+              <option value="twilio">Twilio</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="telegram">Telegram</option>
+              <option value="discord">Discord</option>
+              <option value="custom">Custom REST API</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="integration-type">Integration Type *</label>
+            <select id="integration-type" name="integrationType" required>
+              <option value="rest">REST API</option>
+              <option value="graphql">GraphQL</option>
+              <option value="webhook">Webhook</option>
+              <option value="grpc">gRPC</option>
+              <option value="soap">SOAP</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="integration-auth">Authentication Type *</label>
+            <select id="integration-auth" name="authType" required>
+              <option value="api_key">API Key</option>
+              <option value="oauth2">OAuth 2.0</option>
+              <option value="bearer_token">Bearer Token</option>
+              <option value="jwt">JWT</option>
+              <option value="basic">Basic Auth</option>
+              <option value="custom_headers">Custom Headers</option>
+              <option value="client_certificate">Client Certificate</option>
+              <option value="none">No Authentication</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="integration-configuration">Configuration (JSON)</label>
+            <textarea id="integration-configuration" name="configuration" rows="5" placeholder='{"baseUrl": "https://api.example.com", "timeout": 30000}'></textarea>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="integration-description">Description</label>
-          <textarea id="integration-description" name="description" rows="3"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('create-integration-modal')">Cancel</button>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
           <button type="submit" class="btn btn-primary">Create Integration</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Integration Details Modal -->
-  <div id="integration-details-modal" class="modal">
-    <div class="modal-content modal-large">
+  <!-- Credential Modal -->
+  <div class="modal" id="credential-modal">
+    <div class="modal-content">
       <div class="modal-header">
-        <h2 id="integration-details-title">Integration Details</h2>
-        <button class="modal-close" onclick="closeModal('integration-details-modal')">&times;</button>
+        <h2>Add Credential</h2>
+        <button class="modal-close" onclick="app.closeCredentialModal()">&times;</button>
       </div>
-      <div class="modal-body">
-        <div id="integration-details-content">
-          <!-- Integration details will be loaded here -->
+      
+      <form id="credential-form" onsubmit="app.saveCredential(event)">
+        <div class="modal-body">
+          <input type="hidden" id="credential-integration-id">
+          
+          <div class="form-group">
+            <label for="credential-type">Credential Type *</label>
+            <select id="credential-type" name="type" required>
+              <option value="api_key">API Key</option>
+              <option value="oauth_token">OAuth Token</option>
+              <option value="jwt">JWT</option>
+              <option value="basic_auth">Basic Auth</option>
+              <option value="certificate">Certificate</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="credential-value">Credential Value *</label>
+            <textarea id="credential-value" name="value" rows="4" required placeholder="Enter your credential value..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="credential-expires">Expiration Date (Optional)</label>
+            <input type="datetime-local" id="credential-expires" name="expiresAt">
+          </div>
         </div>
-      </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="app.closeCredentialModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Credential</button>
+        </div>
+      </form>
     </div>
   </div>
 

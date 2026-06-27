@@ -183,8 +183,14 @@ export async function createApp({ pool } = {}) {
   // Plugin Platform
   const pluginRepo             = createPluginRepository(dbPool);
   const integrationRepo        = createIntegrationRepository(dbPool);
+  const integrationRepoEnhanced = new (require('./repositories/integrationRepositoryEnhanced'))(dbPool);
   const pluginService          = createPluginService(dbPool, permService, configService, aiGatewayService);
   const integrationService     = createIntegrationService(dbPool, permService, configService);
+  const integrationServiceEnhanced = new (require('./services/integrationServiceEnhanced'))(
+    dbPool,
+    permService,
+    configService
+  );
   
   const memoryService          = createMemoryEngineService(memoryRepo, policyRepo);
   const knowledgeService       = createKnowledgeRetrievalService(
@@ -243,6 +249,13 @@ export async function createApp({ pool } = {}) {
   app.use('/api/integrations', buildIntegrationsRouter({
     db: dbPool,
     integrationService,
+    permissionService: permService
+  }));
+  
+  // Integration Platform Enhanced routes
+  app.use('/api/integrations', buildIntegrationsEnhancedRouter({
+    db: dbPool,
+    integrationServiceEnhanced,
     permissionService: permService
   }));
 

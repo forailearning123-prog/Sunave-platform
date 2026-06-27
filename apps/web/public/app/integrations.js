@@ -1,366 +1,419 @@
-// Integration Framework Frontend
-// Epic 5: Plugin SDK & Integration Platform
+// Integrations Platform Frontend Application
+// Prompt 25: Integration Platform
 
-// ─── State Management ─────────────────────────────────────────────────────────
-
-const state = {
-  integrations: [],
-  selectedIntegration: null
-};
-
-// ─── Initialization ───────────────────────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', () => {
-  initializeFilters();
-  initializeModals();
-  loadIntegrations();
-});
-
-// ─── Filter Management ────────────────────────────────────────────────────────
-
-function initializeFilters() {
-  document.getElementById('integrations-search')?.addEventListener('input', debounce(loadIntegrations, 300));
-  document.getElementById('integrations-provider-filter')?.addEventListener('change', loadIntegrations);
-  document.getElementById('integrations-status-filter')?.addEventListener('change', loadIntegrations);
-}
-
-// ─── Data Loading ─────────────────────────────────────────────────────────────
-
-async function loadIntegrations() {
-  const search = document.getElementById('integrations-search')?.value || '';
-  const provider = document.getElementById('integrations-provider-filter')?.value || '';
-  const status = document.getElementById('integrations-status-filter')?.value || '';
-
-  try {
-    const params = new URLSearchParams();
-    if (search) params.append('search', search);
-    if (provider) params.append('provider', provider);
-    if (status) params.append('status', status);
-
-    const response = await fetch(`/api/integrations?${params}`);
-    const result = await response.json();
-
-    if (result.success) {
-      state.integrations = result.data;
-      renderIntegrations();
-    }
-  } catch (error) {
-    console.error('Failed to load integrations:', error);
-    showError('Failed to load integrations');
-  }
-}
-
-// ─── Rendering ────────────────────────────────────────────────────────────────
-
-function renderIntegrations() {
-  const grid = document.getElementById('integrations-grid');
-  if (!grid) return;
-
-  if (state.integrations.length === 0) {
-    grid.innerHTML = '<div class="empty-state">No integrations found</div>';
-    return;
-  }
-
-  grid.innerHTML = state.integrations.map(integration => `
-    <div class="plugin-card" onclick="showIntegrationDetails('${integration.id}')">
-      <div class="plugin-icon">${getProviderIcon(integration.provider)}</div>
-      <div class="plugin-info">
-        <h3>${integration.displayName || integration.name}</h3>
-        <p class="plugin-description">${integration.description?.substring(0, 100) || ''}</p>
-        <div class="plugin-meta">
-          <span class="plugin-category">${integration.provider}</span>
-          <span class="plugin-status status-${integration.status}">${integration.status}</span>
-          <span class="plugin-type">${integration.integrationType}</span>
-        </div>
-      </div>
-      <div class="plugin-actions">
-        <button class="btn btn-sm ${integration.isEnabled ? 'btn-warning' : 'btn-success'}" 
-                onclick="event.stopPropagation(); toggleIntegration('${integration.id}', ${integration.isEnabled})">
-          ${integration.isEnabled ? 'Disable' : 'Enable'}
-        </button>
-        <button class="btn btn-sm btn-primary" 
-                onclick="event.stopPropagation(); testIntegration('${integration.id}')">
-          Test
-        </button>
-        <button class="btn btn-sm btn-danger" 
-                onclick="event.stopPropagation(); deleteIntegration('${integration.id}')">
-          Delete
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function getProviderIcon(provider) {
-  const icons = {
-    github: '🐙',
-    gitlab: '🦊',
-    azure_devops: '📦',
-    jira: '📋',
-    confluence: '📚',
-    slack: '💬',
-    microsoft_teams: '👥',
-    google_workspace: '📧',
-    microsoft_365: '📊',
-    outlook: '📧',
-    gmail: '📧',
-    sap: '🏢',
-    salesforce: '☁️',
-    hubspot: '🎯',
-    servicenow: '📝',
-    twilio: '📱',
-    whatsapp: '💚',
-    telegram: '✈️',
-    discord: '🎮',
-    custom: '🔧'
-  };
-  return icons[provider] || '🔌';
-}
-
-// ─── Integration Actions ──────────────────────────────────────────────────────
-
-async function toggleIntegration(integrationId, isEnabled) {
-  const action = isEnabled ? 'disable' : 'enable';
-  
-  if (!confirm(`Are you sure you want to ${action} this integration?`)) {
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/integrations/${integrationId}/${action}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSuccess(`Integration ${action}d successfully`);
-      loadIntegrations();
-    } else {
-      showError(result.error || `Failed to ${action} integration`);
-    }
-  } catch (error) {
-    console.error(`Failed to ${action} integration:`, error);
-    showError(`Failed to ${action} integration`);
-  }
-}
-
-async function testIntegration(integrationId) {
-  try {
-    showSuccess('Testing connection...');
-    
-    const response = await fetch(`/api/integrations/${integrationId}/test`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSuccess('Connection test successful!');
-    } else {
-      showError(result.error || 'Connection test failed');
-    }
-  } catch (error) {
-    console.error('Failed to test integration:', error);
-    showError('Failed to test integration');
-  }
-}
-
-async function deleteIntegration(integrationId) {
-  if (!confirm('Are you sure you want to delete this integration? This action cannot be undone.')) {
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/integrations/${integrationId}`, {
-      method: 'DELETE'
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSuccess('Integration deleted successfully');
-      loadIntegrations();
-    } else {
-      showError(result.error || 'Failed to delete integration');
-    }
-  } catch (error) {
-    console.error('Failed to delete integration:', error);
-    showError('Failed to delete integration');
-  }
-}
-
-// ─── Modal Management ─────────────────────────────────────────────────────────
-
-function initializeModals() {
-  document.getElementById('create-integration-form')?.addEventListener('submit', handleCreateIntegration);
-}
-
-function openCreateIntegrationModal() {
-  document.getElementById('create-integration-modal').classList.add('active');
-}
-
-function closeModal(modalId) {
-  document.getElementById(modalId)?.classList.remove('active');
-}
-
-async function handleCreateIntegration(event) {
-  event.preventDefault();
-
-  const formData = new FormData(event.target);
-  const integrationData = {
-    name: formData.get('name'),
-    displayName: formData.get('name'),
-    description: formData.get('description'),
-    provider: formData.get('provider'),
-    integrationType: formData.get('integrationType'),
-    authType: formData.get('authType'),
-    configuration: {}
-  };
-
-  try {
-    const response = await fetch('/api/integrations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(integrationData)
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSuccess('Integration created successfully');
-      closeModal('create-integration-modal');
-      event.target.reset();
-      loadIntegrations();
-    } else {
-      showError(result.error || 'Failed to create integration');
-    }
-  } catch (error) {
-    console.error('Failed to create integration:', error);
-    showError('Failed to create integration');
-  }
-}
-
-// ─── Integration Details ──────────────────────────────────────────────────────
-
-async function showIntegrationDetails(integrationId) {
-  try {
-    const response = await fetch(`/api/integrations/${integrationId}`);
-    const result = await response.json();
-
-    if (result.success) {
-      state.selectedIntegration = result.data;
-      renderIntegrationDetails(result.data);
-      document.getElementById('integration-details-modal').classList.add('active');
-    } else {
-      showError(result.error || 'Failed to load integration details');
-    }
-  } catch (error) {
-    console.error('Failed to load integration details:', error);
-    showError('Failed to load integration details');
-  }
-}
-
-function renderIntegrationDetails(integration) {
-  const title = document.getElementById('integration-details-title');
-  const content = document.getElementById('integration-details-content');
-
-  title.textContent = integration.displayName || integration.name;
-
-  content.innerHTML = `
-    <div class="plugin-details">
-      <div class="detail-section">
-        <h3>Information</h3>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <label>Name:</label>
-            <span>${integration.name}</span>
-          </div>
-          <div class="detail-item">
-            <label>Provider:</label>
-            <span>${integration.provider}</span>
-          </div>
-          <div class="detail-item">
-            <label>Type:</label>
-            <span>${integration.integrationType}</span>
-          </div>
-          <div class="detail-item">
-            <label>Auth Type:</label>
-            <span>${integration.authType}</span>
-          </div>
-          <div class="detail-item">
-            <label>Status:</label>
-            <span class="status-${integration.status}">${integration.status}</span>
-          </div>
-          <div class="detail-item">
-            <label>Enabled:</label>
-            <span>${integration.isEnabled ? 'Yes' : 'No'}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail-section">
-        <h3>Description</h3>
-        <p>${integration.description || 'No description provided'}</p>
-      </div>
-
-      ${integration.lastSyncAt ? `
-        <div class="detail-section">
-          <h3>Sync Information</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Last Sync:</label>
-              <span>${new Date(integration.lastSyncAt).toLocaleString()}</span>
-            </div>
-            ${integration.lastErrorAt ? `
-              <div class="detail-item">
-                <label>Last Error:</label>
-                <span class="error">${new Date(integration.lastErrorAt).toLocaleString()}</span>
-              </div>
-            ` : ''}
-          </div>
-          ${integration.lastErrorMessage ? `
-            <p class="error-message">${integration.lastErrorMessage}</p>
-          ` : ''}
-        </div>
-      ` : ''}
-
-      <div class="detail-actions">
-        <button class="btn btn-secondary" onclick="closeModal('integration-details-modal')">Close</button>
-        <button class="btn btn-primary" onclick="testIntegration('${integration.id}'); closeModal('integration-details-modal');">
-          Test Connection
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-// ─── Utility Functions ────────────────────────────────────────────────────────
-
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
+class IntegrationsApp {
+  constructor() {
+    this.integrations = [];
+    this.currentIntegration = null;
+    this.filters = {
+      search: '',
+      provider: '',
+      status: ''
     };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
+    
+    this.init();
+  }
+
+  init() {
+    this.bindEvents();
+    this.loadIntegrations();
+    this.loadStatistics();
+  }
+
+  bindEvents() {
+    // Search
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      this.filters.search = e.target.value;
+      this.loadIntegrations();
+    });
+
+    // Provider filter
+    document.getElementById('provider-filter')?.addEventListener('change', (e) => {
+      this.filters.provider = e.target.value;
+      this.loadIntegrations();
+    });
+
+    // Status filter
+    document.getElementById('status-filter')?.addEventListener('change', (e) => {
+      this.filters.status = e.target.value;
+      this.loadIntegrations();
+    });
+
+    // Form submission
+    document.getElementById('integration-form')?.addEventListener('submit', (e) => {
+      this.saveIntegration(e);
+    });
+
+    // Credential form submission
+    document.getElementById('credential-form')?.addEventListener('submit', (e) => {
+      this.saveCredential(e);
+    });
+  }
+
+  // ─── Load Integrations ───────────────────────────────────────────────────────
+
+  async loadIntegrations() {
+    try {
+      const params = new URLSearchParams();
+      if (this.filters.search) params.append('search', this.filters.search);
+      if (this.filters.provider) params.append('provider', this.filters.provider);
+      if (this.filters.status) params.append('status', this.filters.status);
+      params.append('limit', '100');
+
+      const response = await fetch(`/api/integrations?${params.toString()}`);
+      const result = await response.json();
+
+      if (result.success) {
+        this.integrations = result.data;
+        this.renderIntegrations();
+      }
+    } catch (error) {
+      console.error('Failed to load integrations:', error);
+      this.showError('Failed to load integrations');
+    }
+  }
+
+  async loadStatistics() {
+    try {
+      const response = await fetch('/api/integrations/statistics');
+      const result = await response.json();
+
+      if (result.success) {
+        this.updateStatistics(result.data);
+      }
+    } catch (error) {
+      console.error('Failed to load statistics:', error);
+    }
+  }
+
+  updateStatistics(stats) {
+    document.getElementById('stat-total').textContent = stats.total || 0;
+    document.getElementById('stat-active').textContent = stats.active || 0;
+    document.getElementById('stat-error').textContent = stats.error || 0;
+    document.getElementById('stat-healthy').textContent = stats.health?.healthy || 0;
+  }
+
+  // ─── Render Integrations ─────────────────────────────────────────────────────
+
+  renderIntegrations() {
+    const grid = document.getElementById('integrations-grid');
+    const emptyState = document.getElementById('empty-state');
+
+    if (this.integrations.length === 0) {
+      grid.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    grid.style.display = 'grid';
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = this.integrations.map(integration => this.renderIntegrationCard(integration)).join('');
+  }
+
+  renderIntegrationCard(integration) {
+    const statusClass = `status-${integration.status}`;
+    const lastSync = integration.lastSyncAt ? new Date(integration.lastSyncAt).toLocaleDateString() : 'Never';
+    const icon = this.getProviderIcon(integration.provider);
+
+    return `
+      <div class="integration-card" onclick="app.viewIntegration('${integration.id}')">
+        <div class="integration-card-header">
+          <div class="integration-icon">${icon}</div>
+          <span class="integration-status ${statusClass}">${integration.status}</span>
+        </div>
+        
+        <div class="integration-name">${this.escapeHtml(integration.displayName)}</div>
+        <div class="integration-provider">${this.escapeHtml(integration.provider)}</div>
+        <div class="integration-description">${this.escapeHtml(integration.description || 'No description')}</div>
+        
+        <div class="integration-meta">
+          <div class="meta-item">
+            <span>🔄</span>
+            <span>Last sync: ${lastSync}</span>
+          </div>
+          <div class="meta-item">
+            <span>🔐</span>
+            <span>${this.escapeHtml(integration.authType)}</span>
+          </div>
+        </div>
+
+        <div class="integration-actions">
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); app.testConnection('${integration.id}')">
+            Test
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); app.showCredentialModal('${integration.id}')">
+            Credentials
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); app.deleteIntegration('${integration.id}')">
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  getProviderIcon(provider) {
+    const icons = {
+      github: '🐙',
+      gitlab: '🦊',
+      azure_devops: '📦',
+      jira: '📋',
+      confluence: '📚',
+      slack: '💬',
+      microsoft_teams: '👥',
+      google_workspace: '📧',
+      microsoft_365: '📊',
+      outlook: '📧',
+      gmail: '📧',
+      notion: '📝',
+      salesforce: '☁️',
+      hubspot: '🎯',
+      servicenow: '🎫',
+      sap: '🏢',
+      oracle: '🗄️',
+      twilio: '📱',
+      whatsapp: '💚',
+      telegram: '✈️',
+      discord: '🎮',
+      custom: '⚙️'
+    };
+    return icons[provider] || '🔌';
+  }
+
+  // ─── Modal Management ────────────────────────────────────────────────────────
+
+  showNewIntegrationModal() {
+    document.getElementById('modal-title').textContent = 'New Integration';
+    document.getElementById('integration-form').reset();
+    document.getElementById('integration-modal').classList.add('active');
+  }
+
+  closeModal() {
+    document.getElementById('integration-modal').classList.remove('active');
+  }
+
+  showCredentialModal(integrationId) {
+    document.getElementById('credential-integration-id').value = integrationId;
+    document.getElementById('credential-form').reset();
+    document.getElementById('credential-modal').classList.add('active');
+  }
+
+  closeCredentialModal() {
+    document.getElementById('credential-modal').classList.remove('active');
+  }
+
+  // ─── CRUD Operations ─────────────────────────────────────────────────────────
+
+  async saveIntegration(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    const integrationData = {
+      name: formData.get('name'),
+      displayName: formData.get('displayName') || formData.get('name'),
+      description: formData.get('description'),
+      provider: formData.get('provider'),
+      integrationType: formData.get('integrationType'),
+      authType: formData.get('authType'),
+      configuration: this.parseJson(formData.get('configuration'))
+    };
+
+    try {
+      const response = await fetch('/api/integrations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(integrationData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.closeModal();
+        this.loadIntegrations();
+        this.loadStatistics();
+        this.showSuccess('Integration created successfully');
+      } else {
+        this.showError(result.error || 'Failed to create integration');
+      }
+    } catch (error) {
+      console.error('Failed to save integration:', error);
+      this.showError('Failed to save integration');
+    }
+  }
+
+  async deleteIntegration(integrationId) {
+    if (!confirm('Are you sure you want to delete this integration?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/integrations/${integrationId}`, {
+        method: 'DELETE'
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.loadIntegrations();
+        this.loadStatistics();
+        this.showSuccess('Integration deleted successfully');
+      } else {
+        this.showError(result.error || 'Failed to delete integration');
+      }
+    } catch (error) {
+      console.error('Failed to delete integration:', error);
+      this.showError('Failed to delete integration');
+    }
+  }
+
+  async viewIntegration(integrationId) {
+    // Navigate to integration detail page
+    window.location.href = `/integrations/${integrationId}`;
+  }
+
+  // ─── Credential Management ───────────────────────────────────────────────────
+
+  async saveCredential(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const integrationId = formData.get('integrationId');
+
+    const credentialData = {
+      type: formData.get('type'),
+      value: formData.get('value'),
+      expiresAt: formData.get('expiresAt') || null
+    };
+
+    try {
+      const response = await fetch(`/api/integrations/${integrationId}/credentials`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentialData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.closeCredentialModal();
+        this.showSuccess('Credential saved successfully');
+      } else {
+        this.showError(result.error || 'Failed to save credential');
+      }
+    } catch (error) {
+      console.error('Failed to save credential:', error);
+      this.showError('Failed to save credential');
+    }
+  }
+
+  // ─── Connection Testing ──────────────────────────────────────────────────────
+
+  async testConnection(integrationId) {
+    try {
+      this.showLoading('Testing connection...');
+
+      const response = await fetch(`/api/integrations/${integrationId}/test`, {
+        method: 'POST'
+      });
+
+      const result = await response.json();
+
+      this.hideLoading();
+
+      if (result.success) {
+        this.showSuccess('Connection test successful!');
+        this.loadIntegrations();
+      } else {
+        this.showError(result.error || 'Connection test failed');
+      }
+    } catch (error) {
+      this.hideLoading();
+      console.error('Failed to test connection:', error);
+      this.showError('Failed to test connection');
+    }
+  }
+
+  async checkAllHealth() {
+    try {
+      this.showLoading('Checking health of all integrations...');
+
+      const response = await fetch('/api/integrations/health/check-all', {
+        method: 'POST'
+      });
+
+      const result = await response.json();
+
+      this.hideLoading();
+
+      if (result.success) {
+        this.showSuccess(`Health check completed for ${result.data.length} integrations`);
+        this.loadIntegrations();
+        this.loadStatistics();
+      } else {
+        this.showError(result.error || 'Health check failed');
+      }
+    } catch (error) {
+      this.hideLoading();
+      console.error('Failed to check health:', error);
+      this.showError('Failed to check health');
+    }
+  }
+
+  // ─── Utility Methods ─────────────────────────────────────────────────────────
+
+  parseJson(str) {
+    try {
+      return str ? JSON.parse(str) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  showSuccess(message) {
+    this.showNotification(message, 'success');
+  }
+
+  showError(message) {
+    this.showNotification(message, 'error');
+  }
+
+  showNotification(message, type = 'info') {
+    // Simple notification - can be enhanced with a proper notification system
+    alert(message);
+  }
+
+  showLoading(message = 'Loading...') {
+    // Implement loading indicator
+    console.log(message);
+  }
+
+  hideLoading() {
+    // Hide loading indicator
+  }
+
+  onProviderChange() {
+    // Handle provider change - can be used to load provider-specific configuration
+    const provider = document.getElementById('integration-provider').value;
+    console.log('Provider changed:', provider);
+  }
 }
 
-function showSuccess(message) {
-  alert(`Success: ${message}`);
-}
-
-function showError(message) {
-  alert(`Error: ${message}`);
-}
+// Initialize app
+let app;
+document.addEventListener('DOMContentLoaded', () => {
+  app = new IntegrationsApp();
+});
