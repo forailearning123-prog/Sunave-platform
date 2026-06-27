@@ -55,6 +55,8 @@ import { createAgentAnalyticsRepository } from './repositories/agentAnalyticsRep
 import { createAgentTemplateRepository } from './repositories/agentTemplateRepository.js';
 import { createAgentMarketplaceRepository } from './repositories/agentMarketplaceRepository.js';
 import { createAgentCollaborationRepository } from './repositories/agentCollaborationRepository.js';
+import { createPluginRepository } from './repositories/pluginRepository.js';
+import { createIntegrationRepository } from './repositories/integrationRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { createAiGatewayService } from './services/aiGatewayService.js';
@@ -67,6 +69,8 @@ import { createContextBuilderService } from './services/contextBuilderService.js
 import { createWorkerService } from './services/workerService.js';
 import { createWorkflowService } from './services/workflowService.js';
 import { createAgentService } from './services/agentService.js';
+import { createPluginService } from './services/pluginService.js';
+import { createIntegrationService } from './services/integrationService.js';
 import { buildConversationsRouter } from './routes/conversations.js';
 import { buildPromptsRouter } from './routes/prompts.js';
 import { buildRuntimeRouter } from './routes/runtime.js';
@@ -80,6 +84,8 @@ import { buildAgentCollaborationsRouter } from './routes/agentCollaborations.js'
 import { buildAgentDecisionsRouter } from './routes/agentDecisions.js';
 import { buildAgentDelegationsRouter } from './routes/agentDelegations.js';
 import { buildAgentApprovalsRouter } from './routes/agentApprovals.js';
+import { buildPluginsRouter } from './routes/plugins.js';
+import { buildIntegrationsRouter } from './routes/integrations.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -174,6 +180,12 @@ export async function createApp({ pool } = {}) {
     configService
   );
   
+  // Plugin Platform
+  const pluginRepo             = createPluginRepository(dbPool);
+  const integrationRepo        = createIntegrationRepository(dbPool);
+  const pluginService          = createPluginService(dbPool, permService, configService, aiGatewayService);
+  const integrationService     = createIntegrationService(dbPool, permService, configService);
+  
   const memoryService          = createMemoryEngineService(memoryRepo, policyRepo);
   const knowledgeService       = createKnowledgeRetrievalService(
     knowledgeSourceRepo, chunkRepo, embeddingRepo, embeddingProviderRepo, vectorIndexRepo
@@ -221,6 +233,18 @@ export async function createApp({ pool } = {}) {
   app.use('/api/agents', buildAgentDecisionsRouter(agentService, permService));
   app.use('/api/agents', buildAgentDelegationsRouter(agentService, permService));
   app.use('/api/agents', buildAgentApprovalsRouter(agentService, permService));
+
+  // Plugin Platform routes
+  app.use('/api/plugins', buildPluginsRouter({
+    db: dbPool,
+    pluginService,
+    permissionService: permService
+  }));
+  app.use('/api/integrations', buildIntegrationsRouter({
+    db: dbPool,
+    integrationService,
+    permissionService: permService
+  }));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));
