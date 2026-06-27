@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Platform - Sunave</title>
+  <link rel="stylesheet" href="/styles/business.css">
+  <style>
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .kpi-card { background: var(--bg-surface); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+    .kpi-value { font-size: 2rem; font-weight: bold; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <div class="business-container">
+    <aside class="business-sidebar">
+      <div class="sidebar-header">
+        <h2>Finance Platform</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/finance" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/finance/invoices" class="nav-item">
+          <span class="nav-icon">📄</span>
+          <span>Invoices</span>
+        </a>
+        <a href="/finance/expenses" class="nav-item">
+          <span class="nav-icon">💳</span>
+          <span>Expenses</span>
+        </a>
+        <a href="/finance/ledger" class="nav-item">
+          <span class="nav-icon">📚</span>
+          <span>Ledger</span>
+        </a>
+        <a href="/finance/reports" class="nav-item">
+          <span class="nav-icon">📉</span>
+          <span>Reports</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="business-main">
+      <header class="main-header">
+        <div class="header-search">
+          <input type="text" placeholder="Search Finance..." id="global-search">
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="btn-new-invoice">+ New Invoice</button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <h1>Finance Executive Dashboard</h1>
+        
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <h3>Revenue (MTD)</h3>
+            <div class="kpi-value">$425K</div>
+            <p>+8% vs last month</p>
+          </div>
+          <div class="kpi-card">
+            <h3>Expenses (MTD)</h3>
+            <div class="kpi-value">$180K</div>
+            <p>-2% vs last month</p>
+          </div>
+          <div class="kpi-card">
+            <h3>Cash Flow</h3>
+            <div class="kpi-value">$245K</div>
+            <p>Healthy</p>
+          </div>
+          <div class="kpi-card">
+            <h3>AI Insights</h3>
+            <div class="kpi-value">1</div>
+            <p>Expense anomaly detected</p>
+          </div>
+        </div>
+
+        <div class="widgets-container">
+          <!-- Shared Business Components reused here -->
+          <div class="widget">
+            <h3>Recent Activities</h3>
+            <ul id="activity-feed">
+              <li>Invoice #INV-2024-001 paid by Client A</li>
+              <li>Expense report #EXP-900 approved</li>
+              <li>Month-end reconciliation started</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

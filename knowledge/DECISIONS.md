@@ -256,3 +256,15 @@
 
 5. **Tags and Custom Fields are globally managed.**
    - Rationale: Allows cross-object querying and prevents schema drift across modules.
+
+## 2026-06-27 - Enterprise Business Applications Platform (Epics 7, 8 & 9)
+
+1. **CRM, HR, and Finance platforms do not create their own core infrastructure.**
+   - Rationale: Everything must extend the Business Operating Platform. This reduces duplication of features like timelines, tasks, and notifications.
+
+2. **Normalized schemas are implemented as metadata/custom fields atop `business_objects`.**
+   - Rationale: Ensures a unified query layer and uniform behaviors across modules while satisfying the requirement for domain-specific schemas without diverging table hierarchies.
+
+3. **APIs and Frontends isolated in package and app directories.**
+   - Rationale: The core API (`apps/api`) remains untouched and acts as a foundation. Domain logic for specific business modules resides in `packages/business/` and their respective UI components in `apps/web/`.
+

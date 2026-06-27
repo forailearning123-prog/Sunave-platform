@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Platform - Sunave</title>
+  <link rel="stylesheet" href="/styles/business.css">
+  <style>
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .kpi-card { background: var(--bg-surface); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+    .kpi-value { font-size: 2rem; font-weight: bold; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <div class="business-container">
+    <aside class="business-sidebar">
+      <div class="sidebar-header">
+        <h2>HR Platform</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/hr" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/hr/employees" class="nav-item">
+          <span class="nav-icon">👥</span>
+          <span>Employees</span>
+        </a>
+        <a href="/hr/recruitment" class="nav-item">
+          <span class="nav-icon">📝</span>
+          <span>Recruitment</span>
+        </a>
+        <a href="/hr/leave" class="nav-item">
+          <span class="nav-icon">🌴</span>
+          <span>Leave</span>
+        </a>
+        <a href="/hr/performance" class="nav-item">
+          <span class="nav-icon">⭐</span>
+          <span>Performance</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="business-main">
+      <header class="main-header">
+        <div class="header-search">
+          <input type="text" placeholder="Search HR..." id="global-search">
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="btn-new-employee">+ New Employee</button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <h1>HR Executive Dashboard</h1>
+        
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <h3>Headcount</h3>
+            <div class="kpi-value">1,240</div>
+            <p>+15 this month</p>
+          </div>
+          <div class="kpi-card">
+            <h3>Open Positions</h3>
+            <div class="kpi-value">28</div>
+            <p>4 critical</p>
+          </div>
+          <div class="kpi-card">
+            <h3>Time to Hire</h3>
+            <div class="kpi-value">32 Days</div>
+            <p>-3 days vs last quarter</p>
+          </div>
+          <div class="kpi-card">
+            <h3>AI Insights</h3>
+            <div class="kpi-value">2</div>
+            <p>Retention alerts</p>
+          </div>
+        </div>
+
+        <div class="widgets-container">
+          <!-- Shared Business Components reused here -->
+          <div class="widget">
+            <h3>Recent Activities</h3>
+            <ul id="activity-feed">
+              <li>Offer accepted by Jane Smith</li>
+              <li>Annual performance review cycle started</li>
+              <li>Leave request approved for Mark T.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

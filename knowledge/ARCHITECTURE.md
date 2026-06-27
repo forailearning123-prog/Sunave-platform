@@ -26,3 +26,16 @@
 ## Tech Stack
 - Node.js, Express, PostgreSQL (with schema migrations).
 - RESTful endpoints, pure JavaScript implementations, Dockerized.
+
+6. **Enterprise Business Applications (CRM, HR, Finance)**
+   - Built entirely on top of the Business Operating Platform.
+   - Domain-specific logic resides in `packages/business/`.
+   - UI frontends are completely isolated under `apps/web/crm`, `apps/web/hr`, and `apps/web/finance`.
+   - Uses dynamically composed metadata rather than isolated physical tables.
+
+
+7. **Enterprise Extension Platforms (Epics 10-15)**
+   - Collaboration, Supply Chain (SCM), Support, BI, Operations, and Cloud management platforms.
+   - Designed to rely natively on the Business Operating Platform (`business_objects` framework and migrations).
+   - Separated into their respective packages (`packages/business/[module]`) and frontend workspaces (`apps/web/[module]`).
+

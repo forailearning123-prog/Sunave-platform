@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Dashboard - Sunave</title>
+  <link rel="stylesheet" href="/styles/business.css">
+  <style>
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .kpi-card { background: var(--bg-surface); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+    .kpi-value { font-size: 2rem; font-weight: bold; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <div class="business-container">
+    <aside class="business-sidebar">
+      <div class="sidebar-header">
+        <h2>CRM Platform</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/crm" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/crm/leads" class="nav-item">
+          <span class="nav-icon">🎯</span>
+          <span>Leads</span>
+        </a>
+        <a href="/crm/opportunities" class="nav-item">
+          <span class="nav-icon">💼</span>
+          <span>Opportunities</span>
+        </a>
+        <a href="/crm/accounts" class="nav-item">
+          <span class="nav-icon">🏢</span>
+          <span>Accounts</span>
+        </a>
+        <a href="/crm/pipeline" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span>Pipeline</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="business-main">
+      <header class="main-header">
+        <div class="header-search">
+          <input type="text" placeholder="Search CRM..." id="global-search">
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="btn-new-lead">+ New Lead</button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <h1>Sales Executive Dashboard</h1>
+        
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <h3>Total Pipeline</h3>
+            <div class="kpi-value">$2.4M</div>
+            <p>+12% vs last month</p>
+          </div>
+          <div class="kpi-card">
+            <h3>Win Rate</h3>
+            <div class="kpi-value">42%</div>
+            <p>+3% vs last month</p>
+          </div>
+          <div class="kpi-card">
+            <h3>Active Deals</h3>
+            <div class="kpi-value">64</div>
+            <p>Needs attention: 5</p>
+          </div>
+          <div class="kpi-card">
+            <h3>AI Insights</h3>
+            <div class="kpi-value">3</div>
+            <p>New recommendations</p>
+          </div>
+        </div>
+
+        <div class="widgets-container">
+          <!-- Shared Business Components reused here -->
+          <div class="widget">
+            <h3>Recent Activities</h3>
+            <ul id="activity-feed">
+              <li>Call with Acme Corp logged by Sarah</li>
+              <li>Proposal sent to Globex Inc</li>
+              <li>Lead "John Doe" qualified</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

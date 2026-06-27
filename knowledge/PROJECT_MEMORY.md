@@ -1,7 +1,7 @@
 # Project Memory
 
 ## Current Sprint
-- Sprint 9: CRM Platform (Epic 7)
+- Sprint 10: Enterprise Collaboration Platform (Epic 10)
 
 ## Architecture Summary
 - Multi-tenant, API-first, plugin-oriented platform.
@@ -34,6 +34,9 @@
 - Worker Platform
 - Agent Platform (Prompts 20-24)
 - Business Operating Platform (Epic 6)
+- CRM Platform (Epic 7)
+- HR Platform (Epic 8)
+- Finance Platform (Epic 9)
 
 ## Completed Modules
 - Foundation scaffolding
@@ -49,6 +52,9 @@
 - Worker Platform (Prompts 17, 18 & 19)
 - Agent Platform (Prompts 20-24)
 - Business Operating Platform (Epic 6)
+- CRM Platform (Epic 7)
+- HR Platform (Epic 8)
+- Finance Platform (Epic 9)
 
 ## Pending Modules
 - Goal Management
