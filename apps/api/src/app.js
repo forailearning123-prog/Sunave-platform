@@ -44,6 +44,17 @@ import { createContextRepository } from './repositories/contextRepository.js';
 import { createPolicyRepository } from './repositories/policyRepository.js';
 import { createWorkerRepository } from './repositories/workerRepository.js';
 import { createWorkflowRepository } from './repositories/workflowRepository.js';
+import { createAgentRepository } from './repositories/agentRepository.js';
+import { createAgentExecutionRepository } from './repositories/agentExecutionRepository.js';
+import { createAgentGoalRepository } from './repositories/agentGoalRepository.js';
+import { createAgentTaskRepository } from './repositories/agentTaskRepository.js';
+import { createAgentDecisionRepository } from './repositories/agentDecisionRepository.js';
+import { createAgentDelegationRepository } from './repositories/agentDelegationRepository.js';
+import { createAgentApprovalRepository } from './repositories/agentApprovalRepository.js';
+import { createAgentAnalyticsRepository } from './repositories/agentAnalyticsRepository.js';
+import { createAgentTemplateRepository } from './repositories/agentTemplateRepository.js';
+import { createAgentMarketplaceRepository } from './repositories/agentMarketplaceRepository.js';
+import { createAgentCollaborationRepository } from './repositories/agentCollaborationRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { createAiGatewayService } from './services/aiGatewayService.js';
@@ -55,12 +66,20 @@ import { createEmbeddingService } from './services/embeddingService.js';
 import { createContextBuilderService } from './services/contextBuilderService.js';
 import { createWorkerService } from './services/workerService.js';
 import { createWorkflowService } from './services/workflowService.js';
+import { createAgentService } from './services/agentService.js';
 import { buildConversationsRouter } from './routes/conversations.js';
 import { buildPromptsRouter } from './routes/prompts.js';
 import { buildRuntimeRouter } from './routes/runtime.js';
 import { buildIntelligenceRouter } from './routes/intelligence.js';
 import { buildWorkersRouter } from './routes/workers.js';
 import { buildWorkflowsRouter } from './routes/workflows.js';
+import { buildAgentsRouter } from './routes/agents.js';
+import { buildAgentTemplatesRouter } from './routes/agentTemplates.js';
+import { buildAgentMarketplaceRouter } from './routes/agentMarketplace.js';
+import { buildAgentCollaborationsRouter } from './routes/agentCollaborations.js';
+import { buildAgentDecisionsRouter } from './routes/agentDecisions.js';
+import { buildAgentDelegationsRouter } from './routes/agentDelegations.js';
+import { buildAgentApprovalsRouter } from './routes/agentApprovals.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -132,6 +151,29 @@ export async function createApp({ pool } = {}) {
   const workerService          = createWorkerService(dbPool);
   const workflowService        = createWorkflowService(dbPool);
   
+  // Agent Platform
+  const agentRepo              = createAgentRepository(dbPool);
+  const agentExecutionRepo     = createAgentExecutionRepository(dbPool);
+  const agentGoalRepo          = createAgentGoalRepository(dbPool);
+  const agentTaskRepo          = createAgentTaskRepository(dbPool);
+  const agentDecisionRepo      = createAgentDecisionRepository(dbPool);
+  const agentDelegationRepo    = createAgentDelegationRepository(dbPool);
+  const agentApprovalRepo      = createAgentApprovalRepository(dbPool);
+  const agentAnalyticsRepo     = createAgentAnalyticsRepository(dbPool);
+  const agentTemplateRepo      = createAgentTemplateRepository(dbPool);
+  const agentMarketplaceRepo   = createAgentMarketplaceRepository(dbPool);
+  const agentCollaborationRepo = createAgentCollaborationRepository(dbPool);
+  const agentService           = createAgentService(
+    agentRepo,
+    agentExecutionRepo,
+    agentGoalRepo,
+    agentTaskRepo,
+    agentAnalyticsRepo,
+    workerRepo,
+    memoryRepo,
+    configService
+  );
+  
   const memoryService          = createMemoryEngineService(memoryRepo, policyRepo);
   const knowledgeService       = createKnowledgeRetrievalService(
     knowledgeSourceRepo, chunkRepo, embeddingRepo, embeddingProviderRepo, vectorIndexRepo
@@ -170,6 +212,15 @@ export async function createApp({ pool } = {}) {
   // Worker Platform routes
   app.use('/api/workers', buildWorkersRouter(workerService, permService));
   app.use('/api/workflows', buildWorkflowsRouter(workflowService, permService));
+
+  // Agent Platform routes
+  app.use('/api/agents', buildAgentsRouter(agentService, permService));
+  app.use('/api/agents/templates', buildAgentTemplatesRouter(agentService, permService));
+  app.use('/api/agents/marketplace', buildAgentMarketplaceRouter(agentService, permService));
+  app.use('/api/agents', buildAgentCollaborationsRouter(agentService, permService));
+  app.use('/api/agents', buildAgentDecisionsRouter(agentService, permService));
+  app.use('/api/agents', buildAgentDelegationsRouter(agentService, permService));
+  app.use('/api/agents', buildAgentApprovalsRouter(agentService, permService));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));
