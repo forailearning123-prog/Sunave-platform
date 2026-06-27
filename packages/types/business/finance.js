@@ -25,3 +25,9 @@ export const FinanceSchemas = {
     }
   }
 };
+
+  budget: { type: 'object', properties: { fiscal_year: { type: 'string' }, allocated_amount: { type: 'number' } } },
+  tax: { type: 'object', properties: { tax_rate: { type: 'number' } } },
+  recurring_billing: { type: 'object', properties: { frequency: { type: 'string' } } },
+  general_ledger: { type: 'object' }
+

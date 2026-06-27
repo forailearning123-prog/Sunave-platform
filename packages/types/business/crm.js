@@ -25,3 +25,9 @@ export const CrmSchemas = {
     }
   }
 };
+
+  campaign: { type: 'object', properties: { budget: { type: 'number' }, status: { type: 'string' } } },
+  quote: { type: 'object', properties: { total_value: { type: 'number' }, valid_until: { type: 'string', format: 'date' } } },
+  contract: { type: 'object', properties: { start_date: { type: 'string', format: 'date' }, end_date: { type: 'string', format: 'date' } } },
+  territory: { type: 'object' }
+

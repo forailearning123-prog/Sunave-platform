@@ -24,3 +24,9 @@ export const HrSchemas = {
     }
   }
 };
+
+  position: { type: 'object', properties: { headcount: { type: 'number' } } },
+  attendance: { type: 'object', properties: { date: { type: 'string', format: 'date' }, hours_worked: { type: 'number' } } },
+  performance_review: { type: 'object', properties: { rating: { type: 'number' }, review_period: { type: 'string' } } },
+  learning: { type: 'object' }
+
