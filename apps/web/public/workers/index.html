@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workers - Sunave</title>
+  <link rel="stylesheet" href="/styles/workers.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Sunave</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item">Dashboard</a>
+        <a href="/workers" class="nav-item active">Workers</a>
+        <a href="/workflows" class="nav-item">Workflows</a>
+        <a href="/marketplace" class="nav-item">Marketplace</a>
+        <a href="/executions" class="nav-item">Executions</a>
+        <a href="/schedules" class="nav-item">Schedules</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>Workers</h1>
+        <button class="btn btn-primary" onclick="createWorker()">+ New Worker</button>
+      </header>
+
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Search workers..." onkeyup="filterWorkers()">
+        <select id="categoryFilter" onchange="filterWorkers()">
+          <option value="">All Categories</option>
+          <option value="ai">AI</option>
+          <option value="knowledge">Knowledge</option>
+          <option value="search">Search</option>
+          <option value="document">Document</option>
+          <option value="communication">Communication</option>
+          <option value="database">Database</option>
+          <option value="analytics">Analytics</option>
+          <option value="automation">Automation</option>
+          <option value="integration">Integration</option>
+          <option value="development">Development</option>
+          <option value="finance">Finance</option>
+          <option value="crm">CRM</option>
+          <option value="hr">HR</option>
+          <option value="operations">Operations</option>
+          <option value="custom">Custom</option>
+        </select>
+        <select id="statusFilter" onchange="filterWorkers()">
+          <option value="">All Status</option>
+          <option value="draft">Draft</option>
+          <option value="testing">Testing</option>
+          <option value="published">Published</option>
+          <option value="deprecated">Deprecated</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      <div class="workers-grid" id="workersGrid">
+        <!-- Workers will be loaded here -->
+      </div>
+    </main>
+  </div>
+
+  <script src="/app/workers.js"></script>
+</body>
+</html>

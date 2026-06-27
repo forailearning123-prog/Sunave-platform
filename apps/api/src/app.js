@@ -42,6 +42,8 @@ import { createEmbeddingRepository } from './repositories/embeddingRepository.js
 import { createVectorIndexRepository } from './repositories/vectorIndexRepository.js';
 import { createContextRepository } from './repositories/contextRepository.js';
 import { createPolicyRepository } from './repositories/policyRepository.js';
+import { createWorkerRepository } from './repositories/workerRepository.js';
+import { createWorkflowRepository } from './repositories/workflowRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { createAiGatewayService } from './services/aiGatewayService.js';
@@ -51,10 +53,14 @@ import { createMemoryEngineService } from './services/memoryEngineService.js';
 import { createKnowledgeRetrievalService } from './services/knowledgeRetrievalService.js';
 import { createEmbeddingService } from './services/embeddingService.js';
 import { createContextBuilderService } from './services/contextBuilderService.js';
+import { createWorkerService } from './services/workerService.js';
+import { createWorkflowService } from './services/workflowService.js';
 import { buildConversationsRouter } from './routes/conversations.js';
 import { buildPromptsRouter } from './routes/prompts.js';
 import { buildRuntimeRouter } from './routes/runtime.js';
 import { buildIntelligenceRouter } from './routes/intelligence.js';
+import { buildWorkersRouter } from './routes/workers.js';
+import { buildWorkflowsRouter } from './routes/workflows.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -119,6 +125,13 @@ export async function createApp({ pool } = {}) {
   const vectorIndexRepo        = createVectorIndexRepository(dbPool);
   const contextRepo            = createContextRepository(dbPool);
   const policyRepo             = createPolicyRepository(dbPool);
+  
+  // Worker Platform
+  const workerRepo             = createWorkerRepository(dbPool);
+  const workflowRepo           = createWorkflowRepository(dbPool);
+  const workerService          = createWorkerService(dbPool);
+  const workflowService        = createWorkflowService(dbPool);
+  
   const memoryService          = createMemoryEngineService(memoryRepo, policyRepo);
   const knowledgeService       = createKnowledgeRetrievalService(
     knowledgeSourceRepo, chunkRepo, embeddingRepo, embeddingProviderRepo, vectorIndexRepo
@@ -153,6 +166,10 @@ export async function createApp({ pool } = {}) {
     memoryRepo, knowledgeSourceRepo, chunkRepo, embeddingProviderRepo,
     embeddingRepo, vectorIndexRepo, contextRepo, orgRepo, permService
   ));
+  
+  // Worker Platform routes
+  app.use('/api/workers', buildWorkersRouter(workerService, permService));
+  app.use('/api/workflows', buildWorkflowsRouter(workflowService, permService));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

@@ -84,4 +84,23 @@
 - API: /api/intelligence/* (memory, knowledge, embeddings, vector, context, search)
 - Frontend: /intelligence/* (overview, memory, search, context, knowledge, vector, admin)
 
-## Prompt 17 — Worker Platform (Next)
+## Prompt 17, 18 & 19 — Worker Platform ✅
+- Worker Registry (CRUD, versioning, dependencies, search, filter, tag)
+- Worker Runtime interface (validate, prepare, execute, retry, cancel, resume, pause, complete, fail, cleanup)
+- Worker Definitions with 15 categories and 7 execution modes
+- Worker Parameters (15 input types, 12 output types)
+- Worker Validation framework
+- Worker Execution Framework with execution history
+- Workflow Engine (sequential, parallel, conditional, loop, retry, delay, approval, webhook, manual, merge)
+- Workflow Designer with steps and connections
+- Workflow Runtime with execution tracking
+- Workflow Templates (9 system templates: document processing, research, meeting summary, email automation, knowledge update, project reporting, goal review, task review, customer support)
+- Worker Marketplace (browse, search, install, rate, favorite, version history)
+- Worker Versioning system
+- Execution History (worker and workflow executions, logs, metrics)
+- Scheduling Framework (once, hourly, daily, weekly, monthly, cron)
+- Dashboard Widgets (worker status, workflow status, recent executions, popular workers, marketplace, execution success rate, workflow health)
+- Migration 010 (13 tables: workers, worker_versions, worker_dependencies, worker_executions, workflows, workflow_steps, workflow_connections, workflow_executions, workflow_templates, schedules, marketplace_items, worker_ratings, execution_logs)
+- API: /api/workers/* and /api/workflows/* (complete CRUD + execution + marketplace + schedules)
+- Frontend: /workers, /workflows, /marketplace (with full UI and styling)
+- Documentation updated

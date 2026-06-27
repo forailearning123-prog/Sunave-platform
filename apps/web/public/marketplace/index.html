@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace - Sunave</title>
+  <link rel="stylesheet" href="/styles/workers.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Sunave</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item">Dashboard</a>
+        <a href="/workers" class="nav-item">Workers</a>
+        <a href="/workflows" class="nav-item">Workflows</a>
+        <a href="/marketplace" class="nav-item active">Marketplace</a>
+        <a href="/executions" class="nav-item">Executions</a>
+        <a href="/schedules" class="nav-item">Schedules</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>Worker Marketplace</h1>
+      </header>
+
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Search marketplace..." onkeyup="filterMarketplace()">
+        <select id="categoryFilter" onchange="filterMarketplace()">
+          <option value="">All Categories</option>
+          <option value="ai">AI</option>
+          <option value="knowledge">Knowledge</option>
+          <option value="search">Search</option>
+          <option value="document">Document</option>
+          <option value="communication">Communication</option>
+          <option value="database">Database</option>
+          <option value="analytics">Analytics</option>
+          <option value="automation">Automation</option>
+          <option value="custom">Custom</option>
+        </select>
+        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 0;">
+          <input type="checkbox" id="featuredFilter" onchange="filterMarketplace()">
+          Featured Only
+        </label>
+      </div>
+
+      <div class="workers-grid" id="marketplaceGrid">
+        <!-- Marketplace items will be loaded here -->
+      </div>
+    </main>
+  </div>
+
+  <script src="/app/marketplace.js"></script>
+</body>
+</html>
