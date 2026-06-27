@@ -31,10 +31,17 @@ import { createAiProviderRepository } from './repositories/aiProviderRepository.
 import { createAiModelRepository } from './repositories/aiModelRepository.js';
 import { createAiCapabilityRepository } from './repositories/aiCapabilityRepository.js';
 import { createAiUsageRepository } from './repositories/aiUsageRepository.js';
+import { createConversationRepository } from './repositories/conversationRepository.js';
+import { createPromptRepository } from './repositories/promptRepository.js';
+import { createRuntimeRepository } from './repositories/runtimeRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { createAiGatewayService } from './services/aiGatewayService.js';
 import { createCredentialService } from './services/credentialService.js';
+import { createRuntimeService } from './services/runtimeService.js';
+import { buildConversationsRouter } from './routes/conversations.js';
+import { buildPromptsRouter } from './routes/prompts.js';
+import { buildRuntimeRouter } from './routes/runtime.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -84,6 +91,12 @@ export async function createApp({ pool } = {}) {
   const credentialService   = createCredentialService();
   const aiGatewayService    = createAiGatewayService(aiProviderRepo);
 
+  // AI Runtime Platform
+  const conversationRepo   = createConversationRepository(dbPool);
+  const promptRepo         = createPromptRepository(dbPool);
+  const runtimeRepo        = createRuntimeRepository(dbPool);
+  const runtimeService     = createRuntimeService(aiGatewayService, conversationRepo, promptRepo, runtimeRepo, aiUsageRepo);
+
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
@@ -101,6 +114,9 @@ export async function createApp({ pool } = {}) {
     aiProviderRepo, aiGatewayService, credentialService, orgRepo, permService,
     aiModelRepo, aiCapabilityRepo, aiUsageRepo
   ));
+  app.use('/api/conversations', buildConversationsRouter(conversationRepo, runtimeService));
+  app.use('/api/prompts', buildPromptsRouter(promptRepo));
+  app.use('/api/runtime', buildRuntimeRouter(runtimeService, runtimeRepo));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

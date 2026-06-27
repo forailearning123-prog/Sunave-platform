@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Prompt Library - Sunave AI OS</title><script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--bg-primary:#0f1117;--bg-secondary:#181b24;--bg-card:#1e2130;--bg-hover:#262a3a;--border:#2a2e3e;--text-primary:#e8eaed;--text-secondary:#9ca3b0;--text-muted:#6b7280;--accent:#6366f1;--success:#22c55e;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);}
+.layout{display:flex;}
+.sidebar{width:260px;background:var(--bg-secondary);border-right:1px solid var(--border);padding:1.5rem;position:fixed;height:100vh;overflow-y:auto;}
+.sidebar h2{font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:1.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1rem;color:var(--text-secondary);text-decoration:none;border-radius:8px;font-size:0.9rem;}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary);}
+.nav-item.active{background:var(--accent);color:white;}
+.nav-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding:0 1rem;margin-bottom:0.5rem;margin-top:1rem;}
+.main{margin-left:260px;flex:1;padding:2rem;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+.header h1{font-size:1.5rem;font-weight:600;}
+.header p{color:var(--text-secondary);font-size:0.9rem;}
+.action-btn{padding:0.5rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);cursor:pointer;font-size:0.85rem;}
+.action-btn:hover{background:var(--bg-hover);border-color:var(--accent);}
+.action-btn.primary{background:var(--accent);border-color:var(--accent);color:white;}
+.categories{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.cat-chip{padding:0.4rem 0.8rem;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;font-size:0.8rem;}
+.cat-chip:hover{background:var(--bg-hover);border-color:var(--accent);}
+.cat-chip.active{background:var(--accent);color:white;border-color:var(--accent);}
+.prompts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;}
+.prompt-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;cursor:pointer;transition:all 0.15s;}
+.prompt-card:hover{border-color:var(--accent);}
+.prompt-card .name{font-weight:600;font-size:0.95rem;margin-bottom:0.25rem;}
+.prompt-card .desc{color:var(--text-secondary);font-size:0.85rem;margin-bottom:0.5rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.prompt-card .meta{display:flex;justify-content:space-between;align-items:center;}
+.prompt-card .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600;}
+.badge.success{background:rgba(34,197,94,0.15);color:var(--success);}
+.badge.info{background:rgba(59,130,246,0.15);color:#3b82f6;}
+.badge.muted{background:rgba(107,114,128,0.15);color:var(--text-muted);}
+.prompt-card .cat{color:var(--text-muted);font-size:0.75rem;}
+.search-input{padding:0.5rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:0.85rem;flex:1;width:100%;margin-bottom:1rem;}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+<h2>🤖 AI OS</h2>
+<div class="nav-label">AI Runtime</div>
+<a href="/conversations/index.html" class="nav-item"><i data-lucide="message-circle"></i> Conversations</a>
+<a href="/prompt-library/index.html" class="nav-item active"><i data-lucide="file-text"></i> Prompt Library</a>
+<a href="/runtime/index.html" class="nav-item"><i data-lucide="zap"></i> AI Runtime</a>
+<div class="nav-label">Management</div>
+<a href="/admin/ai/index.html" class="nav-item"><i data-lucide="cpu"></i> AI Admin</a>
+</nav>
+<div class="main">
+<div class="header"><div><h1>Prompt Library</h1><p>Reusable prompt templates with variables and versioning</p></div><button class="action-btn primary" onclick="location.href='/prompt-library/edit.html'">+ New Prompt</button></div>
+<input type="text" class="search-input" id="searchInput" placeholder="Search prompts..." oninput="loadPrompts()">
+<div class="categories" id="categoryList"></div>
+<div class="prompts-grid" id="promptsGrid"><p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">Loading prompts...</p></div>
+</div></div>
+<script>
+lucide.createIcons();
+let allPrompts = []; let allCats = [];
+
+async function loadPrompts() {
+  const search = document.getElementById('searchInput').value;
+  const params = new URLSearchParams({ limit: 100 });
+  if (search) params.set('search', search);
+  const res = await (await fetch(`/api/prompts?${params}`)).json();
+  if (!res.success) return;
+  allPrompts = res.data.prompts || [];
+  allCats = res.data.categories || [];
+  renderCats();
+  renderPrompts();
+}
+
+function renderCats() {
+  document.getElementById('categoryList').innerHTML = '<span class="cat-chip active" onclick="filterByCat(\'\')">All</span>' +
+    allCats.map(c => `<span class="cat-chip" data-cat="${c.id}" onclick="filterByCat('${c.id}')">${c.display_name}</span>`).join('');
+}
+
+function filterByCat(catId) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  if (catId) document.querySelector(`[data-cat="${catId}"]`).classList.add('active');
+  else document.querySelector('.cat-chip').classList.add('active');
+  const filtered = catId ? allPrompts.filter(p => p.categoryId === catId) : allPrompts;
+  renderPrompts(filtered);
+}
+
+function renderPrompts(prompts) {
+  const list = prompts || allPrompts;
+  const el = document.getElementById('promptsGrid');
+  if (list.length === 0) { el.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">No prompts found.</p>'; return; }
+  el.innerHTML = list.map(p => `
+    <div class="prompt-card" onclick="location.href='/prompt-library/edit.html?id=${p.id}'">
+      <div class="name">${p.name}</div>
+      <div class="desc">${p.description || 'No description'}</div>
+      <div class="meta">
+        <span class="cat">${p.categoryName || 'Uncategorized'}</span>
+        <span><span class="badge ${p.status === 'published' ? 'success' : p.status === 'draft' ? 'info' : 'muted'}">${p.status}</span> v${p.version}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+loadPrompts();
+</script></body></html>

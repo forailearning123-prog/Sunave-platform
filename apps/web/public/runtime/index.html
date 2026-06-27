@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Runtime - Sunave AI OS</title><script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--bg-primary:#0f1117;--bg-secondary:#181b24;--bg-card:#1e2130;--bg-hover:#262a3a;--border:#2a2e3e;--text-primary:#e8eaed;--text-secondary:#9ca3b0;--text-muted:#6b7280;--accent:#6366f1;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);}
+.layout{display:flex;}
+.sidebar{width:260px;background:var(--bg-secondary);border-right:1px solid var(--border);padding:1.5rem;position:fixed;height:100vh;overflow-y:auto;}
+.sidebar h2{font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:1.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1rem;color:var(--text-secondary);text-decoration:none;border-radius:8px;font-size:0.9rem;}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary);}
+.nav-item.active{background:var(--accent);color:white;}
+.nav-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding:0 1rem;margin-bottom:0.5rem;margin-top:1rem;}
+.main{margin-left:260px;flex:1;padding:2rem;}
+.header{margin-bottom:2rem;}
+.header h1{font-size:1.5rem;font-weight:600;}
+.header p{color:var(--text-secondary);font-size:0.9rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.stat-card .label{color:var(--text-muted);font-size:0.8rem;}
+.stat-card .value{font-size:1.5rem;font-weight:700;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.card h3{font-size:1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.exec-card{padding:0.6rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;}
+.exec-card:last-child{border-bottom:none;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600;}
+.badge.success{background:rgba(34,197,94,0.15);color:var(--success);}
+.badge.warning{background:rgba(245,158,11,0.15);color:var(--warning);}
+.badge.danger{background:rgba(239,68,68,0.15);color:var(--danger);}
+.badge.info{background:rgba(59,130,246,0.15);color:#3b82f6;}
+.quick-exec{display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.quick-exec .action-btn{padding:0.5rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);cursor:pointer;font-size:0.85rem;}
+.quick-exec .action-btn:hover{background:var(--bg-hover);border-color:var(--accent);}
+.quick-exec .action-btn.primary{background:var(--accent);border-color:var(--accent);color:white;}
+.prompt-select{padding:0.5rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:0.85rem;flex:1;}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+<h2>🤖 AI OS</h2>
+<div class="nav-label">AI Runtime</div>
+<a href="/conversations/index.html" class="nav-item"><i data-lucide="message-circle"></i> Conversations</a>
+<a href="/prompt-library/index.html" class="nav-item"><i data-lucide="file-text"></i> Prompt Library</a>
+<a href="/runtime/index.html" class="nav-item active"><i data-lucide="zap"></i> AI Runtime</a>
+<div class="nav-label">Management</div>
+<a href="/admin/ai/index.html" class="nav-item"><i data-lucide="cpu"></i> AI Admin</a>
+</nav>
+<div class="main">
+<div class="header"><h1>AI Runtime</h1><p>Execute AI capability requests and monitor runtime performance</p></div>
+<div class="stats-grid" id="statsGrid"></div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+<h3><i data-lucide="zap" style="width:18px;height:18px;color:var(--accent)"></i> Quick Execute</h3>
+<div class="quick-exec">
+<select class="prompt-select" id="quickPrompt"><option value="">Select a prompt template...</option></select>
+<button class="action-btn primary" onclick="quickChat()">Chat</button>
+<button class="action-btn" onclick="quickExecute()">Execute</button>
+</div>
+<textarea id="quickPromptInput" placeholder="Enter a prompt or message..." style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:0.9rem;min-height:60px;font-family:inherit;margin-bottom:0.5rem;"></textarea>
+<div id="quickResult" style="display:none;margin-top:0.5rem;padding:0.75rem;border-radius:8px;background:var(--bg-hover);font-size:0.85rem;white-space:pre-wrap;"></div>
+</div>
+
+<div class="grid-2">
+<div class="card"><h3><i data-lucide="activity" style="width:18px;height:18px;color:var(--accent)"></i> Recent Executions</h3><div id="recentExecutions"><p style="color:var(--text-muted);font-size:0.85rem;">Loading...</p></div></div>
+<div class="card"><h3><i data-lucide="file-text" style="width:18px;height:18px;color:var(--accent)"></i> Most Used Prompts</h3><div id="mostUsedPrompts"><p style="color:var(--text-muted);font-size:0.85rem;">Loading...</p></div></div>
+</div>
+</div></div>
+<script>
+lucide.createIcons();
+
+async function load() {
+  const res = await (await fetch('/api/runtime/stats')).json();
+  if (res.success) {
+    const d = res.data;
+    if (d.stats) {
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card"><div class="label">Total Executions</div><div class="value">${d.stats.total_executions||0}</div></div>
+        <div class="stat-card"><div class="label">Completed</div><div class="value" style="color:var(--success)">${d.stats.completed||0}</div></div>
+        <div class="stat-card"><div class="label">Avg Time</div><div class="value">${(d.stats.avg_execution_time_ms||0).toLocaleString()}ms</div></div>
+        <div class="stat-card"><div class="label">Total Tokens</div><div class="value">${(d.stats.total_tokens||0).toLocaleString()}</div></div>`;
+    }
+    if (d.recentExecutions) {
+      document.getElementById('recentExecutions').innerHTML = d.recentExecutions.slice(0, 5).map(e => `
+        <div class="exec-card">
+          <div><strong>${e.capability}</strong> ${e.prompt_name ? '· '+e.prompt_name : ''}</div>
+          <div><span class="badge ${e.status==='completed'?'success':e.status==='failed'?'danger':e.status==='running'?'info':'warning'}">${e.status}</span> ${e.execution_time_ms ? e.execution_time_ms+'ms' : ''}</div>
+        </div>
+      `).join('') || '<p style="color:var(--text-muted);font-size:0.85rem;">No executions yet.</p>';
+    }
+    if (d.mostUsedPrompts) {
+      document.getElementById('mostUsedPrompts').innerHTML = d.mostUsedPrompts.map(p => `
+        <div class="exec-card">
+          <div><strong>${p.name}</strong> <span style="color:var(--text-muted);font-size:0.8rem;">${p.category_name || ''}</span></div>
+          <div style="color:var(--text-secondary);font-size:0.85rem;">${p.execution_count} runs · ${p.avg_execution_time_ms}ms avg</div>
+        </div>
+      `).join('') || '<p style="color:var(--text-muted);font-size:0.85rem;">No data yet.</p>';
+    }
+  }
+
+  const promptRes = await (await fetch('/api/prompts')).json();
+  if (promptRes.success) {
+    const sel = document.getElementById('quickPrompt');
+    (promptRes.data.prompts || []).forEach(p => {
+      const opt = document.createElement('option'); opt.value = p.id; opt.textContent = p.name; sel.appendChild(opt);
+    });
+  }
+  lucide.createIcons();
+}
+
+async function quickChat() {
+  const promptId = document.getElementById('quickPrompt').value;
+  const prompt = document.getElementById('quickPromptInput').value.trim();
+  if (!prompt) { alert('Please enter a prompt.'); return; }
+  await executeRuntime(promptId, prompt, 'chat');
+}
+
+async function quickExecute() {
+  const promptId = document.getElementById('quickPrompt').value;
+  const prompt = document.getElementById('quickPromptInput').value.trim();
+  if (!prompt) { alert('Please enter a prompt.'); return; }
+  await executeRuntime(promptId, prompt, 'chat');
+}
+
+async function executeRuntime(promptId, promptText, capability) {
+  const resultEl = document.getElementById('quickResult');
+  resultEl.style.display = 'block';
+  resultEl.textContent = 'Executing...';
+  const body = { capability, prompt: promptText };
+  if (promptId) body.promptId = promptId;
+
+  const res = await fetch('/api/runtime/execute', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  const data = await res.json();
+  if (data.success) {
+    const r = data.data;
+    resultEl.innerHTML = `<strong>Response:</strong> ${r.response?.content || JSON.stringify(r.response)}
+<div style="color:var(--text-muted);font-size:0.8rem;margin-top:0.5rem;">via ${r.provider} · ${r.model} · ${r.executionTimeMs}ms · ${r.usage?.totalTokens || 0} tokens</div>`;
+  } else {
+    resultEl.innerHTML = `<strong style="color:var(--danger)">Error:</strong> ${data.error?.message || 'Execution failed'}`;
+  }
+}
+
+load();
+</script></body></html>
