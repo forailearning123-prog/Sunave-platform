@@ -1,29 +1,17 @@
 # Current Task
 
 ## Active Sprint
-- Sprint 7: Worker Platform (Prompts 17, 18 & 19)
+- Sprint 9: CRM Platform (Epic 7)
 
 ## Current Focus
-- Building the complete Worker Platform that provides reusable execution units for all business capabilities.
+- Design and implement the CRM platform (Epic 7).
+- Utilize the shared foundation from the Business Operating Platform (Epic 6).
 
 ## Completed
-- Database schema (migration 010) with 13 tables
-- Worker types and interfaces (WorkerDefinition, WorkerRuntime, WorkflowDefinition, etc.)
-- Worker Registry with full CRUD operations
-- Worker Runtime interface (validate, prepare, execute, retry, cancel, resume, pause, complete, fail, cleanup)
-- Worker Versioning system
-- Worker Dependencies management
-- Workflow Engine with steps and connections
-- Workflow Designer support (sequential, parallel, conditional, loop, retry, delay, approval, webhook, manual, merge)
-- Workflow Templates (9 system templates seeded)
-- Worker Marketplace with search, install, rate functionality
-- Scheduling Framework (once, hourly, daily, weekly, monthly, cron)
-- Execution History tracking for workers and workflows
-- Complete API routes under /api/workers and /api/workflows
-- Frontend pages: workers, workflows, marketplace
-- UI components and styling
-- All acceptance criteria met
+- Business Operating Platform (BOP) is complete and ready for use by all future business modules.
+- Epic 6 marked as Completed in MASTER_ROADMAP.md.
+- Updated PROJECT_MEMORY.md with BOP details.
 
 ## Next Steps
-- Mark Prompts 17, 18, 19 as Completed in MASTER_ROADMAP.md
-- Proceed to next module: Agent Platform
+- Implement CRM features including Accounts, Contacts, Leads, Opportunities, and Pipelines.
+- Integrate CRM with the generic Business Object Framework.

@@ -239,3 +239,20 @@
 
 12. **Mock embeddings are used for development; real providers are configured via environment variables.**
     - Rationale: enables platform development without external API keys. Production deployments configure real providers (OpenAI, etc.) via `embedding_providers` table. The abstraction allows seamless switching between mock and real.
+
+## 2026-06-27 - Business Operating Platform (Epic 6)
+
+1. **All business entities inherit from BusinessObject.**
+   - Rationale: Ensures uniform fields (id, owner, visibility, metadata) and behaviors across CRM, HR, Finance, etc.
+
+2. **Relationship Engine supports dynamic typing.**
+   - Rationale: Avoids hardcoded foreign keys for every possible edge, enabling highly configurable networks of objects.
+
+3. **Unified Activity Timeline tracks all events.**
+   - Rationale: Every comment, status change, and worker execution is recorded generically to provide a consistent audit history.
+
+4. **Abstracted Approval & Notification Engines.**
+   - Rationale: Modules do not build custom workflows; they publish events or status updates to a single centralized engine.
+
+5. **Tags and Custom Fields are globally managed.**
+   - Rationale: Allows cross-object querying and prevents schema drift across modules.

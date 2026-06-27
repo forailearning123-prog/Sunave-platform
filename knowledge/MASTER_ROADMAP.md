@@ -121,3 +121,21 @@
 - API: /api/workers/* and /api/workflows/* (complete CRUD + execution + marketplace + schedules)
 - Frontend: /workers, /workflows, /marketplace (with full UI and styling)
 - Documentation updated
+
+## Epic 6 — Business Operating Platform ✅
+- Database schema (migration 015) with 18 tables
+- Business Object Framework with full CRUD operations
+- Relationship Engine (parent, child, reference, dependency, related, etc.)
+- Activity Timeline with automatic tracking
+- Comments system with mentions and reactions
+- Tasks with priorities, due dates, and checklists
+- Approvals engine with multi-step support
+- Notifications system (in-app, email, push, teams, slack, webhook)
+- Tags, Labels, Categories & Custom Fields
+- Status Engine & Business Events
+- Audit Trail & Global Search
+- Favorites, Bookmarks & Recent Items
+- Business Dashboard with stats and widgets
+- Complete API under /api/business/*
+- Frontend pages: /business/* with full UI
+
