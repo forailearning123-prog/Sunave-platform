@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vector Store - AI Intelligence Platform</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/intelligence.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Intelligence</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/intelligence" class="nav-item" data-page="overview">
+          <span class="icon">📊</span>
+          <span>Overview</span>
+        </a>
+        <a href="/intelligence/memory" class="nav-item" data-page="memory">
+          <span class="icon">🧠</span>
+          <span>Memory</span>
+        </a>
+        <a href="/intelligence/search" class="nav-item" data-page="search">
+          <span class="icon">🔍</span>
+          <span>Search</span>
+        </a>
+        <a href="/intelligence/context" class="nav-item" data-page="context">
+          <span class="icon">📝</span>
+          <span>Context</span>
+        </a>
+        <a href="/intelligence/knowledge" class="nav-item" data-page="knowledge">
+          <span class="icon">📚</span>
+          <span>Knowledge</span>
+        </a>
+        <a href="/intelligence/vector" class="nav-item active" data-page="vector">
+          <span class="icon">🔮</span>
+          <span>Vector Store</span>
+        </a>
+        <a href="/intelligence/admin" class="nav-item" data-page="admin">
+          <span class="icon">⚙️</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <h1>Vector Store</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="createIndexBtn">
+            + Create Index
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🔮</div>
+            <div class="stat-info">
+              <h3>Total Indices</h3>
+              <p class="stat-value" id="totalIndices">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <h3>Ready Indices</h3>
+              <p class="stat-value" id="readyIndices">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+              <h3>Total Vectors</h3>
+              <p class="stat-value" id="totalVectors">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🔌</div>
+            <div class="stat-info">
+              <h3>Store Type</h3>
+              <p class="stat-value" id="storeType">pgvector</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Vector Indices</h2>
+          </div>
+          <div class="card-body">
+            <div class="vector-grid" id="vectorGrid">
+              <p class="text-muted">Loading vector indices...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="indexModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create Vector Index</h2>
+        <button class="modal-close" id="closeIndexModal">&times;</button>
+      </div>
+      <form id="indexForm">
+        <div class="form-group">
+          <label for="indexName">Index Name</label>
+          <input type="text" id="indexName" class="form-input" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="indexType">Index Type</label>
+            <select id="indexType" class="form-select">
+              <option value="ivfflat">IVFFlat</option>
+              <option value="hnsw">HNSW</option>
+              <option value="flat">Flat</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vectorStoreType">Vector Store</label>
+            <select id="vectorStoreType" class="form-select">
+              <option value="pgvector">PostgreSQL pgvector</option>
+              <option value="qdrant">Qdrant</option>
+              <option value="pinecone">Pinecone</option>
+              <option value="weaviate">Weaviate</option>
+              <option value="chroma">Chroma</option>
+              <option value="redis">Redis Vector</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dimensions">Dimensions</label>
+            <input type="number" id="dimensions" class="form-input" value="1536" required>
+          </div>
+
+          <div class="form-group">
+            <label for="metric">Distance Metric</label>
+            <select id="metric" class="form-select">
+              <option value="cosine">Cosine</option>
+              <option value="euclidean">Euclidean</option>
+              <option value="dot_product">Dot Product</option>
+              <option value="manhattan">Manhattan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelIndexBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Index</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/app/intelligence.js"></script>
+</body>
+</html>

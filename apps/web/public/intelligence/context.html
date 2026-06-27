@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Builder - AI Intelligence Platform</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/intelligence.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Intelligence</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/intelligence" class="nav-item" data-page="overview">
+          <span class="icon">📊</span>
+          <span>Overview</span>
+        </a>
+        <a href="/intelligence/memory" class="nav-item" data-page="memory">
+          <span class="icon">🧠</span>
+          <span>Memory</span>
+        </a>
+        <a href="/intelligence/search" class="nav-item" data-page="search">
+          <span class="icon">🔍</span>
+          <span>Search</span>
+        </a>
+        <a href="/intelligence/context" class="nav-item active" data-page="context">
+          <span class="icon">📝</span>
+          <span>Context</span>
+        </a>
+        <a href="/intelligence/knowledge" class="nav-item" data-page="knowledge">
+          <span class="icon">📚</span>
+          <span>Knowledge</span>
+        </a>
+        <a href="/intelligence/vector" class="nav-item" data-page="vector">
+          <span class="icon">🔮</span>
+          <span>Vector Store</span>
+        </a>
+        <a href="/intelligence/admin" class="nav-item" data-page="admin">
+          <span class="icon">⚙️</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <h1>Context Builder</h1>
+      </header>
+
+      <div class="page-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>Build Context</h2>
+          </div>
+          <div class="card-body">
+            <form id="contextForm">
+              <div class="form-group">
+                <label for="contextQuery">Query</label>
+                <textarea id="contextQuery" class="form-textarea" rows="3" placeholder="Enter your query..."></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contextBudget">Context Window Budget (tokens)</label>
+                  <input type="number" id="contextBudget" class="form-input" value="4096">
+                </div>
+
+                <div class="form-group">
+                  <label for="contextType">Context Type</label>
+                  <select id="contextType" class="form-select">
+                    <option value="request">Request</option>
+                    <option value="conversation">Conversation</option>
+                    <option value="session">Session</option>
+                    <option value="workflow">Workflow</option>
+                    <option value="agent">Agent</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Include Sources</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="includeMemory" checked>
+                    <span>User Memory</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="includeOrgMemory" checked>
+                    <span>Organization Memory</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="includeKnowledge" checked>
+                    <span>Knowledge Base</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="includeConversation">
+                    <span>Recent Conversations</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="maxMemoryItems">Max Memory Items</label>
+                  <input type="number" id="maxMemoryItems" class="form-input" value="10">
+                </div>
+
+                <div class="form-group">
+                  <label for="maxKnowledgeItems">Max Knowledge Items</label>
+                  <input type="number" id="maxKnowledgeItems" class="form-input" value="5">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Build Context</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card" id="contextResult" style="display: none;">
+          <div class="card-header">
+            <h2>Built Context</h2>
+          </div>
+          <div class="card-body">
+            <div class="context-stats">
+              <div class="stat-item">
+                <span class="stat-label">Total Tokens:</span>
+                <span class="stat-value" id="contextTokens">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Budget:</span>
+                <span class="stat-value" id="contextBudgetUsed">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Sources:</span>
+                <span class="stat-value" id="contextSources">-</span>
+              </div>
+            </div>
+
+            <div class="context-preview" id="contextPreview"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/app/intelligence.js"></script>
+</body>
+</html>

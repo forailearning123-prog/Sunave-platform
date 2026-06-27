@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Intelligence Platform - Sunave</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/intelligence.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Intelligence</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/intelligence" class="nav-item active" data-page="overview">
+          <span class="icon">📊</span>
+          <span>Overview</span>
+        </a>
+        <a href="/intelligence/memory" class="nav-item" data-page="memory">
+          <span class="icon">🧠</span>
+          <span>Memory</span>
+        </a>
+        <a href="/intelligence/search" class="nav-item" data-page="search">
+          <span class="icon">🔍</span>
+          <span>Search</span>
+        </a>
+        <a href="/intelligence/context" class="nav-item" data-page="context">
+          <span class="icon">📝</span>
+          <span>Context</span>
+        </a>
+        <a href="/intelligence/knowledge" class="nav-item" data-page="knowledge">
+          <span class="icon">📚</span>
+          <span>Knowledge</span>
+        </a>
+        <a href="/intelligence/vector" class="nav-item" data-page="vector">
+          <span class="icon">🔮</span>
+          <span>Vector Store</span>
+        </a>
+        <a href="/intelligence/admin" class="nav-item" data-page="admin">
+          <span class="icon">⚙️</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <h1>AI Intelligence Platform</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="buildContextBtn">
+            Build Context
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content" id="pageContent">
+        <!-- Overview Dashboard -->
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🧠</div>
+            <div class="stat-info">
+              <h3>Total Memories</h3>
+              <p class="stat-value" id="totalMemories">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+              <h3>Knowledge Sources</h3>
+              <p class="stat-value" id="totalSources">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🔮</div>
+            <div class="stat-info">
+              <h3>Embeddings</h3>
+              <p class="stat-value" id="totalEmbeddings">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-info">
+              <h3>Contexts Built</h3>
+              <p class="stat-value" id="totalContexts">-</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-header">
+              <h2>Memory Usage by Type</h2>
+            </div>
+            <div class="card-body">
+              <canvas id="memoryTypeChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Knowledge Sources by Status</h2>
+            </div>
+            <div class="card-body">
+              <canvas id="knowledgeStatusChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Recent Retrievals</h2>
+            </div>
+            <div class="card-body">
+              <div class="retrieval-list" id="recentRetrievals">
+                <p class="text-muted">No recent retrievals</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Top Documents</h2>
+            </div>
+            <div class="card-body">
+              <div class="document-list" id="topDocuments">
+                <p class="text-muted">No documents indexed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/app/intelligence.js"></script>
+</body>
+</html>

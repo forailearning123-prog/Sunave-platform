@@ -34,14 +34,27 @@ import { createAiUsageRepository } from './repositories/aiUsageRepository.js';
 import { createConversationRepository } from './repositories/conversationRepository.js';
 import { createPromptRepository } from './repositories/promptRepository.js';
 import { createRuntimeRepository } from './repositories/runtimeRepository.js';
+import { createMemoryRepository } from './repositories/memoryRepository.js';
+import { createKnowledgeSourceRepository } from './repositories/knowledgeSourceRepository.js';
+import { createChunkRepository } from './repositories/chunkRepository.js';
+import { createEmbeddingProviderRepository } from './repositories/embeddingProviderRepository.js';
+import { createEmbeddingRepository } from './repositories/embeddingRepository.js';
+import { createVectorIndexRepository } from './repositories/vectorIndexRepository.js';
+import { createContextRepository } from './repositories/contextRepository.js';
+import { createPolicyRepository } from './repositories/policyRepository.js';
 import { createPermissionService } from './services/permissionService.js';
 import { createConfigurationService } from './services/configurationService.js';
 import { createAiGatewayService } from './services/aiGatewayService.js';
 import { createCredentialService } from './services/credentialService.js';
 import { createRuntimeService } from './services/runtimeService.js';
+import { createMemoryEngineService } from './services/memoryEngineService.js';
+import { createKnowledgeRetrievalService } from './services/knowledgeRetrievalService.js';
+import { createEmbeddingService } from './services/embeddingService.js';
+import { createContextBuilderService } from './services/contextBuilderService.js';
 import { buildConversationsRouter } from './routes/conversations.js';
 import { buildPromptsRouter } from './routes/prompts.js';
 import { buildRuntimeRouter } from './routes/runtime.js';
+import { buildIntelligenceRouter } from './routes/intelligence.js';
 import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
@@ -97,6 +110,24 @@ export async function createApp({ pool } = {}) {
   const runtimeRepo        = createRuntimeRepository(dbPool);
   const runtimeService     = createRuntimeService(aiGatewayService, conversationRepo, promptRepo, runtimeRepo, aiUsageRepo);
 
+  // AI Intelligence Platform
+  const memoryRepo             = createMemoryRepository(dbPool);
+  const knowledgeSourceRepo    = createKnowledgeSourceRepository(dbPool);
+  const chunkRepo              = createChunkRepository(dbPool);
+  const embeddingProviderRepo  = createEmbeddingProviderRepository(dbPool);
+  const embeddingRepo          = createEmbeddingRepository(dbPool);
+  const vectorIndexRepo        = createVectorIndexRepository(dbPool);
+  const contextRepo            = createContextRepository(dbPool);
+  const policyRepo             = createPolicyRepository(dbPool);
+  const memoryService          = createMemoryEngineService(memoryRepo, policyRepo);
+  const knowledgeService       = createKnowledgeRetrievalService(
+    knowledgeSourceRepo, chunkRepo, embeddingRepo, embeddingProviderRepo, vectorIndexRepo
+  );
+  const embeddingService       = createEmbeddingService(embeddingRepo, embeddingProviderRepo, chunkRepo);
+  const contextBuilderService  = createContextBuilderService(
+    memoryRepo, knowledgeSourceRepo, chunkRepo, conversationRepo, contextRepo, configService
+  );
+
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
@@ -117,6 +148,11 @@ export async function createApp({ pool } = {}) {
   app.use('/api/conversations', buildConversationsRouter(conversationRepo, runtimeService));
   app.use('/api/prompts', buildPromptsRouter(promptRepo));
   app.use('/api/runtime', buildRuntimeRouter(runtimeService, runtimeRepo));
+  app.use('/api/intelligence', buildIntelligenceRouter(
+    memoryService, knowledgeService, embeddingService, contextBuilderService,
+    memoryRepo, knowledgeSourceRepo, chunkRepo, embeddingProviderRepo,
+    embeddingRepo, vectorIndexRepo, contextRepo, orgRepo, permService
+  ));
 
   app.use((_req, res) => {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory - AI Intelligence Platform</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/intelligence.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Intelligence</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/intelligence" class="nav-item" data-page="overview">
+          <span class="icon">📊</span>
+          <span>Overview</span>
+        </a>
+        <a href="/intelligence/memory" class="nav-item active" data-page="memory">
+          <span class="icon">🧠</span>
+          <span>Memory</span>
+        </a>
+        <a href="/intelligence/search" class="nav-item" data-page="search">
+          <span class="icon">🔍</span>
+          <span>Search</span>
+        </a>
+        <a href="/intelligence/context" class="nav-item" data-page="context">
+          <span class="icon">📝</span>
+          <span>Context</span>
+        </a>
+        <a href="/intelligence/knowledge" class="nav-item" data-page="knowledge">
+          <span class="icon">📚</span>
+          <span>Knowledge</span>
+        </a>
+        <a href="/intelligence/vector" class="nav-item" data-page="vector">
+          <span class="icon">🔮</span>
+          <span>Vector Store</span>
+        </a>
+        <a href="/intelligence/admin" class="nav-item" data-page="admin">
+          <span class="icon">⚙️</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <h1>Memory Explorer</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="createMemoryBtn">
+            + Create Memory
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <div class="filters-bar">
+          <select id="memoryTypeFilter" class="form-select">
+            <option value="">All Types</option>
+            <option value="working">Working</option>
+            <option value="conversation">Conversation</option>
+            <option value="session">Session</option>
+            <option value="long_term">Long-term</option>
+            <option value="knowledge">Knowledge</option>
+            <option value="organization">Organization</option>
+            <option value="user">User</option>
+            <option value="project">Project</option>
+            <option value="goal">Goal</option>
+            <option value="agent">Agent</option>
+          </select>
+
+          <select id="importanceFilter" class="form-select">
+            <option value="">All Importance</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+            <option value="pinned">Pinned</option>
+          </select>
+
+          <input type="text" id="memorySearch" class="form-input" placeholder="Search memories...">
+        </div>
+
+        <div class="memory-grid" id="memoryGrid">
+          <p class="text-muted">Loading memories...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="memoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create Memory</h2>
+        <button class="modal-close" id="closeMemoryModal">&times;</button>
+      </div>
+      <form id="memoryForm">
+        <div class="form-group">
+          <label for="memoryTitle">Title</label>
+          <input type="text" id="memoryTitle" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label for="memoryType">Type</label>
+          <select id="memoryType" class="form-select" required>
+            <option value="working">Working</option>
+            <option value="conversation">Conversation</option>
+            <option value="session">Session</option>
+            <option value="long_term">Long-term</option>
+            <option value="knowledge">Knowledge</option>
+            <option value="organization">Organization</option>
+            <option value="user">User</option>
+            <option value="project">Project</option>
+            <option value="goal">Goal</option>
+            <option value="agent">Agent</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="memoryContent">Content</label>
+          <textarea id="memoryContent" class="form-textarea" rows="6" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="memorySummary">Summary (optional)</label>
+          <textarea id="memorySummary" class="form-textarea" rows="3"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="memoryImportance">Importance</label>
+            <select id="memoryImportance" class="form-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+              <option value="pinned">Pinned</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="memoryConfidence">Confidence (0-1)</label>
+            <input type="number" id="memoryConfidence" class="form-input" min="0" max="1" step="0.1" value="1.0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="memoryTags">Tags (comma-separated)</label>
+          <input type="text" id="memoryTags" class="form-input" placeholder="tag1, tag2, tag3">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelMemoryBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Memory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/app/intelligence.js"></script>
+</body>
+</html>

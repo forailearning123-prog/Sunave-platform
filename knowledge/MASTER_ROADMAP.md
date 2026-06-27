@@ -66,9 +66,22 @@
 - Dashboard Widgets (provider health, top models, capability usage, recent failures)
 - Migration 007 (new tables: ai_models, ai_capabilities, ai_model_capabilities, ai_usage, ai_token_usage, ai_cost_summary, ai_budgets)
 
-## Prompt 11 — Conversation Platform & Prompt Library (Next)
+## Prompt 11 — Conversation Platform & Prompt Library ✅
 ## Prompt 12 — Finance (Planned)
 ## Prompt 13 — HR (Planned)
 ## Prompt 14 — CRM (Planned)
-## Prompt 15 — Marketplace (Planned)
-## Prompt 16 — Analytics (Planned)
+## Prompt 15 & 16 — AI Intelligence Platform ✅
+- Memory Engine (10 memory types: working, conversation, session, long-term, knowledge, organization, user, project, goal, agent)
+- Knowledge Retrieval system with unified interface
+- Embedding Framework (local, OpenAI, Gemini, Vertex, Ollama)
+- Vector Store abstraction (pgvector, Qdrant, Pinecone, Weaviate, Chroma, Redis)
+- Semantic Search (similarity, hybrid, keyword, metadata, filtered)
+- Context Builder with window budget management
+- Document Intelligence (chunking engine: fixed, semantic, sliding window, hierarchical)
+- Context Cache with TTL and invalidation
+- Intelligence Dashboard with stats and monitoring
+- Migration 009 (12 new tables: memories, knowledge_sources, chunks, embeddings, embedding_providers, vector_indices, contexts, retrieval_logs, search_logs, memory_policies, knowledge_categories, chunk_metadata)
+- API: /api/intelligence/* (memory, knowledge, embeddings, vector, context, search)
+- Frontend: /intelligence/* (overview, memory, search, context, knowledge, vector, admin)
+
+## Prompt 17 — Worker Platform (Next)

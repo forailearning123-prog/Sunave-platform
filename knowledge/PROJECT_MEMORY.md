@@ -29,6 +29,7 @@
 - Settings & Configuration Engine
 - Dashboard Framework
 - AI Provider & Model Registry Platform
+- AI Intelligence Platform (Memory, Knowledge, Context, Embeddings, Vector Store)
 
 ## Completed Modules
 - Foundation scaffolding
@@ -40,6 +41,7 @@
 - Settings & Configuration Engine
 - Dashboard Framework
 - AI Provider & Model Registry Platform (Prompts 11 & 12)
+- AI Intelligence Platform (Prompts 15 & 16)
 
 ## Pending Modules
 - Goal Management
@@ -47,7 +49,6 @@
 - Plugin runtime loader
 - Worker orchestration
 - Agents
-- Embeddings
 - Vision Processing
 - Speech Processing
 
@@ -76,6 +77,20 @@
   - `POST /api/ai/models/refresh` — Refresh all models
   - `POST /api/ai/test` — Gateway test
   - `POST /api/ai/estimate-cost` — Cost estimation
+- AI Intelligence Platform endpoints are available under `/api/intelligence/*`:
+  - `GET/POST /api/intelligence/memory` — Memory CRUD
+  - `GET/PUT/DELETE /api/intelligence/memory/{id}` — Memory operations
+  - `GET /api/intelligence/knowledge/search` — Knowledge search
+  - `POST /api/intelligence/knowledge/index` — Index knowledge source
+  - `POST /api/intelligence/knowledge/retrieve/{id}` — Retrieve knowledge
+  - `POST /api/intelligence/embeddings` — Generate embeddings
+  - `GET /api/intelligence/vector/health` — Vector store health
+  - `POST /api/intelligence/context/build` — Build context
+  - `POST /api/intelligence/search` — Semantic/keyword search
+  - `GET /api/intelligence/memory/stats` — Memory statistics
+  - `GET /api/intelligence/knowledge/stats` — Knowledge statistics
+  - `GET /api/intelligence/embeddings/stats` — Embedding statistics
+  - `GET /api/intelligence/context/stats` — Context statistics
 - Responses use a common `success/data/error` envelope.
 
 ## Database Summary
@@ -109,6 +124,19 @@
   - `ai_token_usage` — Granular per-request token and cost tracking
   - `ai_cost_summary` — Cost summaries per period
   - `ai_budgets` — Budget configuration with alerting
+- Implemented AI Intelligence Platform tables (migration 009):
+  - `memories` — Multi-type memory store (10 types, importance levels, retention policies)
+  - `knowledge_sources` — Knowledge base sources with indexing status
+  - `chunks` — Document chunks with chunking strategies
+  - `chunk_metadata` — Key-value metadata for chunks
+  - `embeddings` — Vector embeddings with pgvector support
+  - `embedding_providers` — Embedding provider configuration (local, OpenAI, Gemini, etc.)
+  - `vector_indices` — Vector index management (6 backends supported)
+  - `contexts` — Context assembly with budget tracking
+  - `retrieval_logs` — Retrieval operation audit trail
+  - `search_logs` — Search operation audit trail
+  - `memory_policies` — Retention and importance policies (9 system policies seeded)
+  - `knowledge_categories` — Hierarchical knowledge categorization (10 system categories)
 - Migration tracking: `schema_migrations` table (each migration runs exactly once)
 
 ## Permission Engine

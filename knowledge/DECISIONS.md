@@ -197,7 +197,45 @@
     - Rationale: the original migration 006 only supported 6 policy types. Rather than creating a new table, extending the CHECK constraint in migration 007 keeps the schema evolution clean and allows existing seeded policies to remain valid.
 
 9. **Health summary endpoint (`/api/ai/health/summary`) was added in addition to the existing `/api/ai/health`.**
-    - Rationale: the existing health endpoint runs health checks (adding latency to the response). The summary endpoint reads the last known health state from the database — suitable for dashboard widgets that need fast, cached data.
+   - Rationale: the existing health endpoint runs health checks (adding latency to the response). The summary endpoint reads the last known health state from the database — suitable for dashboard widgets that need fast, cached data.
 
 10. **All usage/cost/statistics endpoints filter by organization ID for multi-tenant isolation.**
     - Rationale: each organization's usage data must be isolated. The `organization_id` column on all usage/cost tables enables natural partitioning. Unauthenticated or cross-org queries return empty results.
+
+## 2026-06-27 - AI Intelligence Platform (Prompts 15 & 16)
+
+1. **Memory Engine supports 10 distinct memory types as separate pluggable modules.**
+   - Rationale: different memory types have different retention policies, importance levels, and use cases. Working memory is temporary; organization memory is permanent. The type system enables fine-grained control without hardcoding behavior.
+
+2. **Memory policies are stored in `memory_policies` table, not hardcoded.**
+   - Rationale: CONSTITUTION §4 (Configuration-Driven Development). Retention periods, importance filters, and auto-archive rules must be changeable without code deployment. System policies are seeded; orgs can create custom policies.
+
+3. **All memory records include importance levels (low/medium/high/critical/pinned/archived).**
+   - Rationale: enables priority-based retrieval and context ranking. Critical and pinned memories are always included; low-importance memories can be filtered. The access_count and accessed_at fields support usage-based ranking.
+
+4. **Knowledge sources implement a unified interface (index/search/retrieve/delete/refresh/health/supports).**
+   - Rationale: CONSTITUTION §2 (Plugin-Based Design). Future modules (CRM, HR, Finance) can provide knowledge without modifying the intelligence platform. The interface contract enables plug-and-play knowledge providers.
+
+5. **Chunking is configurable with 5 strategies (fixed/semantic/sliding_window/hierarchical/custom).**
+   - Rationale: different document types benefit from different chunking. Semantic chunking preserves meaning; sliding window enables overlap; hierarchical supports nested documents. The `chunking_strategy` column on chunks enables per-chunk strategy selection.
+
+6. **Embedding providers are abstracted with support for 5 backends (local/OpenAI/Gemini/Vertex/Ollama).**
+   - Rationale: CONSTITUTION §7 (No Hardcoded AI Model Names). Embedding models change frequently; the provider abstraction allows swapping without touching business logic. A default provider is selected per organization.
+
+7. **Vector store abstraction supports 6 backends (pgvector/Qdrant/Pinecone/Weaviate/Chroma/Redis).**
+   - Rationale: different organizations have different scale and compliance requirements. pgvector for self-hosted; Pinecone for managed scale; Redis for low-latency caching. The `vector_store_type` column enables per-index backend selection.
+
+8. **Context Builder enforces a token budget and assembles context from multiple sources.**
+   - Rationale: AI models have context window limits. The builder automatically includes conversation history, user memory, organization memory, and knowledge base while respecting the budget. Sources are ranked by relevance and pruned if necessary.
+
+9. **Context ranking uses multiple signals: similarity, recency, importance, confidence, source priority.**
+   - Rationale: the most relevant context is not always the most recent or most important. Combining signals ensures the AI receives the best possible context. Ranking metadata is stored for audit and optimization.
+
+10. **All intelligence operations are organization-isolated and permission-aware.**
+    - Rationale: CONSTITUTION §3 (Multi-Tenancy by Default). Memories, knowledge, and contexts belong to organizations. Cross-org queries return empty results. Permission checks ensure users only access content they're authorized to see.
+
+11. **Embeddings are never exposed via API — only internal references.**
+    - Rationale: embeddings are internal representation artifacts. Exposing them would leak semantic information and increase payload size. The API returns metadata and similarity scores, not raw vectors.
+
+12. **Mock embeddings are used for development; real providers are configured via environment variables.**
+    - Rationale: enables platform development without external API keys. Production deployments configure real providers (OpenAI, etc.) via `embedding_providers` table. The abstraction allows seamless switching between mock and real.

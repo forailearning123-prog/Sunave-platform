@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - AI Intelligence Platform</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/intelligence.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Intelligence</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/intelligence" class="nav-item" data-page="overview">
+          <span class="icon">📊</span>
+          <span>Overview</span>
+        </a>
+        <a href="/intelligence/memory" class="nav-item" data-page="memory">
+          <span class="icon">🧠</span>
+          <span>Memory</span>
+        </a>
+        <a href="/intelligence/search" class="nav-item" data-page="search">
+          <span class="icon">🔍</span>
+          <span>Search</span>
+        </a>
+        <a href="/intelligence/context" class="nav-item" data-page="context">
+          <span class="icon">📝</span>
+          <span>Context</span>
+        </a>
+        <a href="/intelligence/knowledge" class="nav-item" data-page="knowledge">
+          <span class="icon">📚</span>
+          <span>Knowledge</span>
+        </a>
+        <a href="/intelligence/vector" class="nav-item" data-page="vector">
+          <span class="icon">🔮</span>
+          <span>Vector Store</span>
+        </a>
+        <a href="/intelligence/admin" class="nav-item active" data-page="admin">
+          <span class="icon">⚙️</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <h1>Intelligence Admin</h1>
+      </header>
+
+      <div class="page-content">
+        <div class="admin-tabs">
+          <button class="tab-btn active" data-tab="embedding-providers">Embedding Providers</button>
+          <button class="tab-btn" data-tab="memory-policies">Memory Policies</button>
+          <button class="tab-btn" data-tab="knowledge-categories">Knowledge Categories</button>
+          <button class="tab-btn" data-tab="system-health">System Health</button>
+        </div>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="embedding-providers">
+            <div class="card">
+              <div class="card-header">
+                <h2>Embedding Providers</h2>
+                <button class="btn btn-primary" id="addProviderBtn">+ Add Provider</button>
+              </div>
+              <div class="card-body">
+                <div class="providers-grid" id="providersGrid">
+                  <p class="text-muted">Loading embedding providers...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="memory-policies">
+            <div class="card">
+              <div class="card-header">
+                <h2>Memory Policies</h2>
+              </div>
+              <div class="card-body">
+                <div class="policies-grid" id="policiesGrid">
+                  <p class="text-muted">Loading memory policies...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="knowledge-categories">
+            <div class="card">
+              <div class="card-header">
+                <h2>Knowledge Categories</h2>
+                <button class="btn btn-primary" id="addCategoryBtn">+ Add Category</button>
+              </div>
+              <div class="card-body">
+                <div class="categories-grid" id="categoriesGrid">
+                  <p class="text-muted">Loading knowledge categories...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="system-health">
+            <div class="card">
+              <div class="card-header">
+                <h2>System Health</h2>
+              </div>
+              <div class="card-body">
+                <div class="health-grid" id="healthGrid">
+                  <p class="text-muted">Loading system health...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/app/intelligence.js"></script>
+</body>
+</html>
