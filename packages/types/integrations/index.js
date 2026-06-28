@@ -377,8 +377,7 @@ class IntegrationEvent {
 
 // ─── Exports ────────────────────────────────────────────────────────────────────
 
-module.exports = {
-  // Enums
+export { // Enums
   ConnectorCategory,
   AuthType,
   IntegrationType,
@@ -404,4 +403,4 @@ module.exports = {
   ConnectionTemplate,
   ConnectorMetadata,
   IntegrationEvent
-};
+ };

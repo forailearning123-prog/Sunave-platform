@@ -1,9 +1,9 @@
 // Plugin Service
 // Business logic layer for plugin platform
 
-const { v4: uuidv4 } = require('uuid');
-const crypto = require('crypto');
-const { PluginManifest, PluginDependency, EventBus, HealthStatus, InstallationStatus } = require('packages/types/plugins');
+import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
+const { PluginManifest, PluginDependency, EventBus, HealthStatus, InstallationStatus } = require('packages/types/agents/index.js');
 
 class PluginService {
   constructor(db, permissionService, configurationService, aiGatewayService) {
@@ -671,7 +671,7 @@ class PluginService {
 
   createSDK(context) {
     return new PluginManifest({ sdk: null }).constructor.sdk || 
-           require('packages/types/plugins').PluginSDK;
+           require('packages/types/agents/index.js').PluginSDK;
   }
 
   // ─── Marketplace ─────────────────────────────────────────────────────────────
@@ -840,4 +840,4 @@ class PluginService {
   }
 }
 
-module.exports = PluginService;
+export default PluginService;

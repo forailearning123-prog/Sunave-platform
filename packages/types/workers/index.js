@@ -361,8 +361,7 @@ const MarketplaceItemStatus = {
   REMOVED: 'removed'
 };
 
-module.exports = {
-  WorkerDefinition,
+export { WorkerDefinition,
   WorkerInput,
   WorkerOutput,
   WorkerRuntime,
@@ -377,4 +376,4 @@ module.exports = {
   WorkflowExecutionStatus,
   ScheduleType,
   MarketplaceItemStatus
-};
+ };

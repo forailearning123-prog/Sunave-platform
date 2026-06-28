@@ -1,7 +1,7 @@
 // Integration Service Enhanced
 // Business logic layer for enhanced integration platform features
 
-const crypto = require('crypto');
+import crypto from 'crypto';
 const { 
   ConnectorCategory, 
   AuthType, 
@@ -13,7 +13,7 @@ const {
   RetryStrategy,
   RateLimitScope,
   EventLevel
-} = require('packages/types/integrations');
+} = require('packages/types/agents/index.js');
 
 class IntegrationServiceEnhanced {
   constructor(db, permissionService, configurationService) {
@@ -741,4 +741,4 @@ class IntegrationServiceEnhanced {
   }
 }
 
-module.exports = IntegrationServiceEnhanced;
+export default IntegrationServiceEnhanced;

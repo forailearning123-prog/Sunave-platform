@@ -1,15 +1,15 @@
 // Plugin Platform Routes
 // Epic 5: Plugin SDK & Integration Platform
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 
-const requireOrg = require('../middleware/requireOrg');
-const requirePermission = require('../middleware/requirePermission');
-const asyncHandler = require('../middleware/asyncHandler');
+import requireOrg from '../middleware/requireOrg';
+import requirePermission from '../middleware/requirePermission';
+import asyncHandler from '../middleware/asyncHandler';
 
 // ─── Dependencies (injected via app.js) ────────────────────────────────────────
 
@@ -611,7 +611,7 @@ router.get('/sdk/info', requireOrg, asyncHandler(async (req, res) => {
 
 // ─── Dependency Injection ──────────────────────────────────────────────────────
 
-module.exports = (dependencies) => {
+export default (dependencies) => {
   db = dependencies.db;
   pluginService = dependencies.pluginService;
   permissionService = dependencies.permissionService;

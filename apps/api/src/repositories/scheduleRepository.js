@@ -1,6 +1,6 @@
 // Schedule Repository - Data access layer for scheduling framework
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class ScheduleRepository {
   constructor(db) {
@@ -220,4 +220,4 @@ class ScheduleRepository {
   }
 }
 
-module.exports = ScheduleRepository;
+export default ScheduleRepository;

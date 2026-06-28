@@ -3,6 +3,8 @@ import csrf from 'csurf';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import cors from 'cors';
+import { config } from './config.js';
 import { fail } from '@sunave/core';
 import { createPool } from './db/pool.js';
 import { runMigrations } from './db/migrate.js';
@@ -86,7 +88,6 @@ import { buildAgentDelegationsRouter } from './routes/agentDelegations.js';
 import { buildAgentApprovalsRouter } from './routes/agentApprovals.js';
 import { buildPluginsRouter } from './routes/plugins.js';
 import { buildIntegrationsRouter } from './routes/integrations.js';
-import { config } from './config.js';
 
 export async function createApp({ pool } = {}) {
   const app = express();
@@ -183,10 +184,10 @@ export async function createApp({ pool } = {}) {
   // Plugin Platform
   const pluginRepo             = createPluginRepository(dbPool);
   const integrationRepo        = createIntegrationRepository(dbPool);
-  const integrationRepoEnhanced = new (require('./repositories/integrationRepositoryEnhanced'))(dbPool);
+  const integrationRepoEnhanced = new IntegrationRepositoryEnhanced(dbPool);
   const pluginService          = createPluginService(dbPool, permService, configService, aiGatewayService);
   const integrationService     = createIntegrationService(dbPool, permService, configService);
-  const integrationServiceEnhanced = new (require('./services/integrationServiceEnhanced'))(
+  const integrationServiceEnhanced = new IntegrationServiceEnhanced(
     dbPool,
     permService,
     configService

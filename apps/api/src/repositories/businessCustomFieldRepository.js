@@ -1,6 +1,6 @@
 // Business Custom Field Repository
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class BusinessCustomFieldRepository {
   constructor(db) {
@@ -262,4 +262,4 @@ class BusinessCustomFieldRepository {
   }
 }
 
-module.exports = BusinessCustomFieldRepository;
+export default BusinessCustomFieldRepository;

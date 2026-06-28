@@ -1,28 +1,57 @@
 import { fail } from '@sunave/core';
 
-const buckets = new Map();
-
-function now() {
-  return Date.now();
+class RateLimiterProvider {
+  constructor({ limit, windowMs }) {
+    this.limit = limit;
+    this.windowMs = windowMs;
+  }
+  
+  async checkLimit(key) {
+    throw new Error('Not implemented');
+  }
 }
 
-export function createRateLimit({ limit, windowMs }) {
-  return (req, res, next) => {
-    const key = `${req.ip}:${req.path}:${(req.body?.email || '').toLowerCase()}`;
-    const bucket = buckets.get(key) || { count: 0, resetAt: now() + windowMs };
+class MemoryRateLimiter extends RateLimiterProvider {
+  constructor(options) {
+    super(options);
+    this.buckets = new Map();
+  }
 
-    if (bucket.resetAt < now()) {
+  async checkLimit(key) {
+    const now = Date.now();
+    const bucket = this.buckets.get(key) || { count: 0, resetAt: now + this.windowMs };
+
+    if (bucket.resetAt < now) {
       bucket.count = 0;
-      bucket.resetAt = now() + windowMs;
+      bucket.resetAt = now + this.windowMs;
     }
 
     bucket.count += 1;
-    buckets.set(key, bucket);
+    this.buckets.set(key, bucket);
 
-    if (bucket.count > limit) {
-      return res.status(429).json(fail('RATE_LIMITED', 'Too many attempts. Please retry later.'));
+    return bucket.count > this.limit;
+  }
+}
+
+// FutureRedisRateLimiter goes here
+
+export function createRateLimit({ limit, windowMs }) {
+  // Can be conditionally initialized based on config
+  const provider = new MemoryRateLimiter({ limit, windowMs });
+
+  return async (req, res, next) => {
+    // DO NOT use email for rate limiting key to avoid timing attacks
+    const key = `${req.ip}:${req.path}`;
+    
+    try {
+      const isLimited = await provider.checkLimit(key);
+      if (isLimited) {
+        return res.status(429).json(fail('RATE_LIMITED', 'Too many attempts. Please retry later.'));
+      }
+      return next();
+    } catch (error) {
+      // Fail open if rate limiter fails
+      return next();
     }
-
-    return next();
   };
 }

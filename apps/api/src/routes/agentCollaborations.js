@@ -1,8 +1,9 @@
+import { Router } from 'express';
 // Agent Collaborations Routes
 // Prompts 20-24: Complete Agent Operating System
 
 export function buildAgentCollaborationsRouter(agentService, permService) {
-  const router = require('express').Router();
+  const router = Router();
 
   // GET /api/agents/:id/collaborations - Get agent collaborations
   router.get('/:id/collaborations', async (req, res) => {

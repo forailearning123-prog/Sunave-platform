@@ -1,9 +1,9 @@
 // Workflow Service - Business logic layer for workflow engine
 
-const { v4: uuidv4 } = require('uuid');
-const WorkflowRepository = require('../repositories/workflowRepository');
-const WorkerService = require('./workerService');
-const { WorkflowExecutionStatus, WorkflowTriggerType } = require('packages/types/workers');
+import { v4 as uuidv4 } from 'uuid';
+import WorkflowRepository from '../repositories/workflowRepository';
+import WorkerService from './workerService';
+const { WorkflowExecutionStatus, WorkflowTriggerType } = require('packages/types/agents/index.js');
 
 class WorkflowService {
   constructor(db) {
@@ -353,7 +353,7 @@ class WorkflowService {
   // ─── Scheduling ──────────────────────────────────────────────────────────────
 
   async createSchedule(organizationId, data, createdBy) {
-    const ScheduleRepository = require('../repositories/scheduleRepository');
+    import ScheduleRepository from '../repositories/scheduleRepository';
     const scheduleRepo = new ScheduleRepository(this.workflowRepo.db);
 
     // Validate required fields
@@ -386,7 +386,7 @@ class WorkflowService {
   }
 
   async getSchedule(id, organizationId) {
-    const ScheduleRepository = require('../repositories/scheduleRepository');
+    import ScheduleRepository from '../repositories/scheduleRepository';
     const scheduleRepo = new ScheduleRepository(this.workflowRepo.db);
 
     const schedule = await scheduleRepo.getScheduleById(id);
@@ -402,7 +402,7 @@ class WorkflowService {
   }
 
   async updateSchedule(id, organizationId, data) {
-    const ScheduleRepository = require('../repositories/scheduleRepository');
+    import ScheduleRepository from '../repositories/scheduleRepository';
     const scheduleRepo = new ScheduleRepository(this.workflowRepo.db);
 
     const schedule = await scheduleRepo.getScheduleById(id);
@@ -418,7 +418,7 @@ class WorkflowService {
   }
 
   async deleteSchedule(id, organizationId) {
-    const ScheduleRepository = require('../repositories/scheduleRepository');
+    import ScheduleRepository from '../repositories/scheduleRepository';
     const scheduleRepo = new ScheduleRepository(this.workflowRepo.db);
 
     const schedule = await scheduleRepo.getScheduleById(id);
@@ -434,11 +434,11 @@ class WorkflowService {
   }
 
   async getOrganizationSchedules(organizationId, filters = {}, limit = 50, offset = 0) {
-    const ScheduleRepository = require('../repositories/scheduleRepository');
+    import ScheduleRepository from '../repositories/scheduleRepository';
     const scheduleRepo = new ScheduleRepository(this.workflowRepo.db);
 
     return await scheduleRepo.searchSchedules(organizationId, filters, limit, offset);
   }
 }
 
-module.exports = WorkflowService;
+export default WorkflowService;

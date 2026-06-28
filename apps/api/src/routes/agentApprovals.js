@@ -1,8 +1,9 @@
+import { Router } from 'express';
 // Agent Approvals Routes
 // Prompts 20-24: Complete Agent Operating System
 
 export function buildAgentApprovalsRouter(agentService, permService) {
-  const router = require('express').Router();
+  const router = Router();
 
   // GET /api/agents/:id/approvals - Get agent approvals
   router.get('/:id/approvals', async (req, res) => {

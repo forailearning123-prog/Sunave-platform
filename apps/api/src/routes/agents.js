@@ -1,8 +1,9 @@
+import { Router } from 'express';
 // Agent Platform Routes
 // Prompts 20-24: Complete Agent Operating System
 
 export function buildAgentsRouter(agentService, permService) {
-  const router = require('express').Router();
+  const router = Router();
 
   // Middleware to require organization context
   const requireOrg = (req, res, next) => {

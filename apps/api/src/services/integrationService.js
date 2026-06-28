@@ -1,9 +1,9 @@
 // Integration Service
 // Business logic layer for integration framework
 
-const { v4: uuidv4 } = require('uuid');
-const crypto = require('crypto');
-const { IntegrationProvider, AuthType, HealthStatus } = require('packages/types/plugins');
+import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
+const { IntegrationProvider, AuthType, HealthStatus } = require('packages/types/agents/index.js');
 
 class IntegrationService {
   constructor(db, permissionService, configurationService) {
@@ -428,4 +428,4 @@ class IntegrationService {
   }
 }
 
-module.exports = IntegrationService;
+export default IntegrationService;

@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 function createSupportRouter(businessService, permService) {
   const router = express.Router();
@@ -35,4 +35,4 @@ function createSupportRouter(businessService, permService) {
   return router;
 }
 
-module.exports = { createSupportRouter };
+export { createSupportRouter };

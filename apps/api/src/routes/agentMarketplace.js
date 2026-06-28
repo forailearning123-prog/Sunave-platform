@@ -1,8 +1,9 @@
+import { Router } from 'express';
 // Agent Marketplace Routes
 // Prompts 20-24: Complete Agent Operating System
 
 export function buildAgentMarketplaceRouter(agentService, permService) {
-  const router = require('express').Router();
+  const router = Router();
 
   // GET /api/agents/marketplace - List marketplace items
   router.get('/', async (req, res) => {

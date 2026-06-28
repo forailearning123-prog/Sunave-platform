@@ -2,26 +2,49 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const requiredInProduction = ['DATABASE_URL', 'AUTH_ACCESS_TOKEN_SECRET', 'AUTH_REFRESH_TOKEN_SECRET'];
+const requiredEnvs = ['NODE_ENV', 'JWT_SECRET', 'FRONTEND_URL', 'API_BASE_URL', 'PORT', 'LOG_LEVEL'];
+const missing = [];
 
-if (process.env.SUNAVE_ENV === 'production') {
-  for (const key of requiredInProduction) {
-    if (!process.env[key]) {
-      throw new Error(`Missing required environment variable: ${key}`);
-    }
+for (const key of requiredEnvs) {
+  if (!process.env[key]) {
+    missing.push(key);
   }
 }
 
+if (missing.length > 0) {
+  for (const m of missing) {
+    console.error(`✗ Missing ${m}`);
+  }
+  console.error('Startup Aborted');
+  process.exit(1);
+}
+
+console.log('✓ Environment validated');
+console.log(`✓ ${process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}`);
+try {
+  const apiUrl = new URL(process.env.API_BASE_URL);
+  console.log(`✓ ${apiUrl.hostname}`);
+} catch (e) {
+  console.log(`✓ ${process.env.API_BASE_URL}`);
+}
+
 export const config = {
-  env: process.env.SUNAVE_ENV || 'development',
-  apiPort: Number(process.env.API_PORT || 8080),
-  databaseUrl: process.env.DATABASE_URL || 'postgres://localhost:5432/sunave',
-  accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET || 'dev-access-secret-change-me',
-  refreshTokenSecret: process.env.AUTH_REFRESH_TOKEN_SECRET || 'dev-refresh-secret-change-me',
-  accessTokenTtlSeconds: Number(process.env.AUTH_ACCESS_TOKEN_TTL_SECONDS || 900),
-  refreshTokenTtlSeconds: Number(process.env.AUTH_REFRESH_TOKEN_TTL_SECONDS || 86400),
-  refreshTokenRememberTtlSeconds: Number(process.env.AUTH_REFRESH_TOKEN_REMEMBER_TTL_SECONDS || 2592000),
-  passwordResetTtlMinutes: Number(process.env.AUTH_PASSWORD_RESET_TTL_MINUTES || 30),
-  isProduction: (process.env.SUNAVE_ENV || 'development') === 'production',
+  env: process.env.NODE_ENV,
+  apiPort: Number(process.env.PORT || 8080),
+  frontendUrl: process.env.FRONTEND_URL,
+  apiBaseUrl: process.env.API_BASE_URL,
+  logLevel: process.env.LOG_LEVEL,
+  
+  databaseUrl: process.env.DATABASE_URL,
+  redisUrl: process.env.REDIS_URL,
+  aiGatewayUrl: process.env.AI_GATEWAY_URL,
+
+  accessTokenSecret: process.env.JWT_SECRET,
+  refreshTokenSecret: process.env.JWT_SECRET,
+  accessTokenTtlSeconds: 900,
+  refreshTokenTtlSeconds: 86400,
+  refreshTokenRememberTtlSeconds: 2592000,
+  passwordResetTtlMinutes: 30,
+  isProduction: process.env.NODE_ENV === 'production',
   runMigrationsOnBoot: (process.env.RUN_MIGRATIONS_ON_BOOT || 'true') === 'true'
 };

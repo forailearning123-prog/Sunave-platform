@@ -1,7 +1,7 @@
 // Agent Collaboration Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { CollaborationType } from '@sunave/types/agents';
+import { CollaborationType } from '../../../../packages/types/agents/index.js';
 
 export function createAgentCollaborationRepository(pool) {
   return {

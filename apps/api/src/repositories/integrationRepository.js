@@ -1,7 +1,7 @@
 // Integration Repository
 // Data access layer for integration framework
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class IntegrationRepository {
   constructor(db) {
@@ -372,4 +372,4 @@ class IntegrationRepository {
   }
 }
 
-module.exports = IntegrationRepository;
+export default IntegrationRepository;

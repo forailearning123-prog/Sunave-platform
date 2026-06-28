@@ -1,14 +1,14 @@
 // Integration Platform Enhanced Routes
 // Complete API for Integration Platform (Prompt 25)
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 
-const requireOrg = require('../middleware/requireOrg');
-const requirePermission = require('../middleware/requirePermission');
-const asyncHandler = require('../middleware/asyncHandler');
+import requireOrg from '../middleware/requireOrg';
+import requirePermission from '../middleware/requirePermission';
+import asyncHandler from '../middleware/asyncHandler';
 
 // ─── Dependencies (injected via app.js) ────────────────────────────────────────
 
@@ -669,7 +669,7 @@ router.post('/health/check-all', requireOrg, asyncHandler(async (req, res) => {
 
 // ─── Dependency Injection ──────────────────────────────────────────────────────
 
-module.exports = (dependencies) => {
+export default (dependencies) => {
   db = dependencies.db;
   integrationService = dependencies.integrationServiceEnhanced;
   permissionService = dependencies.permissionService;

@@ -1,6 +1,6 @@
 // Business Tag Repository
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class BusinessTagRepository {
   constructor(db) {
@@ -232,4 +232,4 @@ class BusinessTagRepository {
   }
 }
 
-module.exports = BusinessTagRepository;
+export default BusinessTagRepository;

@@ -1,7 +1,7 @@
 // Plugin Repository
 // Data access layer for plugin platform
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class PluginRepository {
   constructor(db) {
@@ -1139,4 +1139,4 @@ class PluginRepository {
   }
 }
 
-module.exports = PluginRepository;
+export default PluginRepository;

@@ -1,3 +1,4 @@
+import { Router } from 'express';
 import { fail } from '@sunave/core';
 
 export function buildIntelligenceRouter(
@@ -15,7 +16,7 @@ export function buildIntelligenceRouter(
   orgRepo,
   permService
 ) {
-  const router = {};
+  const router = Router();
 
   const requireOrg = (req, res, next) => {
     if (!req.org) {

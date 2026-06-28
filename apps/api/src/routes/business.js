@@ -1,7 +1,7 @@
 // Business Operating Platform Routes
 // Epic 6 - Shared foundation for all business modules
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // Import repositories and services (will be injected via app.js)
@@ -881,4 +881,4 @@ router.get('/recent', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

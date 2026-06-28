@@ -1,7 +1,7 @@
 // Agent Approval Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { ApprovalType, ApprovalStatus } from '@sunave/types/agents';
+import { ApprovalType, ApprovalStatus } from '../../../../packages/types/agents/index.js';
 
 export function createAgentApprovalRepository(pool) {
   return {

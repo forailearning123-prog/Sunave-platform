@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 function createBiRouter(businessService, permService) {
   const router = express.Router();
@@ -24,4 +24,4 @@ function createBiRouter(businessService, permService) {
   return router;
 }
 
-module.exports = { createBiRouter };
+export { createBiRouter };

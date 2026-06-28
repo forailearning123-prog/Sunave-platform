@@ -1,8 +1,8 @@
 // Worker Service - Business logic layer for worker platform
 
-const { v4: uuidv4 } = require('uuid');
-const WorkerRepository = require('../repositories/workerRepository');
-const { WorkerStatus, WorkerExecutionStatus, ExecutionMode } = require('packages/types/workers');
+import { v4 as uuidv4 } from 'uuid';
+import WorkerRepository from '../repositories/workerRepository';
+const { WorkerStatus, WorkerExecutionStatus, ExecutionMode } = require('packages/types/agents/index.js');
 
 class WorkerService {
   constructor(db) {
@@ -449,4 +449,4 @@ class WorkerService {
   }
 }
 
-module.exports = WorkerService;
+export default WorkerService;

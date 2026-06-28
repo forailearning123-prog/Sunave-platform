@@ -1,7 +1,7 @@
 // Agent Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { AgentStatus, AgentType, AgentVisibility } from '@sunave/types/agents';
+import { AgentStatus, AgentType, AgentVisibility } from '../../../../packages/types/agents/index.js';
 
 export function createAgentRepository(pool) {
   return {

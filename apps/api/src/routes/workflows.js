@@ -1,8 +1,8 @@
 // Workflows API Routes
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const WorkflowService = require('../services/workflowService');
+import WorkflowService from '../services/workflowService';
 const { requirePermission } = require('../middleware/permissionMiddleware');
 
 // ─── Workflow CRUD ────────────────────────────────────────────────────────────
@@ -347,4 +347,4 @@ router.delete('/schedules/:id', requirePermission('schedules.delete'), async (re
   }
 });
 
-module.exports = router;
+export default router;

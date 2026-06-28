@@ -1,8 +1,9 @@
+import { Router } from 'express';
 // Agent Templates Routes
 // Prompts 20-24: Complete Agent Operating System
 
 export function buildAgentTemplatesRouter(agentService, permService) {
-  const router = require('express').Router();
+  const router = Router();
 
   // GET /api/agents/templates - List templates
   router.get('/', async (req, res) => {

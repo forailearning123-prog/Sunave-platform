@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 function createHrRouter(businessService, permService) {
   const router = express.Router();
@@ -68,4 +68,4 @@ function createHrRouter(businessService, permService) {
   return router;
 }
 
-module.exports = { createHrRouter };
+export { createHrRouter };

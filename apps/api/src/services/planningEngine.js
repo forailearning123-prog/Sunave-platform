@@ -1,7 +1,7 @@
 // Planning Engine Service
 // Prompts 20-24: Complete Agent Operating System
 
-import { ReasoningMode, GoalType } from '@sunave/types/agents';
+import { ReasoningMode, GoalType } from '../../../../packages/types/agents/index.js';
 
 export function createPlanningEngine(
   agentRepo,

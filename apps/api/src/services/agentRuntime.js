@@ -1,7 +1,7 @@
 // Agent Runtime Service
 // Prompts 20-24: Complete Agent Operating System
 
-import { ExecutionStatus, TaskStatus } from '@sunave/types/agents';
+import { ExecutionStatus, TaskStatus } from '../../../../packages/types/agents/index.js';
 
 export function createAgentRuntime(
   agentService,

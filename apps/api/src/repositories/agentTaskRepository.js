@@ -1,12 +1,12 @@
 // Agent Task Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { TaskStatus } from '@sunave/types/agents';
+import { TaskStatus } from '../../../../packages/types/agents/index.js';
 
 export function createAgentTaskRepository(pool) {
   return {
     async findById(id) {
-      const result = await pool.query('SELECT * FROM agent_tasks WHERE id = $1', [id]);
+      result = await pool.query('SELECT * FROM agent_tasks WHERE id = $1', [id]);
       return result.rows[0] || null;
     },
 
@@ -43,12 +43,12 @@ export function createAgentTaskRepository(pool) {
       query += ` OFFSET $${paramCount}`;
       params.push(offset);
 
-      const result = await pool.query(query, params);
+      result = await pool.query(query, params);
       return result.rows;
     },
 
     async findByExecution(executionId) {
-      const result = await pool.query(
+      result = await pool.query(
         'SELECT * FROM agent_tasks WHERE execution_id = $1 ORDER BY priority DESC, created_at ASC',
         [executionId]
       );
@@ -76,7 +76,7 @@ export function createAgentTaskRepository(pool) {
       query += ` OFFSET $${paramCount}`;
       params.push(offset);
 
-      const result = await pool.query(query, params);
+      result = await pool.query(query, params);
       return result.rows;
     },
 
@@ -102,7 +102,7 @@ export function createAgentTaskRepository(pool) {
         metadata = {}
       } = data;
 
-      const result = await pool.query(
+      result = await pool.query(
         `INSERT INTO agent_tasks (
           agent_id, organization_id, goal_id, execution_id, parent_task_id,
           title, description, type, priority, worker_id, worker_type,
@@ -151,7 +151,7 @@ export function createAgentTaskRepository(pool) {
         completedAt
       } = data;
 
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks SET
           title = COALESCE($1, title),
           description = COALESCE($2, description),
@@ -195,7 +195,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async assignWorker(id, workerId, workerType) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET worker_id = $1, worker_type = $2, status = $3, updated_at = NOW() 
          WHERE id = $4 
@@ -206,7 +206,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async start(id) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET status = $1, started_at = NOW(), updated_at = NOW() 
          WHERE id = $2 
@@ -229,7 +229,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async fail(id, error) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET status = $1, error = $2, updated_at = NOW() 
          WHERE id = $3 
@@ -240,7 +240,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async retry(id) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET status = $1, retry_count = retry_count + 1, error = NULL, updated_at = NOW() 
          WHERE id = $2 
@@ -251,7 +251,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async cancel(id) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET status = $1, completed_at = NOW(), updated_at = NOW() 
          WHERE id = $2 
@@ -262,7 +262,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async approve(id, approvedBy) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET approval_status = 'approved', approved_by = $1, approved_at = NOW(), updated_at = NOW() 
          WHERE id = $2 
@@ -273,7 +273,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async reject(id, approvedBy, reason) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_tasks 
          SET approval_status = 'rejected', approved_by = $1, approved_at = NOW(), error = $2, updated_at = NOW() 
          WHERE id = $3 
@@ -288,7 +288,7 @@ export function createAgentTaskRepository(pool) {
     },
 
     async getPendingTasks(agentId) {
-      const result = await pool.query(
+      result = await pool.query(
         `SELECT * FROM agent_tasks 
          WHERE agent_id = $1 
          AND status IN ('pending', 'assigned', 'retrying')

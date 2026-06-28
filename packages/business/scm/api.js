@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 function createScmRouter(businessService, permService) {
   const router = express.Router();
@@ -46,4 +46,4 @@ function createScmRouter(businessService, permService) {
   return router;
 }
 
-module.exports = { createScmRouter };
+export { createScmRouter };

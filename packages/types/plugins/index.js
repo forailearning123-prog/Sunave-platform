@@ -1020,8 +1020,7 @@ class MarketplaceReview {
 
 // ─── Exports ───────────────────────────────────────────────────────────────────
 
-module.exports = {
-  // Enums
+export { // Enums
   PluginStatus,
   PluginCategory,
   InstallationStatus,
@@ -1067,4 +1066,4 @@ module.exports = {
   IntegrationProvider,
   MarketplaceItem,
   MarketplaceReview
-};
+ };

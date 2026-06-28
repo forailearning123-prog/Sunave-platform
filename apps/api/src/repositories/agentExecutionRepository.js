@@ -1,12 +1,12 @@
 // Agent Execution Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { ExecutionStatus } from '@sunave/types/agents';
+import { ExecutionStatus } from '../../../../packages/types/agents/index.js';
 
 export function createAgentExecutionRepository(pool) {
   return {
     async findById(id) {
-      const result = await pool.query('SELECT * FROM agent_executions WHERE id = $1', [id]);
+      result = await pool.query('SELECT * FROM agent_executions WHERE id = $1', [id]);
       return result.rows[0] || null;
     },
 
@@ -31,7 +31,7 @@ export function createAgentExecutionRepository(pool) {
       query += ` OFFSET $${paramCount}`;
       params.push(offset);
 
-      const result = await pool.query(query, params);
+      result = await pool.query(query, params);
       return result.rows;
     },
 
@@ -62,7 +62,7 @@ export function createAgentExecutionRepository(pool) {
       query += ` OFFSET $${paramCount}`;
       params.push(offset);
 
-      const result = await pool.query(query, params);
+      result = await pool.query(query, params);
       return result.rows;
     },
 
@@ -76,7 +76,7 @@ export function createAgentExecutionRepository(pool) {
         context = {}
       } = data;
 
-      const result = await pool.query(
+      result = await pool.query(
         `INSERT INTO agent_executions (agent_id, organization_id, user_id, status, goal, context)
          VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING *`,
@@ -107,7 +107,7 @@ export function createAgentExecutionRepository(pool) {
         tasksTotal
       } = data;
 
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_executions SET
           status = COALESCE($1, status),
           plan = COALESCE($2, plan),
@@ -141,7 +141,7 @@ export function createAgentExecutionRepository(pool) {
     },
 
     async start(id) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_executions 
          SET status = $1, started_at = NOW(), updated_at = NOW() 
          WHERE id = $2 
@@ -163,7 +163,7 @@ export function createAgentExecutionRepository(pool) {
     },
 
     async fail(id, error) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_executions 
          SET status = $1, error = $2, completed_at = NOW(), updated_at = NOW() 
          WHERE id = $3 
@@ -174,7 +174,7 @@ export function createAgentExecutionRepository(pool) {
     },
 
     async cancel(id) {
-      const result = await pool.query(
+      result = await pool.query(
         `UPDATE agent_executions 
          SET status = $1, completed_at = NOW(), updated_at = NOW() 
          WHERE id = $2 
@@ -189,7 +189,7 @@ export function createAgentExecutionRepository(pool) {
     },
 
     async getStats(agentId, days = 30) {
-      const result = await pool.query(
+      result = await pool.query(
         `SELECT 
           COUNT(*) as total_executions,
           COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed,

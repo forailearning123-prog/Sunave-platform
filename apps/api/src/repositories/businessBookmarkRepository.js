@@ -1,6 +1,6 @@
 // Business Bookmark Repository
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class BusinessBookmarkRepository {
   constructor(db) {
@@ -165,4 +165,4 @@ class BusinessBookmarkRepository {
   }
 }
 
-module.exports = BusinessBookmarkRepository;
+export default BusinessBookmarkRepository;

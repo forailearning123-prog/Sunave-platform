@@ -1,7 +1,7 @@
 // Integration Repository Enhanced
 // Data access layer for enhanced integration platform features
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class IntegrationRepositoryEnhanced {
   constructor(db) {
@@ -897,4 +897,4 @@ class IntegrationRepositoryEnhanced {
   }
 }
 
-module.exports = IntegrationRepositoryEnhanced;
+export default IntegrationRepositoryEnhanced;

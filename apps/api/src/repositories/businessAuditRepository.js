@@ -1,6 +1,6 @@
 // Business Audit Repository
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class BusinessAuditRepository {
   constructor(db) {
@@ -222,4 +222,4 @@ class BusinessAuditRepository {
   }
 }
 
-module.exports = BusinessAuditRepository;
+export default BusinessAuditRepository;

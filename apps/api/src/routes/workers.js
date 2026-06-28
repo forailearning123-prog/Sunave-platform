@@ -1,8 +1,8 @@
 // Workers API Routes
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const WorkerService = require('../services/workerService');
+import WorkerService from '../services/workerService';
 const { requirePermission } = require('../middleware/permissionMiddleware');
 
 // ─── Worker CRUD ──────────────────────────────────────────────────────────────
@@ -509,4 +509,4 @@ router.get('/executions/:executionId/logs', requirePermission('workers.read'), a
   }
 });
 
-module.exports = router;
+export default router;

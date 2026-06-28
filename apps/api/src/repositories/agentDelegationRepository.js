@@ -1,7 +1,7 @@
 // Agent Delegation Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { DelegationType } from '@sunave/types/agents';
+import { DelegationType } from '../../../../packages/types/agents/index.js';
 
 export function createAgentDelegationRepository(pool) {
   return {

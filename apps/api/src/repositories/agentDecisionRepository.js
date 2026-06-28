@@ -1,7 +1,7 @@
 // Agent Decision Repository
 // Prompts 20-24: Complete Agent Operating System
 
-import { DecisionType } from '@sunave/types/agents';
+import { DecisionType } from '../../../../packages/types/agents/index.js';
 
 export function createAgentDecisionRepository(pool) {
   return {

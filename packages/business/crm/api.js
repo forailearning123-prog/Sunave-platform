@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 function createCrmRouter(businessService, permService) {
   const router = express.Router();
@@ -105,4 +105,4 @@ function createCrmRouter(businessService, permService) {
   return router;
 }
 
-module.exports = { createCrmRouter };
+export { createCrmRouter };

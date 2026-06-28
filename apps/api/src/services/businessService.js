@@ -1,7 +1,7 @@
 // Business Operating Platform Service
 // Orchestrates all business operations
 
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 class BusinessService {
   constructor(
@@ -652,4 +652,4 @@ class BusinessService {
   }
 }
 
-module.exports = BusinessService;
+export default BusinessService;

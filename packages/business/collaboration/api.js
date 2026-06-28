@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 function createCollaborationRouter(businessService, permService) {
   const router = express.Router();
@@ -35,4 +35,4 @@ function createCollaborationRouter(businessService, permService) {
   return router;
 }
 
-module.exports = { createCollaborationRouter };
+export { createCollaborationRouter };
