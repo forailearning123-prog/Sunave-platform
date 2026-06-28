@@ -30,7 +30,7 @@
         ui.error.textContent = '';
         try {
           const data = await request('/api/auth/register', 'POST', valuesFromForm(ui.form));
-          window.location.href = data.needsOrganization ? '/auth/organization' : '/dashboard';
+          window.location.href = data.needsOrganization ? '/auth/organization' : '/onboarding/wizard.html';
         } catch (error) {
           ui.error.textContent = error.message;
         }

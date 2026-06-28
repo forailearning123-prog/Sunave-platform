@@ -15,12 +15,15 @@
       const ui = renderForm({
         rootId: 'root',
         title: 'Create Organization',
-        submitLabel: 'Continue',
-        helper: 'Required for first login.',
+        submitLabel: 'Create Workspace',
+        helper: 'Set up your workspace to get started.',
         fields: [
-          { name: 'organizationName', label: 'Organization Name' },
-          { name: 'industry', label: 'Industry' },
-          { name: 'country', label: 'Country' }
+          { name: 'organizationName', label: 'Organization Name', type: 'text' },
+          { name: 'slug', label: 'Workspace URL Slug', type: 'text' },
+          { name: 'industry', label: 'Industry', type: 'text' },
+          { name: 'companySize', label: 'Company Size', type: 'text' },
+          { name: 'country', label: 'Country', type: 'text' },
+          { name: 'timezone', label: 'Time Zone', type: 'text', value: 'UTC' }
         ]
       });
 
@@ -28,13 +31,19 @@
         event.preventDefault();
         ui.error.textContent = '';
         try {
-          await request('/api/auth/complete-onboarding', 'POST', valuesFromForm(ui.form));
-          window.location.href = '/dashboard';
+          const values = valuesFromForm(ui.form);
+          // Auto-fill fallback for legacy fields expected by API
+          if (!values.industry) values.industry = 'Technology';
+          if (!values.country) values.country = 'US';
+          
+          await request('/api/auth/complete-onboarding', 'POST', values);
+          // Redirect to Welcome Wizard instead of directly to dashboard
+          window.location.href = '/onboarding/wizard.html';
         } catch (error) {
           ui.error.textContent = error.message;
         }
       });
     </script>
-  <script type='module' src='/assets/js/ui-core.js'></script>
-</body>
+    <script type='module' src='/assets/js/ui-core.js'></script>
+  </body>
 </html>

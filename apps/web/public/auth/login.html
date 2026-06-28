@@ -30,7 +30,7 @@
         try {
           const values = valuesFromForm(ui.form);
           const data = await request('/api/auth/login', 'POST', values);
-          window.location.href = data.needsOrganization ? '/auth/organization' : '/dashboard';
+          window.location.href = data.needsOrganization ? '/auth/organization' : '/onboarding/wizard.html';
         } catch (error) {
           ui.error.textContent = error.message;
         }

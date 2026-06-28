@@ -1,1 +1,66 @@
-Sunave Web placeholder
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sunave - AI Platform</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg-body, #0a0a0a); color: var(--text-color, #fff); }
+      .hero { text-align: center; padding: 6rem 1rem; max-width: 800px; margin: 0 auto; }
+      .hero h1 { font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(90deg, #fff, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .hero p { font-size: 1.25rem; color: #a1a1aa; margin-bottom: 2rem; }
+      .cta-group { display: flex; gap: 1rem; justify-content: center; }
+      .btn { padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 500; transition: all 0.2s; border: none; cursor: pointer; }
+      .btn-primary { background: #6366f1; color: white; }
+      .btn-primary:hover { background: #4f46e5; }
+      .btn-secondary { background: #27272a; color: white; }
+      .btn-secondary:hover { background: #3f3f46; }
+      .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; }
+      .feature-card { background: #18181b; padding: 2rem; border-radius: 12px; border: 1px solid #27272a; text-align: left; }
+      .feature-card h3 { margin-top: 0; color: #e4e4e7; }
+      .feature-card p { color: #a1a1aa; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <header style="padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #27272a;">
+      <div style="font-weight: bold; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;"><div style="color: #6366f1;">✦</div> Sunave</div>
+      <nav style="display: flex; gap: 1rem; align-items: center;">
+        <a href="#features" style="color: #a1a1aa; text-decoration: none;">Features</a>
+        <a href="/auth/login" style="color: #a1a1aa; text-decoration: none;">Sign In</a>
+        <a href="/auth/register" class="btn btn-primary" style="padding: 0.5rem 1rem;">Get Started</a>
+      </nav>
+    </header>
+    
+    <main>
+      <section class="hero animate-in">
+        <h1>The Intelligent Operating System</h1>
+        <p>Unify your agents, workflows, and knowledge inside a single, secure platform. Built on Neon PostgreSQL and Cloudflare R2.</p>
+        <div class="cta-group">
+          <a href="/auth/register" class="btn btn-primary">Start for free</a>
+          <a href="/docs" class="btn btn-secondary">Documentation</a>
+        </div>
+      </section>
+
+      <section id="features" class="features">
+        <div class="feature-card animate-in">
+          <h3>?? Knowledge Management</h3>
+          <p>Index documents seamlessly using fast embedding pipelines and vector similarity search.</p>
+        </div>
+        <div class="feature-card animate-in">
+          <h3>?? AI Center & Agents</h3>
+          <p>Route prompts effortlessly across OpenAI, Anthropic, Gemini, and Local models.</p>
+        </div>
+        <div class="feature-card animate-in">
+          <h3>?? Workflow Builder</h3>
+          <p>Visually wire data ingestion edges and conditions directly into background workers.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer style="text-align: center; padding: 2rem; border-top: 1px solid #27272a; color: #71717a; margin-top: 4rem;">
+      <p>&copy; 2026 Sunave Inc. All rights reserved.</p>
+    </footer>
+    <script type='module' src='/assets/js/ui-core.js'></script>
+  </body>
+</html>
