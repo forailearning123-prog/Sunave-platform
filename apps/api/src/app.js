@@ -263,16 +263,33 @@ export async function createApp({ pool } = {}) {
     res.status(404).json(fail('NOT_FOUND', 'Resource not found.'));
   });
 
-  app.use((err, _req, res, next) => {
+  app.use((err, req, res, next) => {
     if (res.headersSent) {
       return next(err);
     }
-    if (err.code === 'EBADCSRFTOKEN') {
-      return res.status(403).json(fail('CSRF_VALIDATION_FAILED', 'CSRF validation failed.'));
-    }
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      level: 'error',
+      message: err.message,
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+      ip: req.ip
+    };
     // eslint-disable-next-line no-console
-    console.error(err);
-    res.status(500).json(fail('INTERNAL_ERROR', 'An unexpected error occurred.'));
+    console.error(JSON.stringify(logEntry));
+
+    if (err.code === 'EBADCSRFTOKEN') {
+      return res.status(403).json(fail('CSRF_VALIDATION_FAILED', 'CSRF validation failed. Invalid or missing token.'));
+    }
+    if (err.type === 'entity.too.large') {
+      return res.status(413).json(fail('PAYLOAD_TOO_LARGE', 'The request payload is too large.'));
+    }
+    if (err.name === 'ValidationError') {
+      return res.status(400).json(fail('VALIDATION_ERROR', err.message, err.details));
+    }
+    res.status(500).json(fail('INTERNAL_ERROR', 'An unexpected internal server error occurred. Please try again later.'));
     return undefined;
   });
 

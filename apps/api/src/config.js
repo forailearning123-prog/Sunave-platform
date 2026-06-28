@@ -15,7 +15,7 @@ if (process.env.SUNAVE_ENV === 'production') {
 export const config = {
   env: process.env.SUNAVE_ENV || 'development',
   apiPort: Number(process.env.API_PORT || 8080),
-  databaseUrl: process.env.DATABASE_URL || '******localhost:5432/sunave',
+  databaseUrl: process.env.DATABASE_URL || 'postgres://localhost:5432/sunave',
   accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET || 'dev-access-secret-change-me',
   refreshTokenSecret: process.env.AUTH_REFRESH_TOKEN_SECRET || 'dev-refresh-secret-change-me',
   accessTokenTtlSeconds: Number(process.env.AUTH_ACCESS_TOKEN_TTL_SECONDS || 900),
