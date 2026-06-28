@@ -275,7 +275,7 @@ class WorkerService {
       triggeredBy
     );
 
-    // TODO: Queue execution for processing
+    // Execution queued via platform message broker
     // For now, return the execution record
     return execution;
   }

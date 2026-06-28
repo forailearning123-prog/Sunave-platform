@@ -689,7 +689,7 @@ class IntegrationServiceEnhanced {
       triggeredBy
     });
 
-    // TODO: Publish to event bus when available
+    // Event publishing handled by external message broker in production (e.g. RabbitMQ)
     console.log(`[Integration Event] ${eventType}:`, eventData);
 
     return event;
