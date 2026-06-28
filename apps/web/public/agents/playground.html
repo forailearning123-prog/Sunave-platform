@@ -51,12 +51,12 @@
       const text = input.value;
       if(!text) return;
       const hist = document.getElementById('chat-history');
-      hist.innerHTML += <div class="message user">\</div>;
+      hist.innerHTML += '<div class="message user">' + text + '</div>';
       input.value = '';
       
       // Call API
       setTimeout(() => {
-        hist.innerHTML += <div class="message assistant">[Stream via /api/runtime/stream] Processing...</div>;
+        hist.innerHTML += '<div class="message assistant">[Stream via /api/runtime/stream] Processing...</div>';
         hist.scrollTop = hist.scrollHeight;
       }, 500);
     });

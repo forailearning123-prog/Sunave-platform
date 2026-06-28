@@ -18,6 +18,6 @@ export function showEmptyState(containerId, title, message, icon = 'üìÇ') {
 export function showErrorBoundary(containerId, error) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  container.innerHTML = '<div class="error-boundary" role="alert"><div class="error-icon" aria-hidden="true">‚ö Ô∏/div><h3>Something went wrong</h3><p>' + (error.message || 'An unexpected error occurred.') + '</p><button onclick="window.location.reload()" class="btn btn-primary">Reload Page</button></div>';
+  container.innerHTML = '<div class="error-boundary" role="alert"><div class="error-icon" aria-hidden="true">‚ö†Ô∏è</div><h3>Something went wrong</h3><p>' + (error.message || 'An unexpected error occurred.') + '</p><button onclick="window.location.reload()" class="btn btn-primary">Reload Page</button></div>';
 }
 document.addEventListener('DOMContentLoaded', initAnimations);

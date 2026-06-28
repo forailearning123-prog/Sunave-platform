@@ -10,7 +10,7 @@ export function buildField(field) {
   if (field.type === 'select') {
     return `
       <label>${field.label}</label>
-      <select name="${field.name}" required>
+      <select name="${field.name}" ${field.required !== false ? 'required' : ''}>
         ${field.options.map((opt) => `<option value="${opt}">${opt}</option>`).join('')}
       </select>
     `;
@@ -28,7 +28,7 @@ export function renderForm({ rootId, title, fields, submitLabel, helper }) {
     <h1>${title}</h1>
     <form id="app-form">
       ${fields.map((field) => buildField(field)).join('')}
-      <button type="submit">${submitLabel}</button>
+      <button type="submit" id="submit-btn">${submitLabel}</button>
       ${helper ? `<p class="helper">${helper}</p>` : ''}
       <p id="error" class="error"></p>
       <p id="success" class="success"></p>
@@ -38,6 +38,7 @@ export function renderForm({ rootId, title, fields, submitLabel, helper }) {
   return {
     form: document.getElementById('app-form'),
     error: document.getElementById('error'),
-    success: document.getElementById('success')
+    success: document.getElementById('success'),
+    submitBtn: document.getElementById('submit-btn')
   };
 }

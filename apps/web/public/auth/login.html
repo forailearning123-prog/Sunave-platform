@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/assets/css/styles.css" />
   </head>
   <body>
-    <div class="container" id="root"></div>
+    <div class="container animate-in" id="root"></div>
     <script type="module">
       import { renderForm } from '/assets/js/form-component.js';
       import { request, valuesFromForm } from '/assets/js/auth-client.js';
@@ -27,12 +27,16 @@
       ui.form.addEventListener('submit', async (event) => {
         event.preventDefault();
         ui.error.textContent = '';
+        ui.submitBtn.disabled = true;
+        ui.submitBtn.textContent = 'Signing in...';
         try {
           const values = valuesFromForm(ui.form);
           const data = await request('/api/auth/login', 'POST', values);
-          window.location.href = data.needsOrganization ? '/auth/organization' : '/onboarding/wizard.html';
+          window.location.href = data.needsOrganization ? '/auth/organization' : '/onboarding/wizard';
         } catch (error) {
           ui.error.textContent = error.message;
+          ui.submitBtn.disabled = false;
+          ui.submitBtn.textContent = 'Sign In';
         }
       });
     </script>
@@ -43,3 +47,4 @@
   <script type='module' src='/assets/js/ui-core.js'></script>
 </body>
 </html>
+

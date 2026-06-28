@@ -21,6 +21,8 @@ app.use('/api', createProxyMiddleware({
 }));
 
 app.use('/assets', express.static(path.join(publicDir, 'assets')));
+app.use('/styles', express.static(path.join(publicDir, 'styles')));
+app.use('/app', express.static(path.join(publicDir, 'app')));
 
 const pageRoutes = {
   '/auth/login': 'auth/login.html',
@@ -49,6 +51,10 @@ const pageRoutes = {
   '/settings/ai': 'settings/ai.html',
   '/settings/system': 'settings/system.html',
   '/settings/feature-flags': 'settings/feature-flags.html',
+  '/settings/voice': 'settings/voice.html',
+  '/onboarding/wizard': 'onboarding/wizard.html',
+  '/command-center': 'command-center.html',
+  '/workspace': 'workspace.html',
   '/goals': 'goals/index.html',
   '/goals/new': 'goals/new.html',
   '/goals/detail': 'goals/detail.html',
@@ -68,7 +74,3 @@ for (const [route, file] of Object.entries(pageRoutes)) {
   });
 }
 
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Sunave web listening on port ${port}`);
-});
