@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Command Center</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    body { background: rgba(0,0,0,0.8); display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; margin: 0; height: 100vh; font-family: sans-serif; }
+    .cmd-palette { width: 100%; max-width: 600px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); overflow: hidden; display: flex; flex-direction: column; }
+    .cmd-input { width: 100%; padding: 1.25rem; font-size: 1.2rem; border: none; background: transparent; color: var(--text-color); outline: none; border-bottom: 1px solid var(--border-color); }
+    .cmd-list { max-height: 400px; overflow-y: auto; }
+    .cmd-item { padding: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; border-left: 2px solid transparent; }
+    .cmd-item:hover { background: var(--bg-body); border-left-color: var(--primary); }
+  </style>
+</head>
+<body class="animate-in">
+  <div class="cmd-palette">
+    <input type="text" class="cmd-input" placeholder="Search commands, agents, files... (Esc to close)" autofocus />
+    <div class="cmd-list">
+      <div class="cmd-item"><div>?? Chat with Data Analyst</div></div>
+      <div class="cmd-item"><div>?? Go to Dashboard</div></div>
+    </div>
+  </div>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

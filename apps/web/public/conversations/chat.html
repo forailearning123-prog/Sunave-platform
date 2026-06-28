@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Conversation</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .chat-layout { display: flex; height: calc(100vh - 60px); }
+    .history-sidebar { width: 300px; background: var(--bg-card); border-right: 1px solid var(--border-color); display:flex; flex-direction:column; }
+    .history-list { flex:1; overflow-y:auto; padding:1rem; }
+    .history-item { padding: 0.75rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .history-item:hover { background: var(--bg-body); }
+    .history-item.active { background: rgba(99,102,241,0.1); color: var(--primary); border: 1px solid var(--primary); }
+    
+    .chat-main { flex: 1; display: flex; flex-direction: column; position: relative; }
+    .messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 900px; margin: 0 auto; width: 100%; }
+    .msg { display: flex; gap: 1rem; }
+    .msg-avatar { width: 40px; height: 40px; border-radius: 4px; background: var(--bg-body); display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink:0; }
+    .msg-content { flex: 1; padding-top: 0.5rem; line-height: 1.6; }
+    .msg.user .msg-avatar { background: var(--primary); color: white; }
+    
+    .chat-input-area { padding: 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+    .chat-input-box { display: flex; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .chat-input-box textarea { flex: 1; border: none; background: transparent; color: var(--text-color); resize: none; padding: 0.5rem; outline: none; font-family: inherit; }
+    .chat-actions { display: flex; align-items: flex-end; gap: 0.5rem; padding: 0.5rem; }
+    
+    .metrics { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; gap: 1rem; }
+  </style>
+</head>
+<body style="margin:0;">
+  <header style="padding:1rem 2rem; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Data Analysis Agent</h3>
+    <div style="display:flex; gap:1rem; align-items:center;">
+      <span style="font-size:0.8rem; color:var(--text-muted)">Model: gpt-4o</span>
+      <button class="btn btn-secondary">Share</button>
+      <button class="btn btn-secondary">Export</button>
+    </div>
+  </header>
+  
+  <div class="chat-layout animate-in">
+    <div class="history-sidebar">
+      <div style="padding:1rem; border-bottom:1px solid var(--border-color);">
+        <button class="btn btn-primary" style="width:100%;">New Chat</button>
+      </div>
+      <div class="history-list">
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase;">Today</div>
+        <div class="history-item active">Q3 Revenue Analysis</div>
+        <div class="history-item">Customer Churn Query</div>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin:1rem 0 0.5rem 0; text-transform:uppercase;">Yesterday</div>
+        <div class="history-item">Marketing ROI Script</div>
+      </div>
+    </div>
+    
+    <div class="chat-main">
+      <div class="messages" id="messages">
+        <div class="msg user">
+          <div class="msg-avatar">U</div>
+          <div class="msg-content">Can you analyze the Q3 revenue data and generate a chart?</div>
+        </div>
+        <div class="msg assistant">
+          <div class="msg-avatar">??</div>
+          <div class="msg-content">
+            <div style="margin-bottom:1rem; padding:0.5rem; background:rgba(99,102,241,0.1); border-radius:4px; font-family:monospace; font-size:0.85rem; color:var(--primary);">
+              > Tool Call: execute_sql<br>
+              > SELECT month, revenue FROM q3_sales GROUP BY month;
+            </div>
+            <p>Based on the database query, here is the revenue breakdown for Q3:</p>
+            <table style="width:100%; border-collapse:collapse; margin-bottom:1rem; font-size:0.9rem;">
+              <tr style="border-bottom:1px solid var(--border-color);"><th style="text-align:left; padding:0.5rem;">Month</th><th style="text-align:right; padding:0.5rem;">Revenue</th></tr>
+              <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:0.5rem;">July</td><td style="text-align:right; padding:0.5rem;">,500</td></tr>
+              <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:0.5rem;">August</td><td style="text-align:right; padding:0.5rem;">,200</td></tr>
+              <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:0.5rem;">September</td><td style="text-align:right; padding:0.5rem;">,900</td></tr>
+            </table>
+            <div class="metrics">
+              <span>Latency: 1.2s</span>
+              <span>Tokens: 452 (In: 310 / Out: 142)</span>
+              <span>Cost: .003</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chat-input-area">
+        <div class="chat-input-box">
+          <button class="btn btn-secondary" style="border:none; background:transparent;" title="Attach File">??</button>
+          <textarea rows="1" placeholder="Reply to Data Analysis Agent..."></textarea>
+          <div class="chat-actions">
+            <button class="btn btn-primary" style="padding:0.5rem 1rem;">Send</button>
+          </div>
+        </div>
+        <div style="text-align:center; font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">
+          AI responses may produce inaccurate information.
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

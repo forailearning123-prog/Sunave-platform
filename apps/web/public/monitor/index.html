@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Execution Monitor</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .monitor-layout { display: flex; flex-direction: column; height: calc(100vh - 60px); padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+    .stat-value { font-size: 2rem; font-weight: bold; margin-top: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 1rem; border-bottom: 1px solid var(--border-color); }
+  </style>
+</head>
+<body style="margin:0;">
+  <header style="padding:1rem 2rem; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0">Execution Monitor</h2>
+  </header>
+  
+  <div class="monitor-layout animate-in">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div style="color:var(--text-muted);">Active Executions</div>
+        <div class="stat-value text-primary">14</div>
+      </div>
+      <div class="stat-card">
+        <div style="color:var(--text-muted);">Queued Jobs</div>
+        <div class="stat-value">42</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Execution ID</th><th>Type</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>exe_9a8b7c6d</td><td>Workflow</td><td>Running</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

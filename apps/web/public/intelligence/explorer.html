@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Knowledge Explorer</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .explorer { display: flex; height: calc(100vh - 60px); }
+    .sidebar { width: 300px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 1rem; overflow-y: auto; }
+    .main { flex: 1; padding: 2rem; overflow-y: auto; }
+    .item-card { border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; background: var(--bg-card); }
+    .badge { background: var(--bg-body); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; margin-right: 0.5rem; }
+  </style>
+</head>
+<body style="margin:0;">
+  <header style="padding:1rem; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0">Knowledge Explorer</h2>
+    <input type="text" class="form-control" placeholder="Universal Search..." style="width:300px;" />
+  </header>
+  <div class="explorer animate-in">
+    <div class="sidebar">
+      <h3>Collections</h3>
+      <ul style="list-style:none; padding:0;">
+        <li style="padding:0.5rem; background:var(--bg-body); border-radius:4px; margin-bottom:0.5rem; cursor:pointer;">Company Handbook</li>
+        <li style="padding:0.5rem; cursor:pointer;">API Docs</li>
+      </ul>
+      <h3 style="margin-top:2rem;">Filters</h3>
+      <div class="form-group"><input type="checkbox"/> Processed</div>
+    </div>
+    <div class="main">
+      <div style="display:flex; justify-content:space-between; margin-bottom:2rem;">
+        <div>
+          <h2 style="margin-top:0;">Company Handbook</h2>
+          <p style="color:var(--text-muted)">12 Documents • 4,521 Chunks</p>
+        </div>
+      </div>
+      
+      <div class="item-card">
+        <div style="display:flex; justify-content:space-between;">
+          <h4 style="margin:0;">employee-guidelines.pdf</h4>
+          <span class="badge" style="background:rgba(34, 197, 94, 0.2); color:#22c55e;">Indexed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

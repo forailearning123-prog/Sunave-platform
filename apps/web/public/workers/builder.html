@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Worker Builder</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .wizard { max-width: 900px; margin: 2rem auto; padding: 2rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); }
+    .step { display: none; }
+    .step.active { display: block; }
+    .nav-btns { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .step-indicator { display: flex; gap: 0.5rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 1rem; }
+    .step-dot { padding: 0.5rem 1rem; background: var(--bg-body); border-radius: 4px; font-size: 0.8rem; white-space: nowrap; color: var(--text-muted); }
+    .step-dot.active { background: var(--primary); color: white; }
+  </style>
+</head>
+<body>
+  <header style="padding:1rem; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0">Hire AI Worker</h2>
+    <div><a href="/workers" class="btn btn-secondary">Cancel</a></div>
+  </header>
+  <div class="container animate-in wizard">
+    <div class="step-indicator" id="step-indicator"></div>
+    
+    <div class="step active" id="step-1">
+      <h2>1. Identity</h2>
+      <div class="form-group"><label>Name</label><input type="text" class="form-control" placeholder="e.g. Alice" /></div>
+      <div class="form-group"><label>Title</label><input type="text" class="form-control" placeholder="e.g. Data Analyst" /></div>
+      <div class="form-group"><label>Department</label><input type="text" class="form-control" /></div>
+      <div class="form-group"><label>Description</label><textarea class="form-control"></textarea></div>
+    </div>
+    <div class="step" id="step-2">
+      <h2>2. Brain</h2>
+      <div class="form-group"><label>Provider</label><select class="form-control"><option>OpenAI</option><option>Anthropic</option></select></div>
+      <div class="form-group"><label>Model</label><select class="form-control"><option>gpt-4o</option><option>claude-3-5-sonnet</option></select></div>
+      <div class="form-group"><label>Temperature</label><input type="range" min="0" max="1" step="0.1" value="0.7" style="width:100%" /></div>
+    </div>
+    <div class="step" id="step-3">
+      <h2>3. Knowledge</h2>
+      <p>Attach Collections</p>
+      <div class="form-group"><input type="checkbox"/> Handbook</div>
+      <div class="form-group"><input type="checkbox"/> API Docs</div>
+    </div>
+    <div class="step" id="step-4">
+      <h2>4. Skills</h2>
+      <div class="form-group"><input type="checkbox"/> Document QA</div>
+      <div class="form-group"><input type="checkbox"/> Data Analysis</div>
+      <div class="form-group"><input type="checkbox"/> Coding</div>
+    </div>
+    <div class="step" id="step-5">
+      <h2>5. Tools</h2>
+      <div class="form-group"><input type="checkbox"/> Web Search</div>
+      <div class="form-group"><input type="checkbox"/> Database Access</div>
+      <div class="form-group"><input type="checkbox"/> GitHub</div>
+    </div>
+    <div class="step" id="step-6">
+      <h2>6. Memory</h2>
+      <div class="form-group"><label>Session Memory Limit</label><input type="number" class="form-control" value="10" /></div>
+      <div class="form-group"><input type="checkbox" checked/> Summarize old conversations</div>
+    </div>
+    <div class="step" id="step-7">
+      <h2>7. Goals</h2>
+      <div class="form-group"><label>Primary Goal</label><textarea class="form-control"></textarea></div>
+      <div class="form-group"><label>Success Metrics</label><textarea class="form-control"></textarea></div>
+    </div>
+    <div class="step" id="step-8">
+      <h2>8. Testing</h2>
+      <div style="height:300px; border:1px solid var(--border-color); padding:1rem; overflow-y:auto; margin-bottom:1rem;">
+        <div style="background:var(--bg-body); padding:1rem; border-radius:8px; margin-bottom:1rem;">Worker initialized. Ready to test skills.</div>
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <input type="text" class="form-control" placeholder="Send test message..." style="flex:1;" />
+        <button class="btn btn-primary">Send</button>
+      </div>
+    </div>
+    <div class="step" id="step-9">
+      <h2>9. Publish</h2>
+      <p>Your digital employee is ready to be deployed to your organization.</p>
+      <div class="form-group"><label>Visibility</label><select class="form-control"><option>Organization</option><option>Private</option></select></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden;">Back</button>
+      <button class="btn btn-primary" id="btn-next">Next</button>
+    </div>
+  </div>
+
+  <script type="module">
+    const steps = ['Identity', 'Brain', 'Knowledge', 'Skills', 'Tools', 'Memory', 'Goals', 'Testing', 'Publish'];
+    const ind = document.getElementById('step-indicator');
+    steps.forEach((s, i) => {
+      ind.innerHTML += <div class="step-dot  + (i===0?'active':'') + " id="dot- + (i+1) + "> + (i+1) + .  + s + </div>;
+    });
+
+    let currentStep = 1;
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if(currentStep === 9) { window.location.href = '/workers'; return; }
+      currentStep++; updateUI();
+    });
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if(currentStep > 1) { currentStep--; updateUI(); }
+    });
+    function updateUI() {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.step-dot').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + currentStep).classList.add('active');
+      document.getElementById('dot-' + currentStep).classList.add('active');
+      document.getElementById('btn-prev').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+      document.getElementById('btn-next').textContent = currentStep === 9 ? 'Deploy Worker' : 'Next';
+    }
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>
