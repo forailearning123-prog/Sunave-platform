@@ -60,3 +60,45 @@
 | **CR-3** | No CORS middleware configured | `apps/api/src/app.js` (missing) | **Security** — API allows any origin. Cross-origin requests to `enterprise-api.sunave.tech` blocked or insecure. |
 | **CR-4** | Dev-only JWT secrets hardcoded in config | `apps/api/src/config.js` | **Security** — `dev-access-secret-change-me` is fallback. Production .env not validated before use. |
 | **CR-5** | In-memory rate limiter (not shared across instances) | `apps/api/src/middleware/rateLimit.js` | **Reliability** — Multi-replica deployments bypass rate limits. Auth endpoints unprotected from distributed brute force. |
+
+---
+
+## Sprint PS-1 Completed Fixes
+
+### CR-1 — ESM Module Crash (Partially Fixed)
+- Converted ~49 files from CommonJS to ESM
+- Replaced require() with import
+- Replaced module.exports with export
+- **Remaining**: workerService.js still has missing .js extension
+
+### CR-2 — Intelligence Router (Fixed)
+- Returns Router() instead of plain object
+
+### CR-3 — Production CORS (Fixed)
+- Installed cors package
+- Configured origin from FRONTEND_URL
+
+### CR-4 — JWT Security (Fixed)
+- Removed hardcoded dev secrets
+- Uses JWT_SECRET only
+
+### CR-5 — Startup Environment Validation (Fixed)
+- Validates required envs on boot
+- Logs clear diagnostics
+
+### CR-6 — Rate Limiter Abstraction (Fixed)
+- Created RateLimiterProvider base class
+- MemoryRateLimiter implementation
+
+### CR-7 — Production Environment (Fixed)
+- Updated .env.example
+
+---
+
+## Current Status
+
+Build: ✅ Passes
+ESM: 🟡 90% (1 file remains)
+Startup: 🟡 Needs workerService.js fix
+
+Deployment Readiness: 75%
