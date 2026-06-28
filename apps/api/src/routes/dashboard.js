@@ -29,7 +29,7 @@ export function buildDashboardRouter(dashboardService) {
       const config = await getDashboardConfig(userId);
       res.json(ok(config));
     } catch (err) {
-      console.error(err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       res.status(500).json(fail('DASHBOARD_ERROR', 'Failed to load dashboard configuration.'));
     }
   });
@@ -45,7 +45,7 @@ export function buildDashboardRouter(dashboardService) {
       });
       res.json(ok({ widgets, total: widgets.length }));
     } catch (err) {
-      console.error(err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       res.status(500).json(fail('WIDGETS_ERROR', 'Failed to load widget registry.'));
     }
   });
@@ -71,7 +71,7 @@ export function buildDashboardRouter(dashboardService) {
       const saved = layoutManager.saveLayout(userId, layout);
       return res.status(201).json(ok({ layout: saved, message: 'Layout saved.' }));
     } catch (err) {
-      console.error(err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('LAYOUT_SAVE_ERROR', 'Failed to save layout.'));
     }
   });
@@ -88,7 +88,7 @@ export function buildDashboardRouter(dashboardService) {
       const saved = layoutManager.saveLayout(userId, layout);
       return res.json(ok({ layout: saved, message: 'Layout updated.' }));
     } catch (err) {
-      console.error(err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('LAYOUT_UPDATE_ERROR', 'Failed to update layout.'));
     }
   });
@@ -139,7 +139,7 @@ export function buildDashboardRouter(dashboardService) {
       }
       return res.json(ok(data));
     } catch (err) {
-      console.error(err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('PROVIDER_ERROR', 'Failed to load provider data.'));
     }
   });

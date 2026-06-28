@@ -29,7 +29,7 @@ export function buildRuntimeRouter(runtimeService, runtimeRepo) {
 
       return res.json(ok(result));
     } catch (err) {
-      console.error('[runtime/chat POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('EXECUTION_ERROR', err.message));
     }
   });
@@ -57,7 +57,7 @@ export function buildRuntimeRouter(runtimeService, runtimeRepo) {
 
       return res.json(ok(result));
     } catch (err) {
-      console.error('[runtime/execute POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('EXECUTION_ERROR', err.message));
     }
   });
@@ -87,7 +87,7 @@ export function buildRuntimeRouter(runtimeService, runtimeRepo) {
       res.write('data: [DONE]\n\n');
       res.end();
     } catch (err) {
-      console.error('[runtime/stream POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
       res.end();
     }
@@ -103,7 +103,7 @@ export function buildRuntimeRouter(runtimeService, runtimeRepo) {
       });
       return res.json(ok({ executions, total: executions.length }));
     } catch (err) {
-      console.error('[runtime/executions GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to list executions.'));
     }
   });
@@ -116,7 +116,7 @@ export function buildRuntimeRouter(runtimeService, runtimeRepo) {
       const logs = await runtimeRepo.listLogs({ executionId: req.params.id });
       return res.json(ok({ execution, logs }));
     } catch (err) {
-      console.error('[runtime/executions/:id GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load execution.'));
     }
   });
@@ -127,7 +127,7 @@ export function buildRuntimeRouter(runtimeService, runtimeRepo) {
       const stats = await runtimeService.getStats(req.org.id);
       return res.json(ok(stats));
     } catch (err) {
-      console.error('[runtime/stats GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load stats.'));
     }
   });

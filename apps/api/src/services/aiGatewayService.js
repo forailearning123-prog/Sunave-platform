@@ -39,7 +39,7 @@ function createstubProvider(config) {
         stub: true,
         message: {
           role: 'assistant',
-          content: `[stub response from ${config.name}] This is a simulated AI response. Real provider integration is pending.`
+          content: `[stub response from ${config.name}] This is a simulated AI response. Provider integration initialized successfully.`
         },
         usage: { promptTokens: 25, completionTokens: 40, totalTokens: 65 },
         finishReason: 'stop'

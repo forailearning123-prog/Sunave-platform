@@ -62,7 +62,7 @@ export function buildAiRouter(
       const providers = await aiProviderRepo.listProviders();
       return res.status(200).json(ok({ providers: providers.map(sanitizeProvider) }));
     } catch (err) {
-      console.error('[ai/providers GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to list providers.'));
     }
   });
@@ -84,7 +84,7 @@ export function buildAiRouter(
         models
       }));
     } catch (err) {
-      console.error('[ai/providers/:id GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load provider.'));
     }
   });
@@ -128,7 +128,7 @@ export function buildAiRouter(
 
         return res.status(201).json(ok({ provider: sanitizeProvider(provider) }));
       } catch (err) {
-        console.error('[ai/providers POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create provider.'));
       }
     }
@@ -170,7 +170,7 @@ export function buildAiRouter(
 
         return res.status(200).json(ok({ provider: sanitizeProvider(updated) }));
       } catch (err) {
-        console.error('[ai/providers PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update provider.'));
       }
     }
@@ -192,7 +192,7 @@ export function buildAiRouter(
         await aiProviderRepo.deleteProvider(id);
         return res.status(200).json(ok({ message: 'Provider deleted.' }));
       } catch (err) {
-        console.error('[ai/providers DELETE]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to delete provider.'));
       }
     }
@@ -236,7 +236,7 @@ export function buildAiRouter(
           stub: true
         }));
       } catch (err) {
-        console.error('[ai/providers/test POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Connection test failed.'));
       }
     }
@@ -280,7 +280,7 @@ export function buildAiRouter(
           syncedAt: new Date().toISOString()
         }));
       } catch (err) {
-        console.error('[ai/providers/sync POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Model sync failed.'));
       }
     }
@@ -302,7 +302,7 @@ export function buildAiRouter(
         history
       }));
     } catch (err) {
-      console.error('[ai/providers/:id/health GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load health history.'));
     }
   });
@@ -328,7 +328,7 @@ export function buildAiRouter(
         );
         return res.status(200).json(ok({ capabilities: updated.filter(Boolean) }));
       } catch (err) {
-        console.error('[ai/providers/:id/capabilities PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update capabilities.'));
       }
     }
@@ -348,7 +348,7 @@ export function buildAiRouter(
       });
       return res.status(200).json(ok({ models, total: models.length }));
     } catch (err) {
-      console.error('[ai/models GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to list models.'));
     }
   });
@@ -362,7 +362,7 @@ export function buildAiRouter(
       const capabilities = await aiModelRepo.listModelCapabilities(model.id);
       return res.status(200).json(ok({ model, capabilities }));
     } catch (err) {
-      console.error('[ai/models/:id GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load model.'));
     }
   });
@@ -419,7 +419,7 @@ export function buildAiRouter(
 
         return res.status(201).json(ok({ model }));
       } catch (err) {
-        console.error('[ai/models POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create model.'));
       }
     }
@@ -459,7 +459,7 @@ export function buildAiRouter(
 
         return res.status(200).json(ok({ model: updated }));
       } catch (err) {
-        console.error('[ai/models PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update model.'));
       }
     }
@@ -476,7 +476,7 @@ export function buildAiRouter(
         await aiModelRepo.deleteModel(id);
         return res.status(200).json(ok({ message: 'Model deleted.' }));
       } catch (err) {
-        console.error('[ai/models DELETE]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to delete model.'));
       }
     }
@@ -513,7 +513,7 @@ export function buildAiRouter(
           refreshedAt: new Date().toISOString()
         }));
       } catch (err) {
-        console.error('[ai/models/refresh POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Model refresh failed.'));
       }
     }
@@ -539,7 +539,7 @@ export function buildAiRouter(
         );
         return res.status(200).json(ok({ capabilities: updated }));
       } catch (err) {
-        console.error('[ai/models/:id/capabilities PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update model capabilities.'));
       }
     }
@@ -568,7 +568,7 @@ export function buildAiRouter(
         routingPolicies: policies
       }));
     } catch (err) {
-      console.error('[ai/capabilities GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load capabilities.'));
     }
   });
@@ -592,7 +592,7 @@ export function buildAiRouter(
         );
         return res.status(200).json(ok({ capabilities: updated }));
       } catch (err) {
-        console.error('[ai/capabilities PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update capabilities.'));
       }
     }
@@ -616,7 +616,7 @@ export function buildAiRouter(
         });
         return res.status(201).json(ok({ capability }));
       } catch (err) {
-        console.error('[ai/capabilities POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create capability.'));
       }
     }
@@ -633,7 +633,7 @@ export function buildAiRouter(
       const availablePolicies = aiGatewayService.getRoutingPolicies();
       return res.status(200).json(ok({ policies, availablePolicies }));
     } catch (err) {
-      console.error('[ai/policies GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load policies.'));
     }
   });
@@ -656,7 +656,7 @@ export function buildAiRouter(
         );
         return res.status(200).json(ok({ policies: updated }));
       } catch (err) {
-        console.error('[ai/policies PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update policies.'));
       }
     }
@@ -672,7 +672,7 @@ export function buildAiRouter(
       const health = await aiGatewayService.health();
       return res.status(200).json(ok({ health }));
     } catch (err) {
-      console.error('[ai/health GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Health check failed.'));
     }
   });
@@ -701,7 +701,7 @@ export function buildAiRouter(
         healthHistory: latestHealth
       }));
     } catch (err) {
-      console.error('[ai/health/summary GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load health summary.'));
     }
   });
@@ -744,7 +744,7 @@ export function buildAiRouter(
         recentFailures
       }));
     } catch (err) {
-      console.error('[ai/statistics GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load statistics.'));
     }
   });
@@ -765,7 +765,7 @@ export function buildAiRouter(
 
       return res.status(200).json(ok({ usage, total: usage.length }));
     } catch (err) {
-      console.error('[ai/usage GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load usage data.'));
     }
   });
@@ -796,7 +796,7 @@ export function buildAiRouter(
         monthlyCost
       }));
     } catch (err) {
-      console.error('[ai/costs GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load cost data.'));
     }
   });
@@ -811,7 +811,7 @@ export function buildAiRouter(
       const budgets = await aiUsageRepo.listBudgets(req.org.id);
       return res.status(200).json(ok({ budgets }));
     } catch (err) {
-      console.error('[ai/budgets GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to list budgets.'));
     }
   });
@@ -839,7 +839,7 @@ export function buildAiRouter(
         });
         return res.status(201).json(ok({ budget }));
       } catch (err) {
-        console.error('[ai/budgets POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create budget.'));
       }
     }
@@ -856,7 +856,7 @@ export function buildAiRouter(
         const budget = await aiUsageRepo.updateBudget(id, req.body);
         return res.status(200).json(ok({ budget }));
       } catch (err) {
-        console.error('[ai/budgets PUT]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update budget.'));
       }
     }
@@ -873,7 +873,7 @@ export function buildAiRouter(
         await aiUsageRepo.deleteBudget(id);
         return res.status(200).json(ok({ message: 'Budget deleted.' }));
       } catch (err) {
-        console.error('[ai/budgets DELETE]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to delete budget.'));
       }
     }
@@ -907,7 +907,7 @@ export function buildAiRouter(
           createdAt: stored.created_at
         }));
       } catch (err) {
-        console.error('[ai/credentials POST]', err);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to store credential.'));
       }
     }
@@ -941,7 +941,7 @@ export function buildAiRouter(
         result
       }));
     } catch (err) {
-      console.error('[ai/test POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Gateway test failed.'));
     }
   });
@@ -958,7 +958,7 @@ export function buildAiRouter(
       const estimate = await aiGatewayService.estimateCost(capability, estimatedTokens, preferredProviderType);
       return res.status(200).json(ok({ estimate }));
     } catch (err) {
-      console.error('[ai/estimate-cost POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Cost estimation failed.'));
     }
   });

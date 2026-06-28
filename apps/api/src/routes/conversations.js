@@ -19,7 +19,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       const counts = await conversationRepo.getConversationCounts(req.org.id);
       return res.json(ok({ conversations, total: conversations.length, counts }));
     } catch (err) {
-      console.error('[conversations GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to list conversations.'));
     }
   });
@@ -34,7 +34,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       });
       return res.status(201).json(ok({ conversation }));
     } catch (err) {
-      console.error('[conversations POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create conversation.'));
     }
   });
@@ -46,7 +46,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       if (!conversation) return res.status(404).json(fail('NOT_FOUND', 'Conversation not found.'));
       return res.json(ok({ conversation }));
     } catch (err) {
-      console.error('[conversations/:id GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load conversation.'));
     }
   });
@@ -58,7 +58,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       if (!conversation) return res.status(404).json(fail('NOT_FOUND', 'Conversation not found.'));
       return res.json(ok({ conversation }));
     } catch (err) {
-      console.error('[conversations/:id PUT]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update conversation.'));
     }
   });
@@ -69,7 +69,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       await conversationRepo.deleteConversation(req.params.id);
       return res.json(ok({ message: 'Conversation deleted.' }));
     } catch (err) {
-      console.error('[conversations/:id DELETE]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to delete conversation.'));
     }
   });
@@ -81,7 +81,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       if (!conv) return res.status(404).json(fail('NOT_FOUND', 'Conversation not found.'));
       return res.status(201).json(ok({ conversation: conv }));
     } catch (err) {
-      console.error('[conversations/:id/duplicate POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to duplicate conversation.'));
     }
   });
@@ -115,7 +115,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       });
       return res.json(ok({ messages, total: messages.length }));
     } catch (err) {
-      console.error('[conversations/:id/messages GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load messages.'));
     }
   });
@@ -132,7 +132,7 @@ export function buildConversationsRouter(conversationRepo, runtimeService) {
       });
       return res.status(201).json(ok({ message }));
     } catch (err) {
-      console.error('[conversations/:id/messages POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create message.'));
     }
   });

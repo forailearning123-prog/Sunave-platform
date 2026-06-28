@@ -18,7 +18,7 @@ export function buildPromptsRouter(promptRepo) {
       const categories = await promptRepo.listCategories();
       return res.json(ok({ prompts, total: prompts.length, categories }));
     } catch (err) {
-      console.error('[prompts GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to list prompts.'));
     }
   });
@@ -37,7 +37,7 @@ export function buildPromptsRouter(promptRepo) {
       await promptRepo.createVersion({ promptId: prompt.id, version: '1.0', template, variables, systemPrompt, runtimePolicies, changelog: 'Initial version.', createdBy: req.auth.sub });
       return res.status(201).json(ok({ prompt }));
     } catch (err) {
-      console.error('[prompts POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to create prompt.'));
     }
   });
@@ -50,7 +50,7 @@ export function buildPromptsRouter(promptRepo) {
       const versions = await promptRepo.listVersions(req.params.id);
       return res.json(ok({ prompt, versions }));
     } catch (err) {
-      console.error('[prompts/:id GET]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to load prompt.'));
     }
   });
@@ -62,7 +62,7 @@ export function buildPromptsRouter(promptRepo) {
       if (!prompt) return res.status(404).json(fail('NOT_FOUND', 'Prompt not found.'));
       return res.json(ok({ prompt }));
     } catch (err) {
-      console.error('[prompts/:id PUT]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to update prompt.'));
     }
   });
@@ -74,7 +74,7 @@ export function buildPromptsRouter(promptRepo) {
       if (!deleted) return res.status(404).json(fail('NOT_FOUND', 'Prompt not found or is a system prompt.'));
       return res.json(ok({ message: 'Prompt deleted.' }));
     } catch (err) {
-      console.error('[prompts/:id DELETE]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to delete prompt.'));
     }
   });
@@ -87,7 +87,7 @@ export function buildPromptsRouter(promptRepo) {
       await promptRepo.createVersion({ promptId: prompt.id, version: prompt.version, template: prompt.template, variables: prompt.variables, systemPrompt: prompt.systemPrompt, runtimePolicies: prompt.runtimePolicies, changelog: 'Published.', createdBy: req.auth.sub });
       return res.json(ok({ prompt }));
     } catch (err) {
-      console.error('[prompts/:id/publish POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to publish prompt.'));
     }
   });
@@ -99,7 +99,7 @@ export function buildPromptsRouter(promptRepo) {
       if (!prompt) return res.status(404).json(fail('NOT_FOUND', 'Prompt not found.'));
       return res.status(201).json(ok({ prompt }));
     } catch (err) {
-      console.error('[prompts/:id/clone POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to clone prompt.'));
     }
   });
@@ -113,7 +113,7 @@ export function buildPromptsRouter(promptRepo) {
       if (!prompt) return res.status(404).json(fail('NOT_FOUND', 'Prompt or version not found.'));
       return res.json(ok({ prompt }));
     } catch (err) {
-      console.error('[prompts/:id/rollback POST]', err);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
       return res.status(500).json(fail('INTERNAL_ERROR', 'Failed to rollback prompt.'));
     }
   });

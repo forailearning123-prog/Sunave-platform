@@ -159,7 +159,7 @@ export function createAgentRuntime(
         };
 
       } catch (error) {
-        console.error('Agent execution error:', error);
+        console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack }));
         throw error;
       }
     },

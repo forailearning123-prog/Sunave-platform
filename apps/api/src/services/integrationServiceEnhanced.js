@@ -483,7 +483,7 @@ class IntegrationServiceEnhanced {
           }, null);
         }
       })
-      .catch(err => console.error('Failed to auto-register connector metadata:', err));
+      .catch(err => console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: "error", message: .message, stack: .stack })););
   }
 
   getConnector(providerName) {
