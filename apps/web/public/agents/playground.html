@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Agent Playground</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .playground { display: flex; height: calc(100vh - 60px); }
+    .chat-area { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
+    .chat-history { flex: 1; padding: 1rem; overflow-y: auto; }
+    .chat-input { padding: 1rem; border-top: 1px solid var(--border-color); }
+    .sidebar { width: 350px; padding: 1rem; background: var(--bg-card); overflow-y: auto; }
+    .message { margin-bottom: 1rem; padding: 1rem; border-radius: 8px; }
+    .message.user { background: var(--bg-body); border: 1px solid var(--border-color); }
+    .message.assistant { background: var(--primary); color: white; }
+  </style>
+</head>
+<body style="margin:0;">
+  <header style="padding:1rem; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0">Agent Playground</h2>
+    <div><a href="/agents" class="btn btn-secondary">Exit</a></div>
+  </header>
+  <div class="playground animate-in">
+    <div class="chat-area">
+      <div class="chat-history" id="chat-history">
+        <div class="message assistant">Hello! I am ready to test.</div>
+      </div>
+      <div class="chat-input">
+        <div style="display:flex; gap:0.5rem;">
+          <input type="text" id="chat-input" class="form-control" placeholder="Type a message..." style="flex:1;" />
+          <button class="btn btn-primary" id="btn-send">Send</button>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar">
+      <h3>Memory Viewer</h3>
+      <div style="background:var(--bg-body); padding:1rem; border-radius:4px; font-family:monospace; font-size:0.8rem; margin-bottom:1rem;">
+        { "context": "Active session", "tokens_used": 142 }
+      </div>
+      <h3>Tool Calls</h3>
+      <div style="background:var(--bg-body); padding:1rem; border-radius:4px; font-size:0.8rem; margin-bottom:1rem;">
+        No active tools executing.
+      </div>
+      <h3>Execution Timeline</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted)">Latency: 0ms | Cost: .00</p>
+    </div>
+  </div>
+  <script type="module">
+    document.getElementById('btn-send').addEventListener('click', async () => {
+      const input = document.getElementById('chat-input');
+      const text = input.value;
+      if(!text) return;
+      const hist = document.getElementById('chat-history');
+      hist.innerHTML += <div class="message user">\</div>;
+      input.value = '';
+      
+      // Call API
+      setTimeout(() => {
+        hist.innerHTML += <div class="message assistant">[Stream via /api/runtime/stream] Processing...</div>;
+        hist.scrollTop = hist.scrollHeight;
+      }, 500);
+    });
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

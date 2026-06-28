@@ -2,58 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marketplace - Sunave</title>
-  <link rel="stylesheet" href="/styles/workers.css">
+  <title>Agent Marketplace</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; padding: 2rem; }
+    .card { background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+    .card h3 { margin-top: 0; }
+    .header { padding: 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Sunave</h2>
-      </div>
-      <nav class="sidebar-nav">
-        <a href="/dashboard" class="nav-item">Dashboard</a>
-        <a href="/workers" class="nav-item">Workers</a>
-        <a href="/workflows" class="nav-item">Workflows</a>
-        <a href="/marketplace" class="nav-item active">Marketplace</a>
-        <a href="/executions" class="nav-item">Executions</a>
-        <a href="/schedules" class="nav-item">Schedules</a>
-      </nav>
-    </aside>
-
-    <main class="main-content">
-      <header class="header">
-        <h1>Worker Marketplace</h1>
-      </header>
-
-      <div class="filters">
-        <input type="text" id="searchInput" placeholder="Search marketplace..." onkeyup="filterMarketplace()">
-        <select id="categoryFilter" onchange="filterMarketplace()">
-          <option value="">All Categories</option>
-          <option value="ai">AI</option>
-          <option value="knowledge">Knowledge</option>
-          <option value="search">Search</option>
-          <option value="document">Document</option>
-          <option value="communication">Communication</option>
-          <option value="database">Database</option>
-          <option value="analytics">Analytics</option>
-          <option value="automation">Automation</option>
-          <option value="custom">Custom</option>
-        </select>
-        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 0;">
-          <input type="checkbox" id="featuredFilter" onchange="filterMarketplace()">
-          Featured Only
-        </label>
-      </div>
-
-      <div class="workers-grid" id="marketplaceGrid">
-        <!-- Marketplace items will be loaded here -->
-      </div>
-    </main>
+  <div class="header">
+    <h2>Agent Marketplace</h2>
+    <input type="text" class="form-control" placeholder="Search templates..." style="width: 300px;" />
   </div>
-
-  <script src="/app/marketplace.js"></script>
-<script type='module' src='/assets/js/ui-core.js'></script>
+  <div class="grid animate-in" id="marketplace-grid">
+  </div>
+  <script type="module">
+    import { showSkeleton } from '/assets/js/ui-core.js';
+    const grid = document.getElementById('marketplace-grid');
+    showSkeleton('marketplace-grid', 'card');
+    
+    // Simulate API fetch to /api/agents/marketplace
+    setTimeout(() => {
+      grid.innerHTML = 
+        <div class="card">
+          <h3>Customer Support Bot</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Resolves tier 1 tickets using company knowledge base.</p>
+          <div style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.8rem;">4.8 (120)</span>
+            <button class="btn btn-primary" onclick="alert('Cloning template...')">Install</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Code Reviewer</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Reviews PRs against organization style guides.</p>
+          <div style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.8rem;">4.9 (85)</span>
+            <button class="btn btn-primary" onclick="alert('Cloning template...')">Install</button>
+          </div>
+        </div>
+      ;
+    }, 800);
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
 </body>
 </html>

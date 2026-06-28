@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Agent Creation Wizard</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .wizard { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); }
+    .step { display: none; }
+    .step.active { display: block; }
+    .nav-btns { display: flex; justify-content: space-between; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="container animate-in wizard">
+    <div class="step active" id="step-1">
+      <h2>Step 1: Agent Details</h2>
+      <div class="form-group"><label>Name</label><input type="text" id="agentName" class="form-control" /></div>
+      <div class="form-group"><label>Description</label><textarea id="agentDesc" class="form-control"></textarea></div>
+      <div class="form-group"><label>Category</label><input type="text" id="agentCategory" class="form-control" /></div>
+    </div>
+    <div class="step" id="step-2">
+      <h2>Step 2: AI Provider & Model</h2>
+      <div class="form-group"><label>Provider</label>
+        <select id="agentProvider" class="form-control" style="background:var(--bg-body); color:var(--text-color); border:1px solid var(--border-color); padding:0.5rem;"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="sunave_local">Local</option></select>
+      </div>
+      <div class="form-group"><label>Model</label><input type="text" id="agentModel" class="form-control" value="gpt-4o" /></div>
+      <div class="form-group"><label>Temperature</label><input type="number" step="0.1" id="agentTemp" class="form-control" value="0.7" /></div>
+    </div>
+    <div class="step" id="step-3">
+      <h2>Step 3: Knowledge Base</h2>
+      <p>Attach collections to give your agent context.</p>
+      <div class="form-group"><input type="checkbox" id="kb1" /> <label for="kb1">Company Handbook</label></div>
+      <div class="form-group"><input type="checkbox" id="kb2" /> <label for="kb2">API Documentation</label></div>
+    </div>
+    <div class="step" id="step-4">
+      <h2>Step 4: Tools</h2>
+      <div class="form-group"><input type="checkbox" id="tool1" /> <label for="tool1">Web Search</label></div>
+      <div class="form-group"><input type="checkbox" id="tool2" /> <label for="tool2">Database Access</label></div>
+    </div>
+    <div class="step" id="step-5">
+      <h2>Step 5: System Prompt</h2>
+      <div class="form-group"><label>System Prompt</label><textarea id="sysPrompt" class="form-control" style="height:150px;">You are a helpful assistant.</textarea></div>
+    </div>
+    <div class="step" id="step-6">
+      <h2>Step 6: Test Chat</h2>
+      <div style="border:1px solid var(--border-color); height:200px; padding:1rem; overflow-y:auto; margin-bottom:1rem;" id="chat-history"></div>
+      <input type="text" id="chatInput" class="form-control" placeholder="Test your agent..." />
+    </div>
+    <div class="step" id="step-7">
+      <h2>Review & Publish</h2>
+      <p>Your agent is ready to be deployed.</p>
+    </div>
+    <div class="nav-btns">
+      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden;">Back</button>
+      <button class="btn btn-primary" id="btn-next">Next</button>
+    </div>
+  </div>
+  <script type="module">
+    let currentStep = 1;
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if(currentStep === 7) { window.location.href = '/agents'; return; }
+      currentStep++; updateUI();
+    });
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if(currentStep > 1) { currentStep--; updateUI(); }
+    });
+    function updateUI() {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + currentStep).classList.add('active');
+      document.getElementById('btn-prev').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+      document.getElementById('btn-next').textContent = currentStep === 7 ? 'Publish' : 'Next';
+    }
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

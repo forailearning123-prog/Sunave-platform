@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voice AI Settings</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .settings-container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); }
+    .recording-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: red; animation: pulse 1s infinite; display: none; }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); } }
+  </style>
+</head>
+<body>
+  <header style="padding:1rem; border-bottom: 1px solid var(--border-color);"><h2 style="margin:0">Voice AI Settings</h2></header>
+  <div class="settings-container animate-in">
+    <h3>Hardware Configuration</h3>
+    <div class="form-group"><label>Microphone</label><select class="form-control"><option>Default - MacBook Pro Microphone</option></select></div>
+    <div class="form-group"><label>Speaker</label><select class="form-control"><option>Default - MacBook Pro Speakers</option></select></div>
+    <div class="form-group"><label><input type="checkbox" checked /> Enable Noise Suppression</label></div>
+    
+    <h3 style="margin-top:2rem;">Provider Routing</h3>
+    <p style="font-size:0.85rem; color:var(--text-muted)">Endpoints configure to connect directly to stt.sunave.tech and tts.sunave.tech APIs.</p>
+    <div class="form-group"><label>Speech-to-Text (STT) Provider</label><select class="form-control"><option>OpenAI Whisper</option><option>Deepgram (Local)</option></select></div>
+    <div class="form-group"><label>Text-to-Speech (TTS) Provider</label><select class="form-control"><option>ElevenLabs</option><option>OpenAI TTS</option></select></div>
+    
+    <h3 style="margin-top:2rem;">Voice Profiles</h3>
+    <div class="form-group"><label>Default Agent Voice</label><select class="form-control"><option>Rachel (American, Professional)</option><option>Drew (British, Casual)</option></select></div>
+
+    <h3 style="margin-top:2rem;">Test Microphone</h3>
+    <div style="border:1px solid var(--border-color); padding:2rem; text-align:center; border-radius:6px; background:var(--bg-body);">
+      <div class="recording-indicator" id="rec-dot"></div>
+      <button class="btn btn-secondary" id="btn-record">Push to Talk</button>
+      <div id="transcript" style="margin-top:1rem; font-style:italic; color:var(--text-muted);">Waiting for audio...</div>
+    </div>
+    
+    <div style="margin-top:2rem; text-align:right;">
+      <button class="btn btn-primary" onclick="alert('Settings saved.')">Save Settings</button>
+    </div>
+  </div>
+  <script type="module">
+    const btn = document.getElementById('btn-record');
+    const dot = document.getElementById('rec-dot');
+    const tr = document.getElementById('transcript');
+    btn.addEventListener('mousedown', () => { dot.style.display='inline-block'; tr.textContent='Listening...'; });
+    btn.addEventListener('mouseup', () => { 
+      dot.style.display='none'; 
+      tr.textContent='Processing...'; 
+      setTimeout(()=>tr.textContent='Test successful. Audio captured.', 1000);
+    });
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

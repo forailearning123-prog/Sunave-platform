@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Provider Setup</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .wizard { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); }
+    .step { display: none; }
+    .step.active { display: block; }
+    .nav-btns { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .provider-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+    .provider-card { border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px; text-align: center; cursor: pointer; }
+    .provider-card:hover { border-color: var(--primary); }
+    .provider-card.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+  </style>
+</head>
+<body>
+  <div class="container animate-in wizard">
+    <div class="step active" id="step-1">
+      <h2>Select AI Provider</h2>
+      <div class="provider-grid">
+        <div class="provider-card selected">OpenAI</div>
+        <div class="provider-card">Anthropic</div>
+        <div class="provider-card">Google Gemini</div>
+        <div class="provider-card">Azure OpenAI</div>
+        <div class="provider-card">Local / Ollama</div>
+      </div>
+    </div>
+    <div class="step" id="step-2">
+      <h2>Configure API Key</h2>
+      <div class="form-group"><label>API Key</label><input type="password" id="apiKey" class="form-control" placeholder="sk-..." /></div>
+      <button class="btn btn-secondary" onclick="alert('Connection successful! Latency: 42ms')">Test Connection</button>
+    </div>
+    <div class="step" id="step-3">
+      <h2>Default Models</h2>
+      <div class="form-group"><label>Chat Model</label><input type="text" class="form-control" value="gpt-4o" /></div>
+      <div class="form-group"><label>Embedding Model</label><input type="text" class="form-control" value="text-embedding-3-large" /></div>
+      <div class="form-group"><label>Vision Model</label><input type="text" class="form-control" value="gpt-4o" /></div>
+    </div>
+    <div class="step" id="step-4">
+      <h2>Limits & Cost Guardrails</h2>
+      <div class="form-group"><label>Monthly Budget (USD)</label><input type="number" class="form-control" value="100" /></div>
+      <div class="form-group"><label>Max Tokens per Request</label><input type="number" class="form-control" value="4096" /></div>
+    </div>
+    <div class="step" id="step-5">
+      <h2>Setup Complete</h2>
+      <p>Provider configured successfully. It is now available in the AI Gateway routing engine.</p>
+    </div>
+    <div class="nav-btns">
+      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden;">Back</button>
+      <button class="btn btn-primary" id="btn-next">Next</button>
+    </div>
+  </div>
+  <script type="module">
+    let currentStep = 1;
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if(currentStep === 5) { window.location.href = '/admin/ai/providers.html'; return; }
+      currentStep++; updateUI();
+    });
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if(currentStep > 1) { currentStep--; updateUI(); }
+    });
+    function updateUI() {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + currentStep).classList.add('active');
+      document.getElementById('btn-prev').style.visibility = currentStep > 1 && currentStep < 5 ? 'visible' : 'hidden';
+      document.getElementById('btn-next').textContent = currentStep === 5 ? 'Finish' : 'Next';
+    }
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>

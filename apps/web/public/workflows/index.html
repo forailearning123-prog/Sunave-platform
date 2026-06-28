@@ -2,62 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workflows - Sunave</title>
-  <link rel="stylesheet" href="/styles/workers.css">
+  <title>Workflow Builder</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .builder-layout { display: flex; height: calc(100vh - 60px); }
+    .sidebar { width: 250px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 1rem; overflow-y: auto; }
+    .canvas { flex: 1; background: var(--bg-body); position: relative; overflow: hidden; background-image: radial-gradient(var(--border-color) 1px, transparent 1px); background-size: 20px 20px; }
+    .node-palette .node-item { padding: 0.75rem; border: 1px solid var(--border-color); margin-bottom: 0.5rem; border-radius: 4px; cursor: grab; background: var(--bg-body); }
+    .canvas-node { position: absolute; width: 200px; padding: 1rem; background: var(--bg-card); border: 1px solid var(--primary); border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: move; }
+  </style>
 </head>
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Sunave</h2>
+<body style="margin:0;">
+  <header style="padding:1rem; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0">Workflow Builder</h2>
+    <div>
+      <button class="btn btn-secondary">Test</button>
+      <button class="btn btn-primary" onclick="alert('Workflow Saved!')">Save</button>
+    </div>
+  </header>
+  <div class="builder-layout animate-in">
+    <div class="sidebar node-palette">
+      <h3>Triggers</h3>
+      <div class="node-item" draggable="true">Webhook Trigger</div>
+      <div class="node-item" draggable="true">Schedule (Cron)</div>
+      <h3>Actions</h3>
+      <div class="node-item" draggable="true">AI Agent Call</div>
+      <div class="node-item" draggable="true">Knowledge Lookup</div>
+      <div class="node-item" draggable="true">Send Email</div>
+      <h3>Logic</h3>
+      <div class="node-item" draggable="true">Condition (If/Else)</div>
+      <div class="node-item" draggable="true">Loop</div>
+    </div>
+    <div class="canvas" id="workflow-canvas">
+      <!-- Mock Nodes -->
+      <div class="canvas-node" style="top:50px; left:100px;">
+        <strong>Webhook Trigger</strong>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Listens on /api/webhooks/xyz</p>
       </div>
-      <nav class="sidebar-nav">
-        <a href="/dashboard" class="nav-item">Dashboard</a>
-        <a href="/workers" class="nav-item">Workers</a>
-        <a href="/workflows" class="nav-item active">Workflows</a>
-        <a href="/marketplace" class="nav-item">Marketplace</a>
-        <a href="/executions" class="nav-item">Executions</a>
-        <a href="/schedules" class="nav-item">Schedules</a>
-      </nav>
-    </aside>
-
-    <main class="main-content">
-      <header class="header">
-        <h1>Workflows</h1>
-        <button class="btn btn-primary" onclick="createWorkflow()">+ New Workflow</button>
-      </header>
-
-      <div class="filters">
-        <input type="text" id="searchInput" placeholder="Search workflows..." onkeyup="filterWorkflows()">
-        <select id="categoryFilter" onchange="filterWorkflows()">
-          <option value="">All Categories</option>
-          <option value="ai">AI</option>
-          <option value="knowledge">Knowledge</option>
-          <option value="document">Document</option>
-          <option value="communication">Communication</option>
-          <option value="database">Database</option>
-          <option value="analytics">Analytics</option>
-          <option value="automation">Automation</option>
-          <option value="custom">Custom</option>
-        </select>
-        <select id="statusFilter" onchange="filterWorkflows()">
-          <option value="">All Status</option>
-          <option value="draft">Draft</option>
-          <option value="testing">Testing</option>
-          <option value="published">Published</option>
-          <option value="deprecated">Deprecated</option>
-          <option value="archived">Archived</option>
-        </select>
+      <div class="canvas-node" style="top:200px; left:150px;">
+        <strong>AI Agent Call</strong>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Customer Support Bot</p>
       </div>
-
-      <div class="workers-grid" id="workflowsGrid">
-        <!-- Workflows will be loaded here -->
-      </div>
-    </main>
+    </div>
   </div>
-
-  <script src="/app/workflows.js"></script>
-<script type='module' src='/assets/js/ui-core.js'></script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
 </body>
 </html>

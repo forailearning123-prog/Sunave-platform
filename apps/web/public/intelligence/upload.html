@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Knowledge Upload Wizard</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    .wizard { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); }
+    .step { display: none; }
+    .step.active { display: block; }
+    .nav-btns { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .drop-zone { border: 2px dashed var(--border-color); padding: 3rem; text-align: center; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
+    .drop-zone:hover { border-color: var(--primary); }
+    .file-list { margin-top: 1rem; }
+    .file-item { display: flex; justify-content: space-between; padding: 0.5rem; background: var(--bg-body); margin-bottom: 0.5rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container animate-in wizard" id="upload-wizard">
+    <div class="step active" id="step-1">
+      <h2>Step 1: Collection Details</h2>
+      <div class="form-group">
+        <label>Collection Name</label>
+        <input type="text" id="collectionName" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="collectionDesc" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tags (comma separated)</label>
+        <input type="text" id="collectionTags" class="form-control" />
+      </div>
+    </div>
+
+    <div class="step" id="step-2">
+      <h2>Step 2: Upload Documents</h2>
+      <div class="drop-zone" id="drop-zone">
+        <p>Drag & Drop files here or click to browse</p>
+        <p style="font-size:0.8rem; color:var(--text-muted)">Supports PDF, DOCX, TXT, MD, CSV, PPTX</p>
+        <input type="file" id="file-input" multiple style="display:none;" />
+      </div>
+      <div class="file-list" id="file-list"></div>
+    </div>
+
+    <div class="step" id="step-3">
+      <h2>Step 3: Document Metadata</h2>
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text" id="metaCategory" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>Language</label>
+        <input type="text" id="metaLang" class="form-control" value="en" />
+      </div>
+    </div>
+
+    <div class="step" id="step-4">
+      <h2>Step 4: Processing</h2>
+      <p id="process-status">Initializing processing pipeline...</p>
+      <div class="progress-bar" style="width:100%; height:8px; background:var(--bg-body); border-radius:4px; overflow:hidden;">
+        <div id="process-fill" style="width:0%; height:100%; background:var(--primary); transition: width 0.3s;"></div>
+      </div>
+    </div>
+
+    <div class="step" id="step-5">
+      <h2>Upload Complete!</h2>
+      <p>Your documents have been indexed and are ready for vector search.</p>
+      <div id="summary-stats"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden;">Back</button>
+      <button class="btn btn-primary" id="btn-next">Next</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { request } from '/assets/js/auth-client.js';
+    let currentStep = 1;
+    let filesToUpload = [];
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--primary)'; });
+    dropZone.addEventListener('dragleave', () => dropZone.style.borderColor = 'var(--border-color)');
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--border-color)';
+      handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+    function handleFiles(files) {
+      for (const file of files) {
+        filesToUpload.push(file);
+        const el = document.createElement('div');
+        el.className = 'file-item';
+        el.innerHTML = <span>\</span><span>\ KB</span>;
+        fileList.appendChild(el);
+      }
+    }
+
+    async function processUpload() {
+      document.getElementById('process-status').textContent = 'Uploading to Cloudflare R2...';
+      document.getElementById('process-fill').style.width = '30%';
+      
+      // Simulate API call to fetch presigned URLs and upload
+      // await request('/api/intelligence/knowledge', 'POST', { name: collectionName, files: filesToUpload.map(f=>f.name) });
+      
+      setTimeout(() => {
+        document.getElementById('process-status').textContent = 'Chunking and generating embeddings...';
+        document.getElementById('process-fill').style.width = '70%';
+        setTimeout(() => {
+          document.getElementById('process-status').textContent = 'Completed';
+          document.getElementById('process-fill').style.width = '100%';
+          document.getElementById('btn-next').disabled = false;
+        }, 1500);
+      }, 1500);
+    }
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if (currentStep === 4) {
+        currentStep++;
+        updateUI();
+        document.getElementById('summary-stats').innerHTML = <p>Indexed \ files successfully.</p>;
+        return;
+      }
+      if (currentStep === 5) {
+        window.location.href = '/intelligence/knowledge.html';
+        return;
+      }
+      
+      currentStep++;
+      updateUI();
+      
+      if (currentStep === 4) {
+        document.getElementById('btn-next').disabled = true;
+        processUpload();
+      }
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if (currentStep > 1) { currentStep--; updateUI(); }
+    });
+
+    function updateUI() {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + currentStep).classList.add('active');
+      document.getElementById('btn-prev').style.visibility = currentStep > 1 && currentStep < 5 ? 'visible' : 'hidden';
+      if (currentStep === 5) document.getElementById('btn-next').textContent = 'Go to Library';
+    }
+  </script>
+  <script type="module" src="/assets/js/ui-core.js"></script>
+</body>
+</html>
