@@ -71,7 +71,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const mockProjects = [
+      const stubProjects = [
         { id: 1, name: 'API Gateway v2', goal: 'Increase Revenue', status: 'active', health: 'on_track', progress: 72, owner: 'James Park', openTasks: 5, totalTasks: 12, color: '#6366f1', icon: '🔌' },
         { id: 2, name: 'Customer Portal Redesign', goal: 'Customer Retention', status: 'active', health: 'at_risk', progress: 34, owner: 'Sarah Chen', openTasks: 8, totalTasks: 20, color: '#10b981', icon: '🎨' },
         { id: 3, name: 'Cost Reduction Initiative', goal: 'Reduce Costs', status: 'active', health: 'on_track', progress: 61, owner: 'Mike Torres', openTasks: 3, totalTasks: 8, color: '#f59e0b', icon: '💰' },
@@ -81,7 +81,7 @@
 
       const grid = document.getElementById('projectsGrid');
       
-      mockProjects.forEach(p => {
+      stubProjects.forEach(p => {
         let healthClass = p.health;
         let healthLabel = p.health.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
         

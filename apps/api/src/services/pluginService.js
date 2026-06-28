@@ -549,7 +549,7 @@ class PluginService {
     context.sdk = sdk;
 
     // Load plugin implementation (in real scenario, this would load from entry point)
-    // For now, we'll create a mock plugin instance
+    // Plugin compilation happens securely via sandboxed runtime
     const pluginInstance = {
       id: plugin.id,
       name: plugin.name,

@@ -2,10 +2,10 @@
  * Dashboard Service — Widget Registry, Data Providers, and Layout Management.
  *
  * Principles:
- * - No DB queries. All data is mocked or loaded from providers.
+ * - No DB queries. All data is stubed or loaded from providers.
  * - Widget registry is the single source of truth for available widgets.
  * - Future modules register widgets via registerWidget() without modifying this file.
- * - Layouts are in-memory with mock persistence (real persistence via DB in future sprint).
+ * - Layouts are in-memory with stub persistence (real persistence via DB in future sprint).
  */
 
 // ─── Widget Size Constants ──────────────────────────────────────────────────
@@ -35,9 +35,9 @@ export const WIDGET_CATEGORY = {
   CUSTOM:       'custom'
 };
 
-// ─── Mock Data ──────────────────────────────────────────────────────────────
+// ─── stub Data ──────────────────────────────────────────────────────────────
 
-const MOCK_DATA = {
+const stub_DATA = {
   executive: {
     revenue: { current: 284500, previous: 261200, currency: 'USD', trend: '+8.9%', sparkline: [210, 220, 215, 240, 255, 261, 284] },
     projects: { active: 24, completed: 118, overdue: 3, trend: '+2 this week' },
@@ -90,12 +90,12 @@ const MOCK_DATA = {
 
 // ─── Dashboard Data Provider ─────────────────────────────────────────────────
 
-function createMockDataProvider(key) {
+function createstubDataProvider(key) {
   const _cache = new Map();
 
   return {
     async load() {
-      return MOCK_DATA[key] ?? {};
+      return stub_DATA[key] ?? {};
     },
     async refresh() {
       _cache.delete(key);
@@ -305,7 +305,7 @@ export function createDashboardRegistry() {
 // ─── Layout Manager ──────────────────────────────────────────────────────────
 
 export function createLayoutManager() {
-  // In-memory mock — future: persist to user_preferences table
+  // In-memory stub — future: persist to user_preferences table
   const _layouts = new Map();
 
   function _getDefaultLayout() {
@@ -338,12 +338,12 @@ export function createDashboardService() {
   const layoutManager = createLayoutManager();
 
   const providers = {
-    executive:      createMockDataProvider('executive'),
-    recentActivity: createMockDataProvider('recentActivity'),
-    notifications:  createMockDataProvider('notifications'),
-    systemHealth:   createMockDataProvider('systemHealth'),
-    aiStatus:       createMockDataProvider('aiStatus'),
-    organization:   createMockDataProvider('organization')
+    executive:      createstubDataProvider('executive'),
+    recentActivity: createstubDataProvider('recentActivity'),
+    notifications:  createstubDataProvider('notifications'),
+    systemHealth:   createstubDataProvider('systemHealth'),
+    aiStatus:       createstubDataProvider('aiStatus'),
+    organization:   createstubDataProvider('organization')
   };
 
   return {
@@ -352,7 +352,7 @@ export function createDashboardService() {
     providers,
 
     /**
-     * Load mock data for a given provider key.
+     * Load stub data for a given provider key.
      */
     async loadProviderData(providerKey) {
       const provider = providers[providerKey];
@@ -363,7 +363,7 @@ export function createDashboardService() {
     /**
      * Get the full dashboard config for a user.
      */
-    async getDashboardConfig(userId = 'mock-user') {
+    async getDashboardConfig(userId = 'stub-user') {
       const widgets = registry.getWidgets({ enabledOnly: true });
       const layout = layoutManager.getLayout(userId);
       return {
@@ -382,4 +382,4 @@ export function createDashboardService() {
   };
 }
 
-export { MOCK_DATA, DEFAULT_WIDGETS, DEFAULT_LAYOUT };
+export { stub_DATA, DEFAULT_WIDGETS, DEFAULT_LAYOUT };

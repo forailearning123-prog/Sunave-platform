@@ -91,13 +91,13 @@
 
         <div class="dash-tab-panel active" id="board">
           <div class="kanban-board">
-            <!-- Todo -->
+            <!-- stub -->
             <div class="kanban-column">
               <div class="kanban-col-header">
-                <span class="kanban-col-title">Todo</span>
+                <span class="kanban-col-title">stub</span>
                 <span class="kanban-col-count">2</span>
               </div>
-              <div class="kanban-col-body" id="col-todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <div class="kanban-col-body" id="col-stub" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <div class="task-card" draggable="true" ondragstart="drag(event)" id="task-1">
                   <div class="task-card-title">Define rate limiting rules</div>
                   <div class="task-card-footer">
@@ -242,7 +242,7 @@
          colBody.appendChild(draggedEl);
          draggedEl.classList.remove('dragging');
          
-         // Update counts (mock logic)
+         // Update counts (stub logic)
          document.querySelectorAll('.kanban-column').forEach(col => {
            const count = col.querySelectorAll('.task-card').length;
            col.querySelector('.kanban-col-count').textContent = count;

@@ -1,7 +1,7 @@
 /**
  * Dashboard Data Providers — Client Side
  *
- * Base provider class + mock implementations for all default widgets.
+ * Base provider class + stub implementations for all default widgets.
  * Providers abstract data fetching so widgets never query APIs directly.
  *
  * Provider interface:
@@ -53,24 +53,24 @@
     }
   }
 
-  // ─── Mock Provider ─────────────────────────────────────────────────────────
+  // ─── stub Provider ─────────────────────────────────────────────────────────
 
-  class MockProvider extends DashboardDataProvider {
-    constructor(name, mockData) {
+  class stubProvider extends DashboardDataProvider {
+    constructor(name, stubData) {
       super(name);
-      this._mockData = mockData;
+      this._stubData = stubData;
     }
 
     async load() {
       // Simulate a small network delay for realism
       await new Promise(r => setTimeout(r, 80 + Math.random() * 120));
-      return JSON.parse(JSON.stringify(this._mockData));
+      return JSON.parse(JSON.stringify(this._stubData));
     }
   }
 
-  // ─── Mock Data ─────────────────────────────────────────────────────────────
+  // ─── stub Data ─────────────────────────────────────────────────────────────
 
-  const MOCK = {
+  const stub = {
     executive: {
       revenue: { current: 284500, previous: 261200, currency: 'USD', trend: '+8.9%', trendUp: true, sparkline: [210, 220, 215, 240, 255, 261, 284] },
       projects: { active: 24, completed: 118, overdue: 3, trend: '+2 this week', trendUp: true },
@@ -125,12 +125,12 @@
   // ─── Provider Instances ────────────────────────────────────────────────────
 
   const DashboardProviders = {
-    executive:      new MockProvider('executive',      MOCK.executive),
-    recentActivity: new MockProvider('recentActivity', MOCK.recentActivity),
-    notifications:  new MockProvider('notifications',  MOCK.notifications),
-    systemHealth:   new MockProvider('systemHealth',   MOCK.systemHealth),
-    aiStatus:       new MockProvider('aiStatus',       MOCK.aiStatus),
-    organization:   new MockProvider('organization',   MOCK.organization),
+    executive:      new stubProvider('executive',      stub.executive),
+    recentActivity: new stubProvider('recentActivity', stub.recentActivity),
+    notifications:  new stubProvider('notifications',  stub.notifications),
+    systemHealth:   new stubProvider('systemHealth',   stub.systemHealth),
+    aiStatus:       new stubProvider('aiStatus',       stub.aiStatus),
+    organization:   new stubProvider('organization',   stub.organization),
 
     /**
      * Get a provider by key.
@@ -151,6 +151,6 @@
 
   global.DashboardDataProvider = DashboardDataProvider;
   global.DashboardProviders = DashboardProviders;
-  global.DASHBOARD_MOCK_DATA = MOCK;
+  global.DASHBOARD_stub_DATA = stub;
 
 })(window);

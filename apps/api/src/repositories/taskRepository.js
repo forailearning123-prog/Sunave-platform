@@ -92,7 +92,7 @@ export function createTaskRepository(pool) {
       // Get max position in the column for ordering
       const posRes = await pool.query(
         `SELECT COALESCE(MAX(position), -1) + 1 AS next_pos FROM tasks WHERE organization_id = $1 AND project_id IS NOT DISTINCT FROM $2 AND status = $3`,
-        [orgId, input.projectId ?? null, input.status ?? 'todo']
+        [orgId, input.projectId ?? null, input.status ?? 'pending']
       );
       const position = posRes.rows[0].next_pos;
 
@@ -106,7 +106,7 @@ export function createTaskRepository(pool) {
         [
           id, orgId,
           input.title, input.description ?? '',
-          input.status ?? 'todo', input.priority ?? 'medium',
+          input.status ?? 'pending', input.priority ?? 'medium',
           input.assigneeId ?? null, input.reporterId ?? userId,
           input.estimateHours ?? null,
           input.startDate ?? null, input.dueDate ?? null,

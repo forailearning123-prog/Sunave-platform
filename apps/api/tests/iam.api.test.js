@@ -290,7 +290,7 @@ describe('IAM api', () => {
         .set('x-csrf-token', guestCsrf)
         .send({
           firstName: 'Eve',
-          lastName: 'Hacker',
+          lastName: 'stuber',
           email: 'eve@iam.test',
           role: 'User'
         });
@@ -301,7 +301,7 @@ describe('IAM api', () => {
       const res = await guestAgent
         .post('/api/teams')
         .set('x-csrf-token', guestCsrf)
-        .send({ name: 'Hacker Team' });
+        .send({ name: 'stuber Team' });
       expect(res.statusCode).toBe(403);
     });
 

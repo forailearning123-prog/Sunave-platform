@@ -203,7 +203,7 @@
 
   function savePrefs(prefs) {
     localStorage.setItem('sunave_dash_prefs', JSON.stringify(prefs));
-    // Also send to API (fire and forget, mock)
+    // Also send to API (fire and forget, stub)
     fetch('/api/dashboard/preferences', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '' },

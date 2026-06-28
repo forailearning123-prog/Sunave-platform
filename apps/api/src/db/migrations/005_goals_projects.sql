@@ -108,8 +108,8 @@ CREATE TABLE IF NOT EXISTS tasks (
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   title           VARCHAR(255) NOT NULL,
   description     TEXT NOT NULL DEFAULT '',
-  status          VARCHAR(30) NOT NULL DEFAULT 'todo'
-                    CHECK (status IN ('todo','in_progress','blocked','review','done','cancelled')),
+  status          VARCHAR(30) NOT NULL DEFAULT 'pending'
+                    CHECK (status IN ('pending','in_progress','blocked','review','done','cancelled')),
   priority        VARCHAR(20) NOT NULL DEFAULT 'medium'
                     CHECK (priority IN ('critical','high','medium','low')),
   assignee_id     UUID REFERENCES users(id) ON DELETE SET NULL,

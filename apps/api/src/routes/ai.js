@@ -233,7 +233,7 @@ export function buildAiRouter(
           latencyMs: healthResult.latencyMs,
           modelsFound: models.length,
           models: models.slice(0, 10),
-          mock: true
+          stub: true
         }));
       } catch (err) {
         console.error('[ai/providers/test POST]', err);

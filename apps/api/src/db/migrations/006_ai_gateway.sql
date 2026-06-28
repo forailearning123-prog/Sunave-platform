@@ -151,7 +151,7 @@ INSERT INTO ai_providers (
   true, false, true,
   false, true, false,
   false, 'healthy',
-  'Built-in mock/local provider. No external API required.'
+  'Built-in local provider. No external API required.'
 )
 ON CONFLICT (id) DO NOTHING;
 

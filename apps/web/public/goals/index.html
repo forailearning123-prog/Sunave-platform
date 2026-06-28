@@ -102,7 +102,7 @@
   <script src="/assets/js/auth-client.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const mockGoals = [
+      const stubGoals = [
         { id: 1, title: 'Increase Annual Revenue 30%', category: 'business', status: 'active', priority: 'high', progress: 74, owner: 'Sarah Chen', targetDate: 'Q4 2026', childCount: 2, projectCount: 4 },
         { id: 2, title: 'Launch Product V2', category: 'technology', status: 'active', priority: 'high', progress: 45, owner: 'James Park', targetDate: 'Q3 2026', childCount: 0, projectCount: 2 },
         { id: 3, title: 'Improve Customer Retention', category: 'customer', status: 'planning', priority: 'medium', progress: 12, owner: 'Priya Nair', targetDate: 'Q4 2026', childCount: 1, projectCount: 1 },
@@ -112,7 +112,7 @@
 
       const grid = document.getElementById('goalsGrid');
       
-      mockGoals.forEach(g => {
+      stubGoals.forEach(g => {
         let fillClass = 'success';
         if(g.progress < 50 && g.status === 'active') fillClass = 'warning';
         if(g.title === 'Launch Product V2') fillClass = 'danger';

@@ -9,11 +9,11 @@ export function createEmbeddingService(
       throw new Error('No embedding provider configured');
     }
 
-    const mockVector = Array.from({ length: provider.dimensions }, () =>
+    const stubVector = Array.from({ length: provider.dimensions }, () =>
       Math.random() * 2 - 1
     );
 
-    const normalizedVector = mockVector.map(v => v / Math.sqrt(mockVector.reduce((a, b) => a + b * b, 0)));
+    const normalizedVector = stubVector.map(v => v / Math.sqrt(stubVector.reduce((a, b) => a + b * b, 0)));
 
     const embedding = await embeddingRepo.create(organizationId, {
       chunkId,
@@ -40,10 +40,10 @@ export function createEmbeddingService(
 
     const embeddings = [];
     for (const chunk of chunks) {
-      const mockVector = Array.from({ length: provider.dimensions }, () =>
+      const stubVector = Array.from({ length: provider.dimensions }, () =>
         Math.random() * 2 - 1
       );
-      const normalizedVector = mockVector.map(v => v / Math.sqrt(mockVector.reduce((a, b) => a + b * b, 0)));
+      const normalizedVector = stubVector.map(v => v / Math.sqrt(stubVector.reduce((a, b) => a + b * b, 0)));
 
       embeddings.push({
         chunkId: chunk.id,

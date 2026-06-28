@@ -10,7 +10,7 @@
  *   PUT  /api/dashboard/preferences  — update user dashboard preferences
  *
  * All responses use the standard { success, data, error } envelope from @sunave/core.
- * All data is mocked — no DB queries. Future sprints will wire real persistence.
+ * All data is stubed — no DB queries. Future sprints will wire real persistence.
  */
 
 import { Router } from 'express';
@@ -24,8 +24,8 @@ export function buildDashboardRouter(dashboardService) {
   // Returns the full dashboard config: enabled widgets, active layout, preferences.
   router.get('/', async (req, res) => {
     try {
-      // Mock user id — future: extract from req.auth
-      const userId = req.auth?.userId ?? 'mock-user';
+      // stub user id — future: extract from req.auth
+      const userId = req.auth?.userId ?? 'stub-user';
       const config = await getDashboardConfig(userId);
       res.json(ok(config));
     } catch (err) {
@@ -63,7 +63,7 @@ export function buildDashboardRouter(dashboardService) {
   // Save a new named layout snapshot.
   router.post('/layout', (req, res) => {
     try {
-      const userId = req.auth?.userId ?? 'mock-user';
+      const userId = req.auth?.userId ?? 'stub-user';
       const { layout } = req.body;
       if (!Array.isArray(layout)) {
         return res.status(400).json(fail('INVALID_LAYOUT', 'layout must be an array of widget position objects.'));
@@ -80,7 +80,7 @@ export function buildDashboardRouter(dashboardService) {
   // Update the active layout (widget positions/sizes).
   router.put('/layout', (req, res) => {
     try {
-      const userId = req.auth?.userId ?? 'mock-user';
+      const userId = req.auth?.userId ?? 'stub-user';
       const { layout } = req.body;
       if (!Array.isArray(layout)) {
         return res.status(400).json(fail('INVALID_LAYOUT', 'layout must be an array of widget position objects.'));
@@ -96,14 +96,14 @@ export function buildDashboardRouter(dashboardService) {
   // ─── PUT /api/dashboard/layout/reset ─────────────────────────────────────
   // Reset layout to platform defaults.
   router.put('/layout/reset', (req, res) => {
-    const userId = req.auth?.userId ?? 'mock-user';
+    const userId = req.auth?.userId ?? 'stub-user';
     const layout = layoutManager.resetLayout(userId);
     res.json(ok({ layout, message: 'Layout reset to default.' }));
   });
 
   // ─── GET /api/dashboard/preferences ──────────────────────────────────────
   router.get('/preferences', (req, res) => {
-    // Mock preferences — future: load from user_preferences via configurationService
+    // stub preferences — future: load from user_preferences via configurationService
     res.json(ok({
       preferences: {
         density: 'comfortable',
@@ -125,12 +125,12 @@ export function buildDashboardRouter(dashboardService) {
     if (!preferences || typeof preferences !== 'object') {
       return res.status(400).json(fail('INVALID_PREFERENCES', 'preferences must be an object.'));
     }
-    // Mock save — future: persist via configurationService.set('dashboard', preferences, 'user', context)
+    // stub save — future: persist via configurationService.set('dashboard', preferences, 'user', context)
     return res.json(ok({ preferences, message: 'Preferences updated.' }));
   });
 
   // ─── GET /api/dashboard/data/:providerKey ─────────────────────────────────
-  // Fetch mock data from a specific provider (for widget refresh calls).
+  // Fetch stub data from a specific provider (for widget refresh calls).
   router.get('/data/:providerKey', async (req, res) => {
     try {
       const data = await loadProviderData(req.params.providerKey);

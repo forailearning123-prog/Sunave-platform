@@ -10,18 +10,18 @@
  * All providers implement the ProviderInterface:
  *   { initialize, chat, stream, health, models, supports, estimateCost, shutdown }
  *
- * No real AI API calls are made. All providers return mock responses.
+ * No real AI API calls are made. All providers return stub responses.
  * Real provider integration is out of scope for this module.
  */
 
-// ─── Provider Interface & Mock Implementations ────────────────────────────────
+// ─── Provider Interface & stub Implementations ────────────────────────────────
 
 /**
- * Base mock provider — all stubs extend this.
+ * Base stub provider — all stubs extend this.
  * @param {object} config
  * @returns {object} Provider implementing the ProviderInterface
  */
-function createMockProvider(config) {
+function createstubProvider(config) {
   return {
     id: config.id,
     name: config.name,
@@ -36,10 +36,10 @@ function createMockProvider(config) {
       return {
         provider: config.type,
         model: options.model || config.defaultModel,
-        mock: true,
+        stub: true,
         message: {
           role: 'assistant',
-          content: `[Mock response from ${config.name}] This is a simulated AI response. Real provider integration is pending.`
+          content: `[stub response from ${config.name}] This is a simulated AI response. Real provider integration is pending.`
         },
         usage: { promptTokens: 25, completionTokens: 40, totalTokens: 65 },
         finishReason: 'stop'
@@ -50,11 +50,11 @@ function createMockProvider(config) {
       return {
         provider: config.type,
         model: options.model || config.defaultModel,
-        mock: true,
+        stub: true,
         streaming: true,
-        note: 'Streaming mock — real SSE stream not yet implemented.',
+        note: 'Streaming stub — real SSE stream not yet implemented.',
         chunks: [
-          { delta: '[Mock stream from ', done: false },
+          { delta: '[stub stream from ', done: false },
           { delta: config.name, done: false },
           { delta: '] Simulated streaming response.', done: false },
           { delta: '', done: true }
@@ -66,14 +66,14 @@ function createMockProvider(config) {
       return {
         provider: config.type,
         available: true,
-        latencyMs: Math.floor(Math.random() * 80) + 20, // 20–100 ms mock
-        models: config.mockModels || [],
-        mock: true
+        latencyMs: Math.floor(Math.random() * 80) + 20, // 20–100 ms stub
+        models: config.stubModels || [],
+        stub: true
       };
     },
 
     async models() {
-      return (config.mockModels || []).map(m => ({
+      return (config.stubModels || []).map(m => ({
         id: m,
         name: m,
         provider: config.type,
@@ -93,7 +93,7 @@ function createMockProvider(config) {
         estimatedTokens,
         estimatedCostUsd: ((estimatedTokens / 1000) * rates.output).toFixed(6),
         currency: 'USD',
-        mock: true
+        stub: true
       };
     },
 
@@ -106,83 +106,83 @@ function createMockProvider(config) {
 // ─── Provider Registry ────────────────────────────────────────────────────────
 
 const PROVIDER_STUBS = {
-  sunave_local: createMockProvider({
+  sunave_local: createstubProvider({
     type: 'sunave_local',
     name: 'Sunave Local',
     defaultModel: 'sunave-local-v1',
-    mockModels: ['sunave-local-v1', 'sunave-local-mini'],
+    stubModels: ['sunave-local-v1', 'sunave-local-mini'],
     capabilities: ['chat', 'embeddings', 'summarization', 'classification', 'extraction'],
     costPer1kTokens: { input: 0, output: 0 }
   }),
 
-  openai: createMockProvider({
+  openai: createstubProvider({
     type: 'openai',
     name: 'OpenAI',
     defaultModel: 'gpt-4o',
-    mockModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo', 'text-embedding-3-large'],
+    stubModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo', 'text-embedding-3-large'],
     capabilities: ['chat', 'vision', 'embeddings', 'function_calling', 'streaming', 'reasoning', 'coding', 'summarization', 'classification', 'extraction', 'generation', 'moderation'],
     costPer1kTokens: { input: 0.005, output: 0.015 }
   }),
 
-  anthropic: createMockProvider({
+  anthropic: createstubProvider({
     type: 'anthropic',
     name: 'Anthropic',
     defaultModel: 'claude-3-5-sonnet-20241022',
-    mockModels: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
+    stubModels: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
     capabilities: ['chat', 'vision', 'streaming', 'reasoning', 'coding', 'summarization', 'classification', 'extraction', 'generation'],
     costPer1kTokens: { input: 0.003, output: 0.015 }
   }),
 
-  gemini: createMockProvider({
+  gemini: createstubProvider({
     type: 'gemini',
     name: 'Google Gemini',
     defaultModel: 'gemini-1.5-pro',
-    mockModels: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash-exp'],
+    stubModels: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash-exp'],
     capabilities: ['chat', 'vision', 'embeddings', 'streaming', 'reasoning', 'coding', 'summarization', 'generation'],
     costPer1kTokens: { input: 0.00125, output: 0.005 }
   }),
 
-  vertex_ai: createMockProvider({
+  vertex_ai: createstubProvider({
     type: 'vertex_ai',
     name: 'Google Vertex AI',
     defaultModel: 'gemini-1.5-pro-002',
-    mockModels: ['gemini-1.5-pro-002', 'gemini-1.5-flash-002', 'text-bison@002'],
+    stubModels: ['gemini-1.5-pro-002', 'gemini-1.5-flash-002', 'text-bison@002'],
     capabilities: ['chat', 'vision', 'embeddings', 'streaming', 'reasoning', 'coding', 'summarization', 'classification', 'generation'],
     costPer1kTokens: { input: 0.00125, output: 0.005 }
   }),
 
-  azure_openai: createMockProvider({
+  azure_openai: createstubProvider({
     type: 'azure_openai',
     name: 'Azure OpenAI',
     defaultModel: 'gpt-4o',
-    mockModels: ['gpt-4o', 'gpt-4-turbo', 'gpt-35-turbo', 'text-embedding-3-large'],
+    stubModels: ['gpt-4o', 'gpt-4-turbo', 'gpt-35-turbo', 'text-embedding-3-large'],
     capabilities: ['chat', 'vision', 'embeddings', 'function_calling', 'streaming', 'reasoning', 'coding', 'summarization', 'classification', 'extraction', 'generation', 'moderation'],
     costPer1kTokens: { input: 0.005, output: 0.015 }
   }),
 
-  openrouter: createMockProvider({
+  openrouter: createstubProvider({
     type: 'openrouter',
     name: 'OpenRouter',
     defaultModel: 'openai/gpt-4o',
-    mockModels: ['openai/gpt-4o', 'anthropic/claude-3-5-sonnet', 'google/gemini-pro-1.5', 'meta-llama/llama-3.1-70b-instruct'],
+    stubModels: ['openai/gpt-4o', 'anthropic/claude-3-5-sonnet', 'google/gemini-pro-1.5', 'meta-llama/llama-3.1-70b-instruct'],
     capabilities: ['chat', 'vision', 'streaming', 'reasoning', 'coding', 'summarization', 'classification', 'generation'],
     costPer1kTokens: { input: 0.005, output: 0.015 }
   }),
 
-  litellm: createMockProvider({
+  litellm: createstubProvider({
     type: 'litellm',
     name: 'LiteLLM',
     defaultModel: 'gpt-4o',
-    mockModels: ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini/gemini-1.5-pro'],
+    stubModels: ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini/gemini-1.5-pro'],
     capabilities: ['chat', 'vision', 'embeddings', 'streaming', 'function_calling', 'reasoning', 'coding', 'summarization', 'classification', 'extraction', 'generation'],
     costPer1kTokens: { input: 0.005, output: 0.015 }
   }),
 
-  ollama: createMockProvider({
+  ollama: createstubProvider({
     type: 'ollama',
     name: 'Ollama',
     defaultModel: 'llama3.2',
-    mockModels: ['llama3.2', 'llama3.1', 'mistral', 'codellama', 'nomic-embed-text'],
+    stubModels: ['llama3.2', 'llama3.1', 'mistral', 'codellama', 'nomic-embed-text'],
     capabilities: ['chat', 'embeddings', 'streaming', 'coding', 'summarization', 'classification', 'extraction', 'generation'],
     costPer1kTokens: { input: 0, output: 0 }
   })
@@ -373,10 +373,10 @@ export function createAiGatewayService(aiProviderRepo) {
         provider: selected.provider.type,
         selectedProvider: selected.provider.name,
         capability: 'embeddings',
-        mock: true,
+        stub: true,
         embedding: Array.from({ length: 1536 }, () => Math.random() * 2 - 1),
         dimensions: 1536,
-        note: 'Mock embedding vector — real provider integration pending.'
+        note: 'stub embedding vector — real provider integration pending.'
       };
     },
 
@@ -392,9 +392,9 @@ export function createAiGatewayService(aiProviderRepo) {
         provider: selected.provider.type,
         selectedProvider: selected.provider.name,
         capability: 'speech',
-        mock: true,
+        stub: true,
         audioUrl: null,
-        note: 'Mock speech response — real provider integration pending.'
+        note: 'stub speech response — real provider integration pending.'
       };
     },
 
@@ -410,8 +410,8 @@ export function createAiGatewayService(aiProviderRepo) {
         provider: selected.provider.type,
         selectedProvider: selected.provider.name,
         capability: 'transcription',
-        mock: true,
-        text: '[Mock transcription] Real transcription integration pending.',
+        stub: true,
+        text: '[stub transcription] Real transcription integration pending.',
         language: audioInput.language || 'en',
         duration: 0
       };
@@ -455,7 +455,7 @@ export function createAiGatewayService(aiProviderRepo) {
 
     /**
      * List all models from all known provider types.
-     * Aggregates mock model lists for each provider type.
+     * Aggregates stub model lists for each provider type.
      */
     async listModels() {
       const providers = await aiProviderRepo.listProviders({ enabledOnly: true });
@@ -469,7 +469,7 @@ export function createAiGatewayService(aiProviderRepo) {
       return {
         models: modelLists.flat(),
         total: modelLists.flat().length,
-        mock: true
+        stub: true
       };
     },
 

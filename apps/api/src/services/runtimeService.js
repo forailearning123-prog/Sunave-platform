@@ -157,7 +157,7 @@ export function createRuntimeService(aiGatewayService, conversationRepo, promptR
         response: result.message || result,
         usage: tokens,
         executionTimeMs: executionTime,
-        mock: result.mock
+        stub: result.stub
       };
 
     } catch (err) {

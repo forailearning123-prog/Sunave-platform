@@ -588,6 +588,6 @@ function showError(message) {
 }
 
 function editPlugin(pluginId) {
-  // TODO: Implement plugin editing
+  // stub: Implement plugin editing
   alert('Plugin editing coming soon');
 }

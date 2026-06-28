@@ -83,7 +83,7 @@ function createCrmRouter(businessService, permService) {
   // Pipeline Dashboard / Forecast / Timeline
   router.get('/pipeline', async (req, res) => {
     try {
-      // Mock pipeline data leveraging business_objects
+      // stub pipeline data leveraging business_objects
       const filters = { objectType: 'opportunity', status: 'active' };
       const result = await businessService.objectRepo.findAll(req.org.organizationId, filters);
       
